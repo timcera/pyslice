@@ -8,11 +8,14 @@ toc_p=1
 =head1 Abstract
 See L<"pyslice.help","manpage">.
 
+
 =head1 Documentation
 =list *
 =item L<"manual.html","User manual">
 =item L<"devguide.html","Developer's Guide">
 =item L<"deshist.html","Design History">
+=item Home Page: L<"http://pyslice.sourceforge.net","http://pyslice.sourceforge.net">
+=item Project Page: L<"http://sourceforge.net/projects/pyslice","http://sourceforge.net/projects/pyslice">
 =end list
 
 =head1 Installation
@@ -36,7 +39,7 @@ This is a standard distutils install:
 =head1 Changes
 
 =head2 2001-07-10: v1.0
-Download: L<"pyslice-1.0.tar.gz","pyslice-1.0.tar.gz">
+Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.0.tar.gz","pyslice-1.0.tar.gz">
 =list 1
 =item Initial release
 =end list
@@ -47,5 +50,4 @@ Download: L<"pyslice-1.0.tar.gz","pyslice-1.0.tar.gz">
 Initial implementation
 
 =end list
-
 
