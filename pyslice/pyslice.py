@@ -44,26 +44,26 @@ EXAMPLES:
         ...
 """
 #===imports======================
-import sys,os,getopt,time,string
+import sys, os, getopt, time, string
 import os.path
 import signal
 import re
 import UserList
 import math
+import ConfigParser
 import shutil
 import stat
-from ConfigParser import *
 
 #===globals======================
 modname="pyslice"
 __version__="1.2"
 
 #--option args--
-debug_p=0
+debug_p = 0
 #opt_b=None  #string arg, default is undefined
 
 #---positional args, default is empty---
-pargs=[]    
+pargs = []    
 
 #---other---
 
@@ -72,13 +72,13 @@ def msg(txt):
   sys.stdout.write(txt)
   sys.stdout.flush()
 
-def debug(ftn,txt):
+def debug(ftn, txt):
   if debug_p:
     tmp=string.join([modname,'.',ftn,':',txt,'\n'],'')
     sys.stdout.write(tmp)
     sys.stdout.flush()
 
-def fatal(ftn,txt):
+def fatal(ftn, txt):
   tmp=string.join([modname,'.',ftn,':FATAL:',txt,'\n'],'')
   raise SystemExit, tmp
  
@@ -88,7 +88,7 @@ def usage():
 activeChildren = []
 
 
-class frange(UserList.UserList):
+class Frange(UserList.UserList):
   """
   frange(stop) # assume start=0, step=1
   frange(start, stop) # assume step=1
@@ -107,11 +107,11 @@ class frange(UserList.UserList):
   """
 
   def __init__(self, *args):
-    l = len(args)
-    if l == 1: # only to
+    arg_len = len(args)
+    if arg_len == 1: # only to
       args.insert(0,0)
       args.append = 1
-    elif l == 2: # from, to
+    elif arg_len == 2: # from, to
       args.append = 1
 
     self.start, self.stop, self.step = args
@@ -122,13 +122,13 @@ class frange(UserList.UserList):
     max_dec    = max(len(startstr[1]),
                      len(stopstr[1]),
                      len(stepstr[1]))
-    mult = math.pow(10,max_dec)
+    mult = math.pow(10, max_dec)
 
     self.data = range(int(self.start*mult),
                       int(self.stop*mult),
                       int(self.step*mult))
 
-    self.data = map(lambda x,mult=mult: x/mult, self.data)
+    self.data = map(lambda x, mult=mult: x/mult, self.data)
 
 
   def __repr__(self):
@@ -175,53 +175,52 @@ class Pyslice:
   #---class variables---
   #--------------------------
   def __init__(self):
-    ftn="Pyslice.__init__"
     #---instance variables---
-    (self.year,self.month,self.day,self.hour,self.minute,self.second,
-     self.weekday,self.julianday,self.daylight)=time.localtime(time.time())
+    (self.year, self.month, self.day, self.hour, self.minute, self.second,
+     self.weekday, self.julianday, self.daylight) = time.localtime(time.time())
   #--------------------------
-  def read_config(self,min_sections,max_sections,req_sections_list):
+  def read_config(self, min_sections, max_sections, req_sections_list):
     """ Reads the pyslice.conf file.
 
     """
     pyslice_conf = os.getcwd() + os.sep + "pyslice.conf"
-    if not os.access(pyslice_conf,os.F_OK | os.R_OK):
+    if not os.access(pyslice_conf, os.F_OK | os.R_OK):
       NotFound = "\n***\nThe pyslice.conf file was not found or not readable"
       raise NotFound,"\npyslice.conf must be in the current directory\n***\n"
-    config_dict = ConfigParser()
+    config_dict = ConfigParser.ConfigParser()
     config_dict.read(pyslice_conf)
     num_sections = len(config_dict.sections())
     if num_sections < min_sections or num_sections > max_sections:
       ConfigFile = "\n***\nThe pyslice.conf file has an incorrect number of sections"
-      raise ConfigFile,"\npyslice.conf must have between %d and %d sections.\n***\n" % (min_sections,max_sections)
+      raise ConfigFile, "\npyslice.conf must have between %d and %d sections.\n***\n" % (min_sections, max_sections)
     for sec in req_sections_list:
       if not config_dict.has_section(sec):
         NoSection = "\n***\nThe pyslice.conf file is missing a required section"
         raise NoSection,"\npyslice.conf requires the [%s] section.\n***\n" % sec
     return config_dict
 
-  def dequote(self,str):
+  def dequote(self, in_str):
     """ Removes quotes around strings in the configuration file.
 
     """
-    str = string.replace(str,'\'','')
-    str = string.replace(str,'\"','')
-    return str
+    in_str = string.replace(in_str, '\'', '')
+    in_str = string.replace(in_str, '\"', '')
+    return in_str
 
-  def path_correction(self,str):
+  def path_correction(self, str):
     """ Corrects path seperators and removes trailing path seperators.
 
     Needed so that path seperators of any OS are corrected to the
     platform running the script.
 
     """
-    str = string.replace(str,"/",os.sep)
-    str = string.replace(str,"\\",os.sep)
+    str = string.replace(str, "/", os.sep)
+    str = string.replace(str, "\\", os.sep)
     if str[-1] == "/" or str[-1] == "\\":
       str = str[:-1]
     return str
 
-  def cartesian(self,listList):
+  def cartesian(self, listList):
     """ Determines the 'cartesian' of a list of lists.
 
     The cartesian is the permutation of all combinations _between_
@@ -233,13 +232,13 @@ class Pyslice:
     if listList:
       result = []
       prod = self.cartesian(listList[:-1])
-      for x in prod:
-        for y in listList[-1]:
-          result.append(x + (y,))
+      for outer in prod:
+        for inner in listList[-1]:
+          result.append(outer + (inner,))
       return result
     return [()]      
 
-  def daemonize(self,dir='/', logto="/dev/null"):
+  def daemonize(self, dir_slash='/', logto="/dev/null"):
     """ Forces current process into the background.
 
     Got off the comp.lang.python newsgroup.  Written by Michael Romberg.
@@ -255,7 +254,7 @@ class Pyslice:
     #
     # Change the cwd
     #
-    os.chdir(dir)
+    os.chdir(dir_slash)
 
     #
     # Background the process by forking and exiting the parent
@@ -299,7 +298,7 @@ class Pyslice:
       activeChildren.remove(pid)
 
   def run(self):
-    ftn="Pyslice.run"
+    ftn = "Pyslice.run"
     debug(ftn,"hello, world")
 
     print "\n    Pyslice will replace all files in the output directories with the\n    same name as files in the template directory.  If this is not\n    what you want, move the files as necessary.  Pyslice also does\n    not check if the permutation schedule is the same and may not use\n    the same number of output directories from previous pyslice runs.\n" 
@@ -307,12 +306,12 @@ class Pyslice:
     print
 
     # Read the configuration file and set appropriate variables.
-    configuration = self.read_config(4,100,["paths","flags","program"])
-    template_path = self.dequote(configuration.get("paths","template_path"))
-    output_path = self.dequote(configuration.get("paths","output_path"))
-    keyword = self.dequote(configuration.get("flags","keyword"))
-    max_processes = configuration.getint("flags","max_processes")
-    program = self.dequote(configuration.get("program","program"))
+    configuration = self.read_config(4, 100, ["paths", "flags", "program"])
+    template_path = self.dequote(configuration.get("paths", "template_path"))
+    output_path = self.dequote(configuration.get("paths", "output_path"))
+    keyword = self.dequote(configuration.get("flags", "keyword"))
+    max_processes = configuration.getint("flags", "max_processes")
+    program = self.dequote(configuration.get("program", "program"))
 
     # Remove the standard configuration sections to leave all of the variables.
     section_list = configuration.sections()
@@ -329,10 +328,10 @@ class Pyslice:
     key_list = []
     list_list = []
     for variable in section_list:
-      start = configuration.getfloat(variable,"start")
-      stop = configuration.getfloat(variable,"stop")
-      incr = configuration.getfloat(variable,"increment")
-      list_list.append(frange(start,stop,incr))
+      start = configuration.getfloat(variable, "start")
+      stop = configuration.getfloat(variable, "stop")
+      incr = configuration.getfloat(variable, "increment")
+      list_list.append(Frange(start, stop, incr))
       key_list.append(variable)
 
     # Create cartesian (all combinations of input variables)
@@ -372,7 +371,7 @@ class Pyslice:
 
         # Is this a binary file?  If so, just copy
         if istext(infilepath):
-          input = open(infilepath,'r')
+          inputf = open(infilepath,'r')
         else:
           shutil.copy(infilepath, outfilepath)
           continue
@@ -382,8 +381,9 @@ class Pyslice:
 
         # Search for keywordvarnamekeyword and replace with appropriate value.
         while 1:
-          line = input.readline()
-          if not line: break
+          line = inputf.readline()
+          if not line: 
+            break
           for key_index in range(len(key_list)):
             # compile re search for keyword .* variable_name .* keyword
             search_for = re.compile(re.escape(keyword) + '(' + r'.*?' + key_list[key_index] + r'.*?' + ')' + re.escape(keyword))
@@ -392,15 +392,15 @@ class Pyslice:
               # only have 1 group, but it returns a 2 item tuple, need [0]
               match = search_for.search(line).groups()[0]
               # replace variable name with number
-              match = string.replace(match,key_list[key_index],str(set[var_index][key_index]))
+              match = string.replace(match, key_list[key_index], str(set[var_index][key_index]))
               # evaluate Python statement with restricted eval
               match = eval(match)
               # replace variable with calculated value
-              line = re.sub(search_for,str(match),line,count=1)
+              line = re.sub(search_for, str(match), line, count=1)
           # writes new line out to output file
           output.write(line)
 
-        input.close()
+        inputf.close()
         output.close()
 
       if max_processes > 0:
@@ -416,32 +416,32 @@ class Pyslice:
         if childPid == 0:
           os.chdir(output_path + os.sep + strtag)
           command_args = string.split(program)
-          os.execvpe(command_args[0],command_args,os.environ)
+          os.execvpe(command_args[0], command_args, os.environ)
         else:
           activeChildren.append(childPid)
 
 #=============================
 def main(args):
-  x=Pyslice()
-  x.run()
+  main_x=Pyslice()
+  main_x.run()
     
 #-------------------------
 if __name__ == '__main__':
   ftn = "main"
-  opts,pargs=getopt.getopt(sys.argv[1:],'hvd',
-             ['help','version','debug','bb='])
+  opts, pargs = getopt.getopt(sys.argv[1:], 'hvd',
+               ['help', 'version', 'debug', 'bb='])
   for opt in opts:
-    if opt[0]=='-h' or opt[0]=='--help':
+    if opt[0] == '-h' or opt[0] == '--help':
       print modname+": version="+__version__
       usage()
       sys.exit(0)
-    elif opt[0]=='-v' or opt[0]=='--version':
+    elif opt[0] == '-v' or opt[0] == '--version':
       print modname+": version="+__version__
       sys.exit(0)
-    elif opt[0]=='-d' or opt[0]=='--debug':
-      debug_p=1
-    elif opt[0]=='--bb':
-      opt_b=opt[1]
+    elif opt[0] == '-d' or opt[0] == '--debug':
+      debug_p = 1
+    elif opt[0] == '--bb':
+      opt_b = opt[1]
 
   #---make the object and run it---
   main(pargs)
