@@ -358,21 +358,22 @@ class Pyslice:
         input.close()
         output.close()
 
-      # Wait until there are less than max_processes.
-      while len(activeChildren) >= max_processes:
-        self.reapChildren()
-        time.sleep(5)
+      if max_processes > 0:
+        # Wait until there are less than max_processes.
+        while len(activeChildren) >= max_processes:
+          self.reapChildren()
+          time.sleep(5)
 
-      # use time.sleep to slightly stagger processes reading the command
-      time.sleep(1)
-      # Create new child and execute program.
-      childPid = os.fork()
-      if childPid == 0:
-        os.chdir(output_path + os.sep + strtag)
-        command_args = string.split(program)
-        os.execvpe(command_args[0],command_args,os.environ)
-      else:
-        activeChildren.append(childPid)
+        # use time.sleep to slightly stagger processes reading the command
+        time.sleep(1)
+        # Create new child and execute program.
+        childPid = os.fork()
+        if childPid == 0:
+          os.chdir(output_path + os.sep + strtag)
+          command_args = string.split(program)
+          os.execvpe(command_args[0],command_args,os.environ)
+        else:
+          activeChildren.append(childPid)
 
 #=============================
 def main(args):
