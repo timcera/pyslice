@@ -25,17 +25,22 @@
 <UL>
 <LI><A HREF="#1."> 1. Abstract</A>
 <LI><A HREF="#2."> 2. Documentation</A>
-<LI><A HREF="#3."> 3. Installation</A>
-<LI><A HREF="#4."> 4. Changes</A>
+<LI><A HREF="#3."> 3. Requirements</A>
 <UL>
-<LI><A HREF="#4.1."> 4.1. 2001-07-10: v1.0</A>
+<LI><A HREF="#3.1."> 3.1. Python </A>
+<LI><A HREF="#3.2."> 3.2. Model </A>
  </UL>
-<LI><A HREF="#5."> 5. Authors</A>
+<LI><A HREF="#4."> 4. Installation</A>
+<LI><A HREF="#5."> 5. Changes</A>
+<UL>
+<LI><A HREF="#5.1."> 5.1. 2001-07-10: v1.0</A>
+<LI><A HREF="#5.2."> 5.2. 2001-07-10: v1.1</A>
+ </UL>
+<LI><A HREF="#6."> 6. Authors</A>
  </UL><p>
 
 <H1><A NAME="1.">1. Abstract</A></H1>
-See <A HREF="pyslice.help">manpage</A>.
-<p>
+Pyslice provides utility functions for parametric modeling.  Parametric modeling is a process of varying many inputs to a model.  A drawback to parametric modeling is that there are usually hundreds to thousands of data sets to prepare and a corresponding number of model runs.  Pyslice will create the model data sets and manage the model runs, or place the model runs in a queue managed by other software.  Pyslice is also useful in establishing the sensitivity of a model to changing parameters.
 <p>
 
 <H1><A NAME="2.">2. Documentation</A></H1>
@@ -51,15 +56,23 @@ See <A HREF="pyslice.help">manpage</A>.
 <LI> Project Page: <A HREF="http://sourceforge.net/projects/pyslice">http://sourceforge.net/projects/pyslice</A>
 </UL><p>
 
-<H1><A NAME="3.">3. Installation</A></H1>
+<H1><A NAME="3.">3. Requirements</A></H1>
+
+<H2><A NAME="3.1.">3.1. Python </A></H2>
+Python 1.5.2 or higher with standard modules.
 <p>
-Requires:
+
+<H2><A NAME="3.2.">3.2. Model </A></H2>
+Any model executable that can be specified with an absolute path or is inside a directory in PATH.  No changes to the model code are required if it draws inputs files from the current working directory.
+<p>
+
+<H1><A NAME="4.">4. Installation</A></H1>
 <UL>
 <LI> Python 1.5.2 with Distutils 0.9 or higher, or Python 2.x
 
 <LI> Pdx required to regenerate documentation
 </UL><p>
-This is a standard distutils install:
+This is a standard UNIX/Linux distutils install:
 
 <PRE>
   cp xyz-0.1.tar.gz myworkdir
@@ -71,16 +84,21 @@ This is a standard distutils install:
 </PRE>
 <p>
 
-<H1><A NAME="4.">4. Changes</A></H1>
+<H1><A NAME="5.">5. Changes</A></H1>
 <p>
 
-<H2><A NAME="4.1.">4.1. 2001-07-10: v1.0</A></H2>
-Download: <A HREF="http://prdownloads.sourceforge.net/pyslice/pyslice-1.0.tar.gz">pyslice-1.0.tar.gz</A>
+<H2><A NAME="5.1.">5.1. 2001-07-10: v1.0</A></H2>
 <OL TYPE="1">
 <LI> Initial release
 </OL><p>
 
-<H1><A NAME="5.">5. Authors</A></H1>
+<H2><A NAME="5.2.">5.2. 2001-07-10: v1.1</A></H2>
+Download: <A HREF="http://prdownloads.sourceforge.net/pyslice/pyslice-1.1.tar.gz">pyslice-1.1.tar.gz</A>
+<OL TYPE="1">
+<LI> Removed Python 2.x dependencies.  Variables can now use floating point.  Works correctly to just create data sets by setting max_processes = 0 in pyslice.conf.  Changes to documentation.
+</OL><p>
+
+<H1><A NAME="6.">6. Authors</A></H1>
 <DL>
 <DT><STRONG>Tim Cera (email: timcera@earthlink.net)</STRONG><DD>Initial implementation
 <p>

@@ -6,8 +6,7 @@ toc_p=1
 =include article_style.pdx
 
 =head1 Abstract
-See L<"pyslice.help","manpage">.
-
+Pyslice provides utility functions for parametric modeling.  Parametric modeling is a process of varying many inputs to a model.  A drawback to parametric modeling is that there are usually hundreds to thousands of data sets to prepare and a corresponding number of model runs.  Pyslice will create the model data sets and manage the model runs, or place the model runs in a queue managed by other software.  Pyslice is also useful in establishing the sensitivity of a model to changing parameters.
 
 =head1 Documentation
 =list *
@@ -18,15 +17,20 @@ See L<"pyslice.help","manpage">.
 =item Project Page: L<"http://sourceforge.net/projects/pyslice","http://sourceforge.net/projects/pyslice">
 =end list
 
-=head1 Installation
+=head1 Requirements
+=head2 Python 
+Python 1.5.2 or higher with standard modules.
 
-Requires:
+=head2 Model 
+Any model executable that can be specified with an absolute path or is inside a directory in PATH.  No changes to the model code are required if it draws inputs files from the current working directory.
+
+=head1 Installation
 =list *
 =item Python 1.5.2 with Distutils 0.9 or higher, or Python 2.x
 =item Pdx required to regenerate documentation
 =end list
 
-This is a standard distutils install:
+This is a standard UNIX/Linux distutils install:
 =verbatim
   cp xyz-0.1.tar.gz myworkdir
   cd myworkdir
@@ -39,9 +43,14 @@ This is a standard distutils install:
 =head1 Changes
 
 =head2 2001-07-10: v1.0
-Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.0.tar.gz","pyslice-1.0.tar.gz">
 =list 1
 =item Initial release
+=end list
+
+=head2 2001-07-10: v1.1
+Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.1.tar.gz","pyslice-1.1.tar.gz">
+=list 1
+=item Removed Python 2.x dependencies.  Variables can now use floating point.  Works correctly to just create data sets by setting max_processes = 0 in pyslice.conf.  Changes to documentation.
 =end list
 
 =head1 Authors
