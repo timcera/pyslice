@@ -56,10 +56,9 @@ import pyslice_lib.PySPG as pyspg
 # Normally like to use just import and explicitly name the module.
 from random import *
 
-
 #===globals======================
 modname="pyslice"
-__version__="1.3"
+__version__="1.4"
 
 #--option args--
 debug_p = 0
@@ -69,6 +68,9 @@ debug_p = 0
 pargs = []    
 
 #---other---
+
+# List of the active children of this process.
+activechildren = []
 
 #===utilities====================
 def msg(txt):
@@ -88,12 +90,12 @@ def fatal(ftn, txt):
 def usage():
   print __doc__
 
-activeChildren = []
 
 def mask(charlist):
   """
   Construct a mask suitable for string.translate,
-  which marks letters in charlist as "t" and ones not as "b"
+  which marks letters in charlist as "t" and ones not as "b".
+  Used by 'istext' function to identify text files.
   """
   mask=""
   for i in range(256):
@@ -107,7 +109,7 @@ ascii7bit_mask=mask(ascii7bit)
 def istext(filep, check=1024, mask=ascii7bit_mask):
   """
   Returns true if the first check characters in file
-  are within mask, false otherwise
+  are within mask, false otherwise. 
   """
 
   try:
@@ -133,12 +135,18 @@ class Pyslice:
     """ Reads the pyslice.conf file.
 
     """
-    pyslice_conf = os.getcwd() + os.sep + "pyslice.conf"
+
+    # Can we find pyslice.conf?
+    pyslice_conf = os.path.join(os.getcwd(), "pyslice.conf")
     if not os.access(pyslice_conf, os.F_OK | os.R_OK):
       NotFound = "\n***\nThe pyslice.conf file was not found or not readable"
       raise NotFound,"\npyslice.conf must be in the current directory\n***\n"
+
+    # Read it in.
     config_dict = ConfigParser.ConfigParser()
     config_dict.read(pyslice_conf)
+
+    # Is pyslice.conf minimally error free?
     num_sections = len(config_dict.sections())
     if num_sections < min_sections or num_sections > max_sections:
       ConfigFile = "\n***\nThe pyslice.conf file has an incorrect number of sections"
@@ -147,20 +155,25 @@ class Pyslice:
       if not config_dict.has_section(sec):
         NoSection = "\n***\nThe pyslice.conf file is missing a required section"
         raise NoSection,"\npyslice.conf requires the [%s] section.\n***\n" % sec
+
+    # Return pyslice.conf as dictionary.
     return config_dict
+
 
   def dequote(self, in_str):
     """ Removes quotes around strings in the configuration file.
+        This corrects a mistake that I would commonly make.
 
     """
     in_str = string.replace(in_str, '\'', '')
     in_str = string.replace(in_str, '\"', '')
     return in_str
 
-  def path_correction(self, path):
-    """ Corrects path seperators and removes trailing path seperators.
 
-    Needed so that path seperators of any OS are corrected to the
+  def path_correction(self, path):
+    """ Corrects path separators and removes trailing path separators.
+
+    Needed so that path separators of any OS are corrected to the
     platform running the script.
 
     """
@@ -177,45 +190,34 @@ class Pyslice:
     Got off the comp.lang.python newsgroup.  Written by Michael Romberg.
 
     """
-    #
+
     # Close open files
-    #
     sys.stdin.close()
     sys.stdout.close()
     sys.stderr.close()
 
-    #
     # Change the cwd
-    #
     os.chdir(dir_slash)
 
-    #
     # Background the process by forking and exiting the parent
-    #
     if os.fork() != 0:
-      # -- Parent --
+      # If here we are the -- Parent --
       sys.exit()
 
-    # -- Child --
+    # If here we are the -- Child --
 
     # redirect stdout and stderr to /dev/null
     #sys.stdin = open("/dev/null", "r")
     sys.stdout = open(logto, "wb", 0)
     sys.stderr = sys.stdout
 
-    #
     # Set the umask
-    #
     os.umask(0)
 
-    #
     # Disassociate from Process Group
-    #
     os.setpgrp()
 
-    #
     # Ignore Terminal I/O Signals
-    #
     if hasattr(signal, 'SIGTTOU'):
       signal.signal(signal.SIGTTOU, signal.SIG_IGN)
     if hasattr(signal, 'SIGTTIN'):
@@ -223,12 +225,18 @@ class Pyslice:
     if hasattr(signal, 'SIGTSTP'):
       signal.signal(signal.SIGTSTP, signal.SIG_IGN)
 
-  def reapChildren(self):
-    while activeChildren:
+
+  def reapchildren(self):
+    """ Keeps track of child processes.  Waits to the end of all
+        child processes.
+
+    """
+    while activechildren:
       pid,stat = os.waitpid(0,os.WNOHANG)
       if not pid:
         break
-      activeChildren.remove(pid)
+      activechildren.remove(pid)
+
 
   def run(self):
     ftn = "Pyslice.run"
@@ -291,12 +299,14 @@ class Pyslice:
 
     list_list = [string.join(i) for i in list_list]
 
+    # This does the cartesian of all of the parameter values.
     pyspg_obj = pyspg.ParamParser(list_list)
 
-    # There should be a way to get this from the PySPG library...
+    # There should be a way to get the length from the PySPG library...
     flag = True
     length = 0
     set = []
+    # Loop reorganizes the output from PySPG and retrieves the actual values.
     while 1:
       length = length + 1
       tmp = []
@@ -337,14 +347,13 @@ class Pyslice:
 
         # Should work out a more robust error check
         try:
-          os.makedirs(output_path + os.sep + strtag)
+          os.makedirs(os.path.join(output_path, strtag))
         except OSError:
           pass
 
-        outfilepath = os.path.abspath(output_path + os.sep + 
-                                      strtag + os.sep + files)
+        outfilepath = os.path.abspath(os.path.join(output_path, strtag, files))
 
-        infilepath = os.path.abspath(template_path + os.sep + files)
+        infilepath = os.path.abspath(os.path.join(template_path, files))
 
         # Is this a binary file?  If so, just copy
         if istext(infilepath):
@@ -384,20 +393,20 @@ class Pyslice:
 
       if max_processes > 0:
         # Wait until there are less than max_processes.
-        while len(activeChildren) >= max_processes:
-          self.reapChildren()
+        while len(activechildren) >= max_processes:
+          self.reapchildren()
           time.sleep(5)
 
-        # use time.sleep to slightly stagger processes reading the command
-        time.sleep(1)
-        # Create new child and execute program.
-        childPid = os.fork()
-        if childPid == 0:
-          os.chdir(output_path + os.sep + strtag)
-          command_args = string.split(program)
-          os.execvpe(command_args[0], command_args, os.environ)
-        else:
-          activeChildren.append(childPid)
+      # use time.sleep to slightly stagger processes reading the command
+      time.sleep(1)
+      # Create new child and execute program.
+      childPid = os.fork()
+      if childPid == 0:
+        os.chdir(os.path.join(output_path, strtag))
+        command_args = string.split(program)
+        os.execvpe(command_args[0], command_args, os.environ)
+      else:
+        activechildren.append(childPid)
 
 #=============================
 def main(args):
