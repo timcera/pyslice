@@ -284,7 +284,7 @@ class Pyslice:
     flag = True
     length = 0
     set = []
-    while flag:
+    while 1:
       length = length + 1
       tmp = []
       # Had to add the 'limit=None' in order to get directories created
@@ -293,7 +293,10 @@ class Pyslice:
       for i in pyspg_obj.actual_values.items():
         tmp.append(i)
       set.append(tmp)
-      flag = pyspg_obj.next()
+      try:
+        pyspg_obj.next()
+      except StopIteration:
+        break
 
     while 1:
       inp =  raw_input('Current configuration results in %s permutations. Continue? (y/n) > ' % len(set))[0] 
