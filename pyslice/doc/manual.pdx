@@ -1,0 +1,100 @@
+=include default_cfg.pdx
+=cfg
+title=pyslice User Manual
+toc_p=1
+=end cfg
+=include article_style.pdx
+
+=head1 Overview
+Pyslice creates input data sets from a template, replacing variables in the template files with a range of values.  It then runs the desired model against each data set, keeping simultaneous model runs below a specified threshold.  It is an ideal program when hundreds of runs are required. Example uses would be for calibration or sensitivity analysis.  The input data set creation feature can easily be setup to create thousands of data sets.
+=head1 Tutorial
+See the example directory under the pyslice install directory for an example pyslice.conf, template_path, and output_path diretories.  To run the example, execute the 'go' script.
+=head2 pyslice.conf
+Pyslice requires a configuration file named 'pyslice.conf'.  Sections are identified with square brackets.  Parameters are set within each section with the format 'parameter=value'.  There are three required sections, 'paths', 'flags', and 'program'.  There must be at least one variable section.
+
+The following example pyslice.conf will take all files in the template_path directory, replacing the variable 'flow' within each file, where 'flow' is equal to the set (90,92,94,96,98).  Note that the set does not included the stop value.
+=verbatim
+    [paths]
+    template_path=/path/to/directory/holding/the/template/dataset
+    output_path=/path/to/where/output/directories/will/be/made
+
+    [flags]
+    keyword="$$"
+    max_processes=8
+
+    [program]
+    program="model -f "
+
+    [flow]
+    start=90
+    stop=100
+    increment=2
+=end
+
+=head2 Templates
+All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing a variable name' 'keyword'.  The keyword string and variable names are specified in pyslice.conf.
+
+The template file,
+=verbatim
+     T1 Simulation of salinity in the No Name River
+     T2 with flow = $$flow$$
+     # Any valid Python statement can be used
+     F1 $$'%10.3f' % flow$$
+     F2 46.58 $$'%10.3f' % (flow * 100)$$
+     F3 $$flow$$ 35.679 $$'%d' % flow$$
+=end
+
+with the example 'pyslice.conf' file above, would result in the following file in the output_path/00000 directory:
+=verbatim
+     T1 Simulation of salinity in the No Name River
+     T2 with flow = 90
+     # Any valid Python statement can be used
+     F1     90.000
+     F2 46.58   9000.000
+     F3 90 35.679 90
+=end
+
+and the following in the output_path/00001 directory:
+=verbatim
+     T1 Simulation of salinity in the No Name River
+     T2 with flow = 92
+     # Any valid Python statement can be used
+     F1     92.000
+     F2 46.58   9200.000
+     F3 92 35.679 92
+=end
+
+...etc.
+
+=table Table of example code in template files, 'flow' varies from 1 to 3 by 1 and 'water_level' varies from 9 to 12 by 1.
+=row B<Template Code> & B<Output Directory> & B<Flow Result> & B<Water Level Result>
+=row $$'%10.4f' % flow$$<BR>$$water_level$$ & 00000 & 1.0000 & 9
+=row  & 00001 & 1.0000 & 10
+=row  & 00002 & 1.0000 & 11
+=row  & 00003 & 2.0000 & 9
+=row  & 00004 & 2.0000 & 10
+=row  & 00005 & 2.0000 & 11
+=row $$'%10.4f' % (flow * 0.1)$$<BR>$$(water_level * 0.2)$$ & 00000 & 0.1000 & 1.8
+=row  & 00001 & 0.1000 & 2.0
+=row  & 00002 & 0.1000 & 2.2
+=row  & 00003 & 0.2000 & 1.8
+=row  & 00004 & 0.2000 & 2.0
+=row  & 00005 & 0.2000 & 2.2
+=end table
+=head1 Mini Python Reference
+=head2 Format
+Python controls the format of a number through the following syntax:
+
+C<'format_string' % number>
+
+If you want to make a calculation you must enclose the calculation in '()'.
+
+Python number formatting is illustrated in the following table:
+=table Table of Python format strings
+=row B<Format> & B<Format String> & B<Definition> & B<Example> & B<Result>
+=row Floating point & C<'%m.nf'> & m=total width<BR>n=places after decimal & C<'%10.3f' % 12.2> & C<    12.200>
+=row Integer & C<'%md'> & m=total width & C<'%10d' % 12.2> & C<        12>
+=end table
+
+=head1 Users Manual Disclaimer
+I have manual writers block.  Frankly if anyone can figure out how to operate pyslice from this manual, they are smarter than I am.  :-)  I really want suggestions about how to make this clearer.  Send me a note!

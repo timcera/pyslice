@@ -1,0 +1,51 @@
+=include default_cfg.pdx
+=cfg
+title=pyslice Home page
+toc_p=1
+=end cfg
+=include article_style.pdx
+
+=head1 Abstract
+See L<"pyslice.help","manpage">.
+
+=head1 Documentation
+=list *
+=item L<"manual.html","User manual">
+=item L<"devguide.html","Developer's Guide">
+=item L<"deshist.html","Design History">
+=end list
+
+=head1 Installation
+
+Requires:
+=list *
+=item Python 1.5.2 with Distutils 0.9 or higher, or Python 2.x
+=item Pdx required to regenerate documentation
+=end list
+
+This is a standard distutils install:
+=verbatim
+  cp xyz-0.1.tar.gz myworkdir
+  cd myworkdir
+  gzip -cd xyz-0.1.tar.gz | tar xvf -
+  cd xyz-0.1
+  python setup.py build
+  python setup.py install  #possibly as root
+=end list
+
+=head1 Changes
+
+=head2 2001-07-10: v1.0
+Download: L<"pyslice-1.0.tar.gz","pyslice-1.0.tar.gz">
+=list 1
+=item Initial release
+=end list
+
+=head1 Authors
+=list []
+=item Tim Cera (email: timcera@earthlink.net)
+Initial implementation
+
+=end list
+
+

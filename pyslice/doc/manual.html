@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+<HEAD>
+<TITLE>pyslice User Manual</TITLE>
+<META NAME="title" CONTENT="pyslice User Manual">
+<META NAME="subject" CONTENT="">
+<META NAME="description" CONTENT="">
+<META NAME="creator" CONTENT="Tim Cera">
+<META NAME="owner" CONTENT="">
+<META NAME="date" CONTENT="2001-07-25">
+<META NAME="validuntil" CONTENT="2001-12-31">
+<META NAME="robots" CONTENT="none">
+</HEAD>
+<BODY BGCOLOR="#ffffff" TEXT="#000000"  LINK="#0000ff" VLINK="#990099" ALINK="#FF0000">
+<TABLE WIDTH=800>
+<TR>
+<TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
+<TD VALIGN="TOP" WIDTH=600><P ALIGN=CENTER><Center>Pyslice</CENTER></P><P ALIGN=CENTER><FONT SIZE=6>pyslice User Manual</FONT></P><P ALIGN=CENTER></P></TD>
+<TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
+</TR>
+<TR>
+<TD VALIGN="TOP" WIDTH=100></TD>
+<TD VALIGN="TOP" WIDTH=600>
+<H1><A NAME="#toc">Table of Contents</A></H1>
+<UL>
+<LI><A HREF="#L001"> 1 Overview</A>
+<LI><A HREF="#L002"> 2 Tutorial</A>
+<UL>
+<LI><A HREF="#L003"> 2.1 pyslice.conf</A>
+<LI><A HREF="#L004"> 2.2 Templates</A>
+ </UL>
+<LI><A HREF="#L005"> 3 Mini Python Reference</A>
+<UL>
+<LI><A HREF="#L006"> 3.1 Format</A>
+ </UL>
+<LI><A HREF="#L007"> 4 Users Manual Disclaimer</A>
+ </UL><p>
+
+<H1><A NAME="L001">1 Overview</A></H1>
+Pyslice creates input data sets from a template, replacing variables in the template files with a range of values.  It then runs the desired model against each data set, keeping simultaneous model runs below a specified threshold.  It is an ideal program when hundreds of runs are required. Example uses would be for calibration or sensitivity analysis.  The input data set creation feature can easily be setup to create thousands of data sets.
+
+<H1><A NAME="L002">2 Tutorial</A></H1>
+See the example directory under the pyslice install directory for an example pyslice.conf, template_path, and output_path diretories.  To run the example, execute the 'go' script.
+
+<H2><A NAME="L003">2.1 pyslice.conf</A></H2>
+Pyslice requires a configuration file named 'pyslice.conf'.  Sections are identified with square brackets.  Parameters are set within each section with the format 'parameter=value'.  There are three required sections, 'paths', 'flags', and 'program'.  There must be at least one variable section.
+<p>
+The following example pyslice.conf will take all files in the template_path directory, replacing the variable 'flow' within each file, where 'flow' is equal to the set (90,92,94,96,98).  Note that the set does not included the stop value.
+
+<PRE>
+    [paths]
+    template_path=/path/to/directory/holding/the/template/dataset
+    output_path=/path/to/where/output/directories/will/be/made
+
+    [flags]
+    keyword=&quot;$$&quot;
+    max_processes=8
+
+    [program]
+    program=&quot;model -f &quot;
+
+    [flow]
+    start=90
+    stop=100
+    increment=2
+</PRE>
+<p>
+
+<H2><A NAME="L004">2.2 Templates</A></H2>
+All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing a variable name' 'keyword'.  The keyword string and variable names are specified in pyslice.conf.
+<p>
+The template file,
+
+<PRE>
+     T1 Simulation of salinity in the No Name River
+     T2 with flow = $$flow$$
+     # Any valid Python statement can be used
+     F1 $$'%10.3f' % flow$$
+     F2 46.58 $$'%10.3f' % (flow * 100)$$
+     F3 $$flow$$ 35.679 $$'%d' % flow$$
+</PRE>
+<p>
+with the example 'pyslice.conf' file above, would result in the following file in the output_path/00000 directory:
+
+<PRE>
+     T1 Simulation of salinity in the No Name River
+     T2 with flow = 90
+     # Any valid Python statement can be used
+     F1     90.000
+     F2 46.58   9000.000
+     F3 90 35.679 90
+</PRE>
+<p>
+and the following in the output_path/00001 directory:
+
+<PRE>
+     T1 Simulation of salinity in the No Name River
+     T2 with flow = 92
+     # Any valid Python statement can be used
+     F1     92.000
+     F2 46.58   9200.000
+     F3 92 35.679 92
+</PRE>
+<p>
+...etc.
+<p>
+<TABLE BORDER CELLSPACING=2 CELLPADDING=2><CAPTION ALIGN="TOP">Table of example code in template files, 'flow' varies from 1 to 3 by 1 and 'water_level' varies from 9 to 12 by 1.</CAPTION >
+<TR><TD VALIGN="TOP" ><B>Template Code </B></TD><TD VALIGN="TOP" ><B>Output Directory </B></TD><TD VALIGN="TOP" ><B>Flow Result </B></TD><TD VALIGN="TOP" ><B>Water Level Result </B></TD></TR>
+<TR><TD VALIGN="TOP" >$$'%10.4f' % flow$$<BR>$$water_level$$</TD><TD VALIGN="TOP" >00000</TD><TD VALIGN="TOP" >1.0000</TD><TD VALIGN="TOP" >9</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00001</TD><TD VALIGN="TOP" >1.0000</TD><TD VALIGN="TOP" >10</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00002</TD><TD VALIGN="TOP" >1.0000</TD><TD VALIGN="TOP" >11</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00003</TD><TD VALIGN="TOP" >2.0000</TD><TD VALIGN="TOP" >9</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00004</TD><TD VALIGN="TOP" >2.0000</TD><TD VALIGN="TOP" >10</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00005</TD><TD VALIGN="TOP" >2.0000</TD><TD VALIGN="TOP" >11</TD></TR>
+<TR><TD VALIGN="TOP" >$$'%10.4f' % (flow * 0.1)$$<BR>$$(water_level * 0.2)$$</TD><TD VALIGN="TOP" >00000</TD><TD VALIGN="TOP" >0.1000</TD><TD VALIGN="TOP" >1.8</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00001</TD><TD VALIGN="TOP" >0.1000</TD><TD VALIGN="TOP" >2.0</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00002</TD><TD VALIGN="TOP" >0.1000</TD><TD VALIGN="TOP" >2.2</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00003</TD><TD VALIGN="TOP" >0.2000</TD><TD VALIGN="TOP" >1.8</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00004</TD><TD VALIGN="TOP" >0.2000</TD><TD VALIGN="TOP" >2.0</TD></TR>
+<TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00005</TD><TD VALIGN="TOP" >0.2000</TD><TD VALIGN="TOP" >2.2</TD></TR>
+</TABLE>
+
+<H1><A NAME="L005">3 Mini Python Reference</A></H1>
+
+<H2><A NAME="L006">3.1 Format</A></H2>
+Python controls the format of a number through the following syntax:
+<p>
+<TT>'format_string' % number </TT>
+<p>
+If you want to make a calculation you must enclose the calculation in '()'.
+<p>
+Python number formatting is illustrated in the following table:
+<TABLE BORDER CELLSPACING=2 CELLPADDING=2><CAPTION ALIGN="TOP">Table of Python format strings</CAPTION >
+<TR><TD VALIGN="TOP" ><B>Format </B></TD><TD VALIGN="TOP" ><B>Format String </B></TD><TD VALIGN="TOP" ><B>Definition </B></TD><TD VALIGN="TOP" ><B>Example </B></TD><TD VALIGN="TOP" ><B>Result </B></TD></TR>
+<TR><TD VALIGN="TOP" >Floating point</TD><TD VALIGN="TOP" ><TT>'%m.nf' </TT></TD><TD VALIGN="TOP" >m=total width<BR>n=places after decimal</TD><TD VALIGN="TOP" ><TT>'%10.3f' % 12.2 </TT></TD><TD VALIGN="TOP" ><TT>    12.200 </TT></TD></TR>
+<TR><TD VALIGN="TOP" >Integer</TD><TD VALIGN="TOP" ><TT>'%md' </TT></TD><TD VALIGN="TOP" >m=total width</TD><TD VALIGN="TOP" ><TT>'%10d' % 12.2 </TT></TD><TD VALIGN="TOP" ><TT>        12 </TT></TD></TR>
+</TABLE>
+<p>
+
+<H1><A NAME="L007">4 Users Manual Disclaimer</A></H1>
+I have manual writers block.  Frankly if anyone can figure out how to operate pyslice from this manual, they are smarter than I am.  :-)  I really want suggestions about how to make this clearer.  Send me a note!
+</TD>
+<TD VALIGN="TOP" WIDTH=100></TD>
+</TR>
+<TR>
+<TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
+<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2001-07-25</TD>
+<TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,4 @@
+include AUTHORS COPYING MANIFEST.in README VERSION *.py
+recursive-include doc  go* *.py *.pdx *.help *.html 
+recursive-include test *
+global-exclude *~

@@ -1,0 +1,4 @@
+$$water_level$$ 10 20 45 60
+30 20 47 20 $$flow$$ 
+10 24 $$'%10.6f' % (phosphorus * 45)$$ 14 15 16 $$phosphorus + 100$$
+
