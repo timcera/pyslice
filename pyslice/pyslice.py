@@ -58,11 +58,10 @@ from random import *
 
 #===globals======================
 modname="pyslice"
-__version__="1.4"
+__version__="1.4.1"
 
 #--option args--
 debug_p = 0
-#opt_b=None  #string arg, default is undefined
 
 #---positional args, default is empty---
 pargs = []    
@@ -271,6 +270,8 @@ class Pyslice:
     for variable in section_list:
       var_type = configuration.get(variable, "type")
       var_list = []
+
+      # Monte Carlo
       if var_type == "montecarlo":
         # Cheat by using list type
         var_list.append(".%s" % (variable,))
@@ -279,14 +280,22 @@ class Pyslice:
         samples = configuration.getint(variable, "samples")
         for samp in range(samples):
           var_list.append(eval(distribution))
+
+      # Arithmetic
       if var_type == "arithmetic":
         var_list.append("+%s" % (variable,))
+
+      # Geometric
       if var_type == "geometric":
         var_list.append("*%s" % (variable,))
+
+      # Arithmetic and Geometric types have the same variables
       if var_type == "arithmetic" or var_type == "geometric":
         var_list.append(configuration.getfloat(variable, "start"))
         var_list.append(configuration.getfloat(variable, "stop"))
         var_list.append(configuration.getfloat(variable, "increment"))
+
+      # List
       if var_type == "list":
         var_list.append(".%s" % (variable,))
         for i in range(1,1000):
@@ -294,6 +303,7 @@ class Pyslice:
             var_list.append(configuration.get(variable, "value%i" % (i)))
           except ConfigParser.NoOptionError:
             break
+
       var_list = [str(i) for i in var_list]
       list_list.append(var_list)
 
@@ -302,13 +312,10 @@ class Pyslice:
     # This does the cartesian of all of the parameter values.
     pyspg_obj = pyspg.ParamParser(list_list)
 
-    # There should be a way to get the length from the PySPG library...
-    flag = True
-    length = 0
+    # set will contain ['directory', [var, var_value], [var1, var1_value], ...]
     set = []
     # Loop reorganizes the output from PySPG and retrieves the actual values.
     while 1:
-      length = length + 1
       tmp = []
       # Had to add the 'limit=None' in order to get directories created
       # for the last variable.  Is this a bug in PySPG?
@@ -322,7 +329,7 @@ class Pyslice:
         break
 
     while 1:
-      inp =  raw_input('Current configuration results in %s permutations. Continue? (y/n) > ' % len(set))[0] 
+      inp =  raw_input('Current configuration results in %s permutations. Continue? (y/n) > ' % (len(set) - 1,))[0] 
       if inp == 'n' or inp == 'N':
         return
       if inp == 'y' or inp == 'Y':
@@ -334,7 +341,7 @@ class Pyslice:
     for var_index,var_set in enumerate(set):
       # Create label for output directories
       if flat_dirs[0] == 'Y' or flat_dirs[0] == 'y':
-        strtag = string.zfill(var_index,5)
+        strtag = str(var_index).zfill(5)
       else:
         strtag = var_set[0]
 
@@ -417,7 +424,7 @@ def main(args):
 if __name__ == '__main__':
   ftn = "main"
   opts, pargs = getopt.getopt(sys.argv[1:], 'hvd',
-               ['help', 'version', 'debug', 'bb='])
+               ['help', 'version', 'debug'])
   for opt in opts:
     if opt[0] == '-h' or opt[0] == '--help':
       print modname+": version="+__version__
@@ -428,8 +435,6 @@ if __name__ == '__main__':
       sys.exit(0)
     elif opt[0] == '-d' or opt[0] == '--debug':
       debug_p = 1
-    elif opt[0] == '--bb':
-      opt_b = opt[1]
 
   #---make the object and run it---
   main(pargs)
