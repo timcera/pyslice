@@ -49,6 +49,8 @@ import os.path
 import signal
 import re
 import rexec
+import UserList
+import math
 
 #===globals======================
 modname="pyslice"
@@ -82,6 +84,59 @@ def usage():
   print __doc__
 
 activeChildren = []
+
+
+class frange(UserList.UserList):
+  """
+  frange(stop) # assume start=0, step=1
+  frange(start, stop) # assume step=1
+  frange(start, stop, step)
+  returns a list of values from start up to stop, with step step.
+  Unlike range(), stop value is included in the list, if it is equal
+  to the last value of the arithmetic sequence.
+  If the returned list is too big, you may want to use xfrange class.
+  This class is not resistant to rounding errors, e.g. on my computer:
+
+  >>> frange(0.7, 0, -0.1)
+  [0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
+  >>> frange(0.7, -0.05, -0.1)
+  [0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, -1.11022302463e-16]
+
+  """
+
+  def __init__(self, *args):
+    l = len(args)
+    if l == 1: # only to
+      args.insert(0,0)
+      args.append = 1
+    elif l == 2: # from, to
+      args.append = 1
+
+    self.start, self.stop, self.step = args
+    startstr = string.split(str(args[0]),'.')
+    stopstr  = string.split(str(args[1]),'.')
+    stepstr  = string.split(str(args[2]),'.')
+
+    max_dec    = max(len(startstr[1]),
+                     len(stopstr[1]),
+                     len(stepstr[1]))
+    mult = math.pow(10,max_dec)
+
+    self.data = range(int(self.start*mult),
+                      int(self.stop*mult),
+                      int(self.step*mult))
+
+    self.data = map(lambda x,mult=mult: x/mult, self.data)
+
+
+  def __repr__(self):
+    return "frange(%i, %i, %i)" % (self.start, self.stop, self.step)
+
+  def __str__(self):
+    return str(self.data)
+
+  def __len__(self):
+    return len(self.data)
 
 #====================================
 class Pyslice:
@@ -245,7 +300,7 @@ class Pyslice:
       start = configuration.getfloat(variable,"start")
       stop = configuration.getfloat(variable,"stop")
       incr = configuration.getfloat(variable,"increment")
-      list_list.append(range(start,stop,incr))
+      list_list.append(frange(start,stop,incr))
       key_list.append(variable)
 
     # Create cartesian (all combinations of input variables)
