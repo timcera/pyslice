@@ -290,7 +290,7 @@ class Pyslice:
       # Had to add the 'limit=None' in order to get directories created
       # for the last variable.  Is this a bug in PySPG?
       tmp.append(pyspg_obj.directory_tree(limit=None))
-      for i in pyspg_obj.actual_values():
+      for i in pyspg_obj.actual_values.items():
         tmp.append(i)
       set.append(tmp)
       flag = pyspg_obj.next()
