@@ -7,8 +7,8 @@
 <META NAME="description" CONTENT="">
 <META NAME="creator" CONTENT="Tim Cera">
 <META NAME="owner" CONTENT="">
-<META NAME="date" CONTENT="2001-09-24">
-<META NAME="validuntil" CONTENT="2001-12-31">
+<META NAME="date" CONTENT="2004-12-17">
+<META NAME="validuntil" CONTENT="2004-12-31">
 <META NAME="robots" CONTENT="none">
 </HEAD>
 <BODY BGCOLOR="#ffffff" TEXT="#000000"  LINK="#0000ff" VLINK="#990099" ALINK="#FF0000">
@@ -34,7 +34,8 @@
 <LI><A HREF="#5."> 5. Changes</A>
 <UL>
 <LI><A HREF="#5.1."> 5.1. 2001-07-10: v1.0</A>
-<LI><A HREF="#5.2."> 5.2. 2001-07-10: v1.1</A>
+<LI><A HREF="#5.2."> 5.2. 2004-12-16: v1.3</A>
+<LI><A HREF="#5.3."> 5.3. 2001-07-10: v1.1</A>
  </UL>
 <LI><A HREF="#6."> 6. Authors</A>
  </UL><p>
@@ -45,21 +46,21 @@ Pyslice provides utility functions for parametric modeling.  Parametric modeling
 
 <H1><A NAME="2.">2. Documentation</A></H1>
 <UL>
-<LI> <A HREF="manual.html">User manual</A>
+<LI><A HREF="manual.html">User manual</A>
 
-<LI> <A HREF="devguide.html">Developer's Guide</A>
+<LI><A HREF="devguide.html">Developer's Guide</A>
 
-<LI> <A HREF="deshist.html">Design History</A>
+<LI><A HREF="deshist.html">Design History</A>
 
-<LI> Home Page: <A HREF="http://pyslice.sourceforge.net">http://pyslice.sourceforge.net</A>
+<LI>Home Page: <A HREF="http://pyslice.sourceforge.net">http://pyslice.sourceforge.net</A>
 
-<LI> Project Page: <A HREF="http://sourceforge.net/projects/pyslice">http://sourceforge.net/projects/pyslice</A>
+<LI>Project Page: <A HREF="http://sourceforge.net/projects/pyslice">http://sourceforge.net/projects/pyslice</A>
 </UL><p>
 
 <H1><A NAME="3.">3. Requirements</A></H1>
 
 <H2><A NAME="3.1.">3.1. Python </A></H2>
-Python 1.5.2 or higher with standard modules.
+Python 2 or higher
 <p>
 
 <H2><A NAME="3.2.">3.2. Model </A></H2>
@@ -68,17 +69,17 @@ Any model executable that can be specified with an absolute path or is inside a 
 
 <H1><A NAME="4.">4. Installation</A></H1>
 <UL>
-<LI> Python 1.5.2 with Distutils 0.9 or higher, or Python 2.x
+<LI>Python 2 or higher
 
-<LI> Pdx required to regenerate documentation
+<LI>Pdx required to regenerate documentation
 </UL><p>
 This is a standard UNIX/Linux distutils install:
 
 <PRE>
-  cp xyz-0.1.tar.gz myworkdir
+  cp pyslice-1.3.tar.gz myworkdir
   cd myworkdir
-  gzip -cd xyz-0.1.tar.gz | tar xvf -
-  cd xyz-0.1
+  gzip -cd pyslice-1.3.tar.gz | tar xvf -
+  cd pyslice-1.3
   python setup.py build
   python setup.py install  #possibly as root
 </PRE>
@@ -89,13 +90,19 @@ This is a standard UNIX/Linux distutils install:
 
 <H2><A NAME="5.1.">5.1. 2001-07-10: v1.0</A></H2>
 <OL TYPE="1">
-<LI> Initial release
+<LI>Initial release
 </OL><p>
 
-<H2><A NAME="5.2.">5.2. 2001-07-10: v1.1</A></H2>
+<H2><A NAME="5.2.">5.2. 2004-12-16: v1.3</A></H2>
+Download: <A HREF="http://prdownloads.sourceforge.net/pyslice/pyslice-1.3.tar.gz">pyslice-1.3.tar.gz</A>
+<OL TYPE="1">
+<LI>Now depends on Python 2.x or better.  Am now using the PySPG library (http://pyspg.sourceforge.net/) in order to develop the variable sets.  Because of PySPG now have the capability of doing geometric and list based parameter generation. 
+<p>
+
+<H2><A NAME="5.3.">5.3. 2001-07-10: v1.1</A></H2>
 Download: <A HREF="http://prdownloads.sourceforge.net/pyslice/pyslice-1.1.tar.gz">pyslice-1.1.tar.gz</A>
 <OL TYPE="1">
-<LI> Removed Python 2.x dependencies.  Variables can now use floating point.  Works correctly to just create data sets by setting max_processes = 0 in pyslice.conf.  Changes to documentation.
+<LI>Removed Python 2.x dependencies.  Variables can now use floating point.  Works correctly to just create data sets by setting max_processes = 0 in pyslice.conf.  Changes to documentation.
 </OL><p>
 
 <H1><A NAME="6.">6. Authors</A></H1>
@@ -103,12 +110,12 @@ Download: <A HREF="http://prdownloads.sourceforge.net/pyslice/pyslice-1.1.tar.gz
 <DT><STRONG>Tim Cera (email: timcera@earthlink.net)</STRONG><DD>Initial implementation
 <p>
 </DL><p>
-</TD>
+</OL></TD>
 <TD VALIGN="TOP" WIDTH=100></TD>
 </TR>
 <TR>
 <TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
-<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2001-09-24<BR><A HREF="http://home.earthlink.net/~timcera">Tim Cera's home page at http://home.earthlink.net/~timcera</A></TD>
+<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2004-12-17<BR><A HREF="http://home.earthlink.net/~timcera">Tim Cera's home page at http://home.earthlink.net/~timcera</A></TD>
 <TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
 </TR>
 </TABLE>

@@ -7,8 +7,8 @@
 <META NAME="description" CONTENT="">
 <META NAME="creator" CONTENT="Tim Cera">
 <META NAME="owner" CONTENT="">
-<META NAME="date" CONTENT="2001-09-24">
-<META NAME="validuntil" CONTENT="2001-12-31">
+<META NAME="date" CONTENT="2004-12-17">
+<META NAME="validuntil" CONTENT="2004-12-31">
 <META NAME="robots" CONTENT="none">
 </HEAD>
 <BODY BGCOLOR="#ffffff" TEXT="#000000"  LINK="#0000ff" VLINK="#990099" ALINK="#FF0000">
@@ -28,6 +28,7 @@
 <UL>
 <LI><A HREF="#2.1."> 2.1. pyslice.conf</A>
 <LI><A HREF="#2.2."> 2.2. Templates</A>
+<LI><A HREF="#2.3."> 2.3. Tips and Tricks</A>
  </UL>
 <LI><A HREF="#3."> 3. Mini Python Reference</A>
 <UL>
@@ -37,7 +38,7 @@
  </UL><p>
 
 <H1><A NAME="1.">1. Overview</A></H1>
-Pyslice creates input data sets from a template, replacing variables in the template files with a range of values.  It then runs the desired model against each data set, keeping simultaneous model runs below a specified threshold.  It is an ideal program when hundreds of runs are required. Example uses would be for calibration or sensitivity analysis.  The input data set creation feature can easily be setup to create thousands of data sets.
+Pyslice creates input data sets from a template, replacing variables in the template files with a set of values.  It then runs the desired model against each created data set, keeping simultaneous model runs below a specified threshold or submitting jobs to a seperate queueing software.  It is an ideal program when hundreds of runs are required. Example uses would be for calibration or sensitivity analysis.  The input data set creation feature can easily be setup to create thousands of data sets.
 
 <H1><A NAME="2.">2. Tutorial</A></H1>
 See the example directory under the pyslice install directory for an example pyslice.conf, template_path, and output_path diretories.  To run the example, execute the 'go' script.
@@ -45,31 +46,72 @@ See the example directory under the pyslice install directory for an example pys
 <H2><A NAME="2.1.">2.1. pyslice.conf</A></H2>
 Pyslice requires a configuration file named 'pyslice.conf'.  Sections are identified with square brackets.  Parameters are set within each section with the format 'parameter=value'.  There are three required sections, 'paths', 'flags', and 'program'.  There must be at least one variable section.
 <p>
-The following example pyslice.conf will take all files in the template_path directory, replacing the variable 'flow' within each file, where 'flow' is equal to the set (90,92,94,96,98).  Note that the set does not included the stop value.
+The following example pyslice.conf will take all files in the template_path directory, replacing the variables 'flow', 'function', 'pressure', and 'salinity' within each file.  Note that the set does not included the stop value.
 
 <PRE>
+
     [paths]
-    template_path=/path/to/directory/holding/the/template/dataset
+    # 'template_path' can contain any number of files.  Pyslice even
+    #                 correctly handles binary files (just copies them)
+    #                 and permissions.
+    template_path=/path/to/directory/holding/the/template/datasets
     output_path=/path/to/where/output/directories/will/be/made
 
+    # 'keyword' can be changed if '$$' means something in your datasets
+    # 'max_processes' should be set to 0 if you just want all the jobs
+    #                 to be run.  This is useful if you have seperate
+    #                 queueing software.  Otherwise set to the number
+    #                 of simultaneous model runs you can allow on your
+    #                 machine.
+    # 'flat_dirs' gives the option of whether or not to have numbered
+    #             output directories or a directory tree using the variable
+    #             values.
     [flags]
     keyword=&quot;$$&quot;
     max_processes=8
+    flat_dirs=&quot;N&quot;
 
+    # 'program' is the command you want run in each of the output 
+    #           directories.
     [program]
     program=&quot;model -f &quot;
 
+    # 'flow' is set to 90, 92, 94, 96, 98
+    # 'arithmetic' is (increment + previous_value) 
     [flow]
+    type=arithmetic
     start=90
     stop=100
     increment=2
+
+    # 'function' is set to 5, 10, 20, 40
+    # 'geometric' is (increment * previous_value)
+    [function]
+    type=geometric
+    start=5
+    stop=41
+    increment=2
+
+    # 'pressure' is set to 1, 20, 24, 5, 8
+    # 'list' takes the values in turn
+    # 'value_type' can be int, float, or str
+    # 'value####' must be the type in 'value_type'
+    [pressure]
+    type=list
+    value_type=int
+    value1=1
+    value2=20
+    value3=24
+    value4=5
+    value5=8
+
 </PRE>
 <p>
 
 <H2><A NAME="2.2.">2.2. Templates</A></H2>
-All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing a variable name' 'keyword'.  The keyword string and variable names are specified in pyslice.conf.
+All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing the variables in pyslice.conf' 'keyword'.  The keyword string and variable names are specified in pyslice.conf.
 <p>
-The template file,
+An example template file,
 
 <PRE>
      T1 Simulation of salinity in the No Name River
@@ -80,7 +122,7 @@ The template file,
      F3 $$flow$$ 35.679 $$'%d' % flow$$
 </PRE>
 <p>
-with the example 'pyslice.conf' file above, would result in the following file in the output_path/00000 directory:
+with the example 'pyslice.conf' file above, would result in the following file in the output_path/00000 directory if the flat_dirs option is set, otherwise an entire directory tree is created that incorporates the variable names and the values:
 
 <PRE>
      T1 Simulation of salinity in the No Name River
@@ -91,7 +133,7 @@ with the example 'pyslice.conf' file above, would result in the following file i
      F3 90 35.679 90
 </PRE>
 <p>
-and the following in the output_path/00001 directory:
+and the next directory in output_path:
 
 <PRE>
      T1 Simulation of salinity in the No Name River
@@ -119,6 +161,13 @@ and the following in the output_path/00001 directory:
 <TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00004</TD><TD VALIGN="TOP" >0.2000</TD><TD VALIGN="TOP" >2.0</TD></TR>
 <TR><TD VALIGN="TOP" ></TD><TD VALIGN="TOP" >00005</TD><TD VALIGN="TOP" >0.2000</TD><TD VALIGN="TOP" >2.2</TD></TR>
 </TABLE>
+<p>
+
+<H2><A NAME="2.3.">2.3. Tips and Tricks</A></H2>
+If you want a model data set with a constant value, just manipulate the start and end values.
+If you want several repetitions of the entire parameterization create a false variable that isn't used in any of the templates.  This would be useful if the model imposes some random behavoir that you want to study.
+Another solution to obtain multiple repetitions is rerun pyslice with different output directories.
+<p>
 
 <H1><A NAME="3.">3. Mini Python Reference</A></H1>
 
@@ -144,7 +193,7 @@ I have manual writers block.  Frankly if anyone can figure out how to operate py
 </TR>
 <TR>
 <TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
-<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2001-09-24<BR><A HREF="http://home.earthlink.net/~timcera">Tim Cera's home page at http://home.earthlink.net/~timcera</A></TD>
+<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2004-12-17<BR><A HREF="http://home.earthlink.net/~timcera">Tim Cera's home page at http://home.earthlink.net/~timcera</A></TD>
 <TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
 </TR>
 </TABLE>

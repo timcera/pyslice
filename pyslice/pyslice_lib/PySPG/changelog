@@ -1,0 +1,23 @@
+
+# :::~ Author: Claudio Juan Tessone <tessonec@imedea.uib.es> (c) 2002-2003
+#
+# Distributed According to GNU Generic Purpose License (GPL)
+# Please visit www.gnu.org
+################################################################################
+
+Changelog
+
+
+
+1.9.1 (30/09/03) Code cleanup
+                 Generic mute variables
+                 Varying.py generic script
+		 fixes of bugs on Executor
+
+1.9   (31/08/03) Rewrite of base classes
+                 Code Clean-up
+
+1.0   (10/12/02) Parses a list of strings to generate parameters recursively
+
+
+################################################################################

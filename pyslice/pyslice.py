@@ -48,15 +48,13 @@ import sys, os, getopt, time, string
 import os.path
 import signal
 import re
-import UserList
-import math
 import ConfigParser
 import shutil
-import stat
+import pyslice_lib.PySPG as pyspg
 
 #===globals======================
 modname="pyslice"
-__version__="1.2"
+__version__="1.3"
 
 #--option args--
 debug_p = 0
@@ -87,59 +85,6 @@ def usage():
 
 activeChildren = []
 
-
-class Frange(UserList.UserList):
-  """
-  frange(stop) # assume start=0, step=1
-  frange(start, stop) # assume step=1
-  frange(start, stop, step)
-  returns a list of values from start up to stop, with step step.
-  Unlike range(), stop value is included in the list, if it is equal
-  to the last value of the arithmetic sequence.
-  If the returned list is too big, you may want to use xfrange class.
-  This class is not resistant to rounding errors, e.g. on my computer:
-
-  >>> frange(0.7, 0, -0.1)
-  [0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
-  >>> frange(0.7, -0.05, -0.1)
-  [0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, -1.11022302463e-16]
-
-  """
-
-  def __init__(self, *args):
-    arg_len = len(args)
-    if arg_len == 1: # only to
-      args.insert(0,0)
-      args.append = 1
-    elif arg_len == 2: # from, to
-      args.append = 1
-
-    self.start, self.stop, self.step = args
-    startstr = string.split(str(args[0]),'.')
-    stopstr  = string.split(str(args[1]),'.')
-    stepstr  = string.split(str(args[2]),'.')
-
-    max_dec    = max(len(startstr[1]),
-                     len(stopstr[1]),
-                     len(stepstr[1]))
-    mult = math.pow(10, max_dec)
-
-    self.data = range(int(self.start*mult),
-                      int(self.stop*mult),
-                      int(self.step*mult))
-
-    self.data = map(lambda x, mult=mult: x/mult, self.data)
-
-
-  def __repr__(self):
-    return "frange(%i, %i, %i)" % (self.start, self.stop, self.step)
-
-  def __str__(self):
-    return str(self.data)
-
-  def __len__(self):
-    return len(self.data)
-
 def mask(charlist):
   """
   Construct a mask suitable for string.translate,
@@ -154,20 +99,20 @@ def mask(charlist):
 ascii7bit=string.joinfields(map(chr, range(32,127)), "")+"\r\n\t\b"
 ascii7bit_mask=mask(ascii7bit)
 
-def istext(file, check=1024, mask=ascii7bit_mask):
+def istext(filep, check=1024, mask=ascii7bit_mask):
   """
   Returns true if the first check characters in file
   are within mask, false otherwise
   """
 
   try:
-    s=file.read(check)
-    file.close()
+    s=filep.read(check)
+    filep.close()
     s=string.translate(s, mask)
     if string.find(s, "b") != -1: return 0
     return 1
   except (AttributeError, NameError): # Other exceptions?
-    return istext(open(file, "r"))
+    return istext(open(filep, "r"))
 
 
 #====================================
@@ -176,8 +121,8 @@ class Pyslice:
   #--------------------------
   def __init__(self):
     #---instance variables---
-    (self.year, self.month, self.day, self.hour, self.minute, self.second,
-     self.weekday, self.julianday, self.daylight) = time.localtime(time.time())
+    pass
+
   #--------------------------
   def read_config(self, min_sections, max_sections, req_sections_list):
     """ Reads the pyslice.conf file.
@@ -207,36 +152,19 @@ class Pyslice:
     in_str = string.replace(in_str, '\"', '')
     return in_str
 
-  def path_correction(self, str):
+  def path_correction(self, path):
     """ Corrects path seperators and removes trailing path seperators.
 
     Needed so that path seperators of any OS are corrected to the
     platform running the script.
 
     """
-    str = string.replace(str, "/", os.sep)
-    str = string.replace(str, "\\", os.sep)
-    if str[-1] == "/" or str[-1] == "\\":
-      str = str[:-1]
-    return str
+    path = string.replace(path, "/", os.sep)
+    path = string.replace(path, "\\", os.sep)
+    if path[-1] == "/" or path[-1] == "\\":
+      path = path[:-1]
+    return path
 
-  def cartesian(self, listList):
-    """ Determines the 'cartesian' of a list of lists.
-
-    The cartesian is the permutation of all combinations _between_
-    lists.  Got this nugget off of comp.lang.python posted by Bryan
-    Olson.  Good thing too because there is no way I could have
-    figured it out on my own.
-
-    """
-    if listList:
-      result = []
-      prod = self.cartesian(listList[:-1])
-      for outer in prod:
-        for inner in listList[-1]:
-          result.append(outer + (inner,))
-      return result
-    return [()]      
 
   def daemonize(self, dir_slash='/', logto="/dev/null"):
     """ Forces current process into the background.
@@ -311,6 +239,7 @@ class Pyslice:
     output_path = self.dequote(configuration.get("paths", "output_path"))
     keyword = self.dequote(configuration.get("flags", "keyword"))
     max_processes = configuration.getint("flags", "max_processes")
+    flat_dirs = self.dequote(configuration.get("flags", "flat_dirs"))
     program = self.dequote(configuration.get("program", "program"))
 
     # Remove the standard configuration sections to leave all of the variables.
@@ -325,17 +254,49 @@ class Pyslice:
 
     # Put all variable names from configuration file into key_list.
     # Create list (from each variable) of lists (from start, stop, incr).
-    key_list = []
     list_list = []
     for variable in section_list:
-      start = configuration.getfloat(variable, "start")
-      stop = configuration.getfloat(variable, "stop")
-      incr = configuration.getfloat(variable, "increment")
-      list_list.append(Frange(start, stop, incr))
-      key_list.append(variable)
+      var_type = configuration.get(variable, "type")
+      var_list = []
+      if var_type == "arithmetic":
+        var_list.append("+")
+        var_list.append(variable)
+      if var_type == "geometric":
+        var_list.append("*")
+        var_list.append(variable)
+      if var_type == "arithmetic" or var_type == "geometric":
+        var_list.append(configuration.getfloat(variable, "start"))
+        var_list.append(configuration.getfloat(variable, "stop"))
+        var_list.append(configuration.getfloat(variable, "increment"))
+      if var_type == "list":
+        var_list.append(".")
+        var_list.append(variable)
+        for i in range(1,1000):
+          try:
+            var_list.append(configuration.get(variable, "value%i" % (i)))
+          except ConfigParser.NoOptionError:
+            break
+      var_list = [str(i) for i in var_list]
+      list_list.append(var_list)
 
-    # Create cartesian (all combinations of input variables)
-    set = self.cartesian(list_list)
+    list_list = [string.join(i) for i in list_list]
+
+    pyspg_obj = pyspg.ParamParser(list_list)
+
+    # There should be a way to get this from the PySPG library...
+    flag = True
+    length = 0
+    set = []
+    while flag:
+      length = length + 1
+      tmp = []
+      # Had to add the 'limit=None' in order to get directories created
+      # for the last variable.  Is this a bug in PySPG?
+      tmp.append(pyspg_obj.directory_tree(limit=None))
+      for i in pyspg_obj.actual_values():
+        tmp.append(i)
+      set.append(tmp)
+      flag = pyspg_obj.next()
 
     while 1:
       inp =  raw_input('Current configuration results in %s permutations. Continue? (y/n) > ' % len(set))[0] 
@@ -344,18 +305,21 @@ class Pyslice:
       if inp == 'y' or inp == 'Y':
         break
 
+    # Comment the following command in order to debug
     self.daemonize(os.getcwd())
 
-    pid_list = []
-    for var_index in range(len(set)):
+    for var_index,var_set in enumerate(set):
       # Create label for output directories
-      strtag = string.zfill(var_index,5)
+      if flat_dirs[0] == 'Y' or flat_dirs[0] == 'y':
+        strtag = string.zfill(var_index,5)
+      else:
+        strtag = var_set[0]
 
       # Operate on each file in template directory 
-      for file in os.listdir(template_path):
+      for files in os.listdir(template_path):
 
         # Not ready to deal with sub-directories yet...
-        if os.path.isdir(file):
+        if os.path.isdir(files):
           continue
 
         # Should work out a more robust error check
@@ -365,9 +329,9 @@ class Pyslice:
           pass
 
         outfilepath = os.path.abspath(output_path + os.sep + 
-                                      strtag + os.sep + file)
+                                      strtag + os.sep + files)
 
-        infilepath = os.path.abspath(template_path + os.sep + file)
+        infilepath = os.path.abspath(template_path + os.sep + files)
 
         # Is this a binary file?  If so, just copy
         if istext(infilepath):
@@ -384,15 +348,17 @@ class Pyslice:
           line = inputf.readline()
           if not line: 
             break
-          for key_index in range(len(key_list)):
+          for variables in var_set[1:]:
+            var_name = variables[0]
+            var_value = variables[1]
             # compile re search for keyword .* variable_name .* keyword
-            search_for = re.compile(re.escape(keyword) + '(' + r'.*?' + key_list[key_index] + r'.*?' + ')' + re.escape(keyword))
+            search_for = re.compile(re.escape(keyword) + '(' + r'.*?' + var_name + r'.*?' + ')' + re.escape(keyword))
             # while there are still matchs available on the line
             while search_for.search(line):
               # only have 1 group, but it returns a 2 item tuple, need [0]
               match = search_for.search(line).groups()[0]
               # replace variable name with number
-              match = string.replace(match, key_list[key_index], str(set[var_index][key_index]))
+              match = string.replace(match, var_name, str(var_value))
               # evaluate Python statement with restricted eval
               match = eval(match)
               # replace variable with calculated value

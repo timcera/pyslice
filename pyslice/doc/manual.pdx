@@ -6,35 +6,76 @@ toc_p=1
 =include article_style.pdx
 
 =head1 Overview
-Pyslice creates input data sets from a template, replacing variables in the template files with a range of values.  It then runs the desired model against each data set, keeping simultaneous model runs below a specified threshold.  It is an ideal program when hundreds of runs are required. Example uses would be for calibration or sensitivity analysis.  The input data set creation feature can easily be setup to create thousands of data sets.
+Pyslice creates input data sets from a template, replacing variables in the template files with a set of values.  It then runs the desired model against each created data set, keeping simultaneous model runs below a specified threshold or submitting jobs to a seperate queueing software.  It is an ideal program when hundreds of runs are required. Example uses would be for calibration or sensitivity analysis.  The input data set creation feature can easily be setup to create thousands of data sets.
 =head1 Tutorial
 See the example directory under the pyslice install directory for an example pyslice.conf, template_path, and output_path diretories.  To run the example, execute the 'go' script.
 =head2 pyslice.conf
 Pyslice requires a configuration file named 'pyslice.conf'.  Sections are identified with square brackets.  Parameters are set within each section with the format 'parameter=value'.  There are three required sections, 'paths', 'flags', and 'program'.  There must be at least one variable section.
 
-The following example pyslice.conf will take all files in the template_path directory, replacing the variable 'flow' within each file, where 'flow' is equal to the set (90,92,94,96,98).  Note that the set does not included the stop value.
+The following example pyslice.conf will take all files in the template_path directory, replacing the variables 'flow', 'function', 'pressure', and 'salinity' within each file.  Note that the set does not included the stop value.
 =verbatim
+
     [paths]
-    template_path=/path/to/directory/holding/the/template/dataset
+    # 'template_path' can contain any number of files.  Pyslice even
+    #                 correctly handles binary files (just copies them)
+    #                 and permissions.
+    template_path=/path/to/directory/holding/the/template/datasets
     output_path=/path/to/where/output/directories/will/be/made
 
+    # 'keyword' can be changed if '$$' means something in your datasets
+    # 'max_processes' should be set to 0 if you just want all the jobs
+    #                 to be run.  This is useful if you have seperate
+    #                 queueing software.  Otherwise set to the number
+    #                 of simultaneous model runs you can allow on your
+    #                 machine.
+    # 'flat_dirs' gives the option of whether or not to have numbered
+    #             output directories or a directory tree using the variable
+    #             values.
     [flags]
     keyword="$$"
     max_processes=8
+    flat_dirs="N"
 
+    # 'program' is the command you want run in each of the output 
+    #           directories.
     [program]
     program="model -f "
 
+    # 'flow' is set to 90, 92, 94, 96, 98
+    # 'arithmetic' is (increment + previous_value) 
     [flow]
+    type=arithmetic
     start=90
     stop=100
     increment=2
+
+    # 'function' is set to 5, 10, 20, 40
+    # 'geometric' is (increment * previous_value)
+    [function]
+    type=geometric
+    start=5
+    stop=41
+    increment=2
+
+    # 'pressure' is set to 1, 20, 24, 5, 8
+    # 'list' takes the values in turn
+    # 'value_type' can be int, float, or str
+    # 'value####' must be the type in 'value_type'
+    [pressure]
+    type=list
+    value_type=int
+    value1=1
+    value2=20
+    value3=24
+    value4=5
+    value5=8
+
 =end
 
 =head2 Templates
-All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing a variable name' 'keyword'.  The keyword string and variable names are specified in pyslice.conf.
+All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing the variables in pyslice.conf' 'keyword'.  The keyword string and variable names are specified in pyslice.conf.
 
-The template file,
+An example template file,
 =verbatim
      T1 Simulation of salinity in the No Name River
      T2 with flow = $$flow$$
@@ -44,7 +85,7 @@ The template file,
      F3 $$flow$$ 35.679 $$'%d' % flow$$
 =end
 
-with the example 'pyslice.conf' file above, would result in the following file in the output_path/00000 directory:
+with the example 'pyslice.conf' file above, would result in the following file in the output_path/00000 directory if the flat_dirs option is set, otherwise an entire directory tree is created that incorporates the variable names and the values:
 =verbatim
      T1 Simulation of salinity in the No Name River
      T2 with flow = 90
@@ -54,7 +95,7 @@ with the example 'pyslice.conf' file above, would result in the following file i
      F3 90 35.679 90
 =end
 
-and the following in the output_path/00001 directory:
+and the next directory in output_path:
 =verbatim
      T1 Simulation of salinity in the No Name River
      T2 with flow = 92
@@ -81,6 +122,12 @@ and the following in the output_path/00001 directory:
 =row  & 00004 & 0.2000 & 2.0
 =row  & 00005 & 0.2000 & 2.2
 =end table
+
+=head2 Tips and Tricks
+If you want a model data set with a constant value, just manipulate the start and end values.
+If you want several repetitions of the entire parameterization create a false variable that isn't used in any of the templates.  This would be useful if the model imposes some random behavoir that you want to study.
+Another solution to obtain multiple repetitions is rerun pyslice with different output directories.
+
 =head1 Mini Python Reference
 =head2 Format
 Python controls the format of a number through the following syntax:

@@ -58,6 +58,7 @@ def fatal(ftn,txt):
     sys.stdout.write(string.join([modname,'.',ftn,':FATAL:',txt,'\n'],''))
     sys.stdout.flush()
     sys.exit(1)
+
 #--------------------
 def usage():
     print __doc__
@@ -87,8 +88,9 @@ def main():
 
            #---scripts,modules and packages---
            ,scripts=['pyslice.py']
-##            ,py_modules = ['pyslice']
-##            ,packages = ['']
+##            ,py_modules = ['']
+           ,packages = ['pyslice_lib'
+                       ,'pyslice_lib/PySPG']
 ##            ,package_dir = {'': ''}
 ##            ,ext_modules = 
 ##               [Extension('my_ext', ['my_ext.c', 'file1.c', 'file2.c'],

@@ -1,0 +1,21 @@
+
+# :::~ Author: Claudio Juan Tessone <tessonec@imedea.uib.es> (c) 2002-2003
+#
+# Distributed According to GNU Generic Purpose License (GPL)
+# Please visit www.gnu.org
+################################################################################
+
+
+TODO LIST
+
+**  Document and cleanup PyGrace, 
+
+**  cleanup of python code (too messy) to make it easily extendable
+
+*** add arbitrary formula support
+
+*** solve string defficiencies 
+           i.e. +s 'a' 'aaaa' 'a' do not solve to 'a' 'aa' ... (not 
+
+
+################################################################################

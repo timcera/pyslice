@@ -19,23 +19,23 @@ Pyslice provides utility functions for parametric modeling.  Parametric modeling
 
 =head1 Requirements
 =head2 Python 
-Python 1.5.2 or higher with standard modules.
+Python 2 or higher
 
 =head2 Model 
 Any model executable that can be specified with an absolute path or is inside a directory in PATH.  No changes to the model code are required if it draws inputs files from the current working directory.
 
 =head1 Installation
 =list *
-=item Python 1.5.2 with Distutils 0.9 or higher, or Python 2.x
+=item Python 2 or higher
 =item Pdx required to regenerate documentation
 =end list
 
 This is a standard UNIX/Linux distutils install:
 =verbatim
-  cp xyz-0.1.tar.gz myworkdir
+  cp pyslice-1.3.tar.gz myworkdir
   cd myworkdir
-  gzip -cd xyz-0.1.tar.gz | tar xvf -
-  cd xyz-0.1
+  gzip -cd pyslice-1.3.tar.gz | tar xvf -
+  cd pyslice-1.3
   python setup.py build
   python setup.py install  #possibly as root
 =end list
@@ -46,6 +46,11 @@ This is a standard UNIX/Linux distutils install:
 =list 1
 =item Initial release
 =end list
+
+=head2 2004-12-16: v1.3
+Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.3.tar.gz","pyslice-1.3.tar.gz">
+=list 1
+=item Now depends on Python 2.x or better.  Am now using the PySPG library (http://pyspg.sourceforge.net/) in order to develop the variable sets.  Because of PySPG now have the capability of doing geometric and list based parameter generation. 
 
 =head2 2001-07-10: v1.1
 Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.1.tar.gz","pyslice-1.1.tar.gz">
