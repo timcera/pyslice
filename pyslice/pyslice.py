@@ -284,9 +284,10 @@ class Pyslice:
     program = self.dequote(configuration.get("program","program"))
 
     # Remove the standard configuration sections to leave all of the variables.
-    configuration.remove_section("paths")
-    configuration.remove_section("flags")
-    configuration.remove_section("program")
+    section_list = configuration.sections()
+    del section_list[section_list.index("paths")]
+    del section_list[section_list.index("flags")]
+    del section_list[section_list.index("program")]
 
     # Make sure to clean up the paths.
     template_path = self.path_correction(template_path)
@@ -296,7 +297,7 @@ class Pyslice:
     # Create list (from each variable) of lists (from start, stop, incr).
     key_list = []
     list_list = []
-    for variable in configuration.sections():
+    for variable in section_list:
       start = configuration.getfloat(variable,"start")
       stop = configuration.getfloat(variable,"stop")
       incr = configuration.getfloat(variable,"increment")
@@ -343,9 +344,9 @@ class Pyslice:
             # compile re search for keyword .* variable_name .* keyword
             search_for = re.compile(re.escape(keyword) + '(' + r'.*?' + key_list[key_index] + r'.*?' + ')' + re.escape(keyword))
             # while there are still matchs available on the line
-            while re.search(search_for,line):
+            while search_for.search(line):
               # only have 1 group, but it returns a 2 item tuple, need [0]
-              match = re.search(search_for,line).groups()[0]
+              match = search_for.search(line).groups()[0]
               # replace variable name with number
               match = string.replace(match,key_list[key_index],str(set[var_index][key_index]))
               # evaluate Python statement with restricted eval
