@@ -52,6 +52,11 @@ import ConfigParser
 import shutil
 import pyslice_lib.PySPG as pyspg
 
+# To support montecarlo...
+# Normally like to use just import and explicitly name the module.
+from random import *
+
+
 #===globals======================
 modname="pyslice"
 __version__="1.3"
@@ -258,6 +263,14 @@ class Pyslice:
     for variable in section_list:
       var_type = configuration.get(variable, "type")
       var_list = []
+      if var_type == "montecarlo":
+        # Cheat by using list type
+        var_list.append(".%s" % (variable,))
+        # Find out distribution
+        distribution = configuration.get(variable, "distribution")
+        samples = configuration.getint(variable, "samples")
+        for samp in range(samples):
+          var_list.append(eval(distribution))
       if var_type == "arithmetic":
         var_list.append("+%s" % (variable,))
       if var_type == "geometric":
@@ -359,7 +372,7 @@ class Pyslice:
               match = search_for.search(line).groups()[0]
               # replace variable name with number
               match = string.replace(match, var_name, str(var_value))
-              # evaluate Python statement with restricted eval
+              # evaluate Python statement with eval
               match = eval(match)
               # replace variable with calculated value
               line = re.sub(search_for, str(match), line, count=1)
