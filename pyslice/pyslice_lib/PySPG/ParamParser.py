@@ -87,12 +87,8 @@ class ParamParser:
       returns the iteration type of a command. The iteration type is defined as the set of non alphanumeric characters
       at the beginning of the line
     """
-    last_char=0
-    while not cadena[last_char].isalnum():
-      last_char+=1;
-    return cadena[:last_char], cadena[last_char:]
-    
-    
+    words = cadena.split()
+    return cadena[0], string.join(words[1:])
 
 ### 1  
   def __parse(self,ls):
