@@ -240,7 +240,7 @@ class Pyslice:
       return result
     return [()]      
 
-  def daemonize(self,dir='/', logto="/tmp/null"):
+  def daemonize(self,dir='/', logto="/dev/null"):
     """ Forces current process into the background.
 
     Got off the comp.lang.python newsgroup.  Written by Michael Romberg.

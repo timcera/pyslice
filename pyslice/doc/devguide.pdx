@@ -22,6 +22,8 @@ The overall process:
   =list *
     =item Loops across all files in template directory.
     =list *
+      =item Ignore sub-directories, continue to next file template directory.
+      =item Copy any binary files, continue to next file template directory. 'istext()'
       =item For across variable names in pyslice.conf for each line in the file.
       =list *
         =item Replace all 'keyword' 'Python statement containing variable name' 'keyword' with the restricted evaluation of the Python statement, replacing variable name with correct number from cartesian set.
