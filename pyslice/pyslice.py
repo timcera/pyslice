@@ -259,18 +259,15 @@ class Pyslice:
       var_type = configuration.get(variable, "type")
       var_list = []
       if var_type == "arithmetic":
-        var_list.append("+")
-        var_list.append(variable)
+        var_list.append("+%s" % (variable,))
       if var_type == "geometric":
-        var_list.append("*")
-        var_list.append(variable)
+        var_list.append("*%s" % (variable,))
       if var_type == "arithmetic" or var_type == "geometric":
         var_list.append(configuration.getfloat(variable, "start"))
         var_list.append(configuration.getfloat(variable, "stop"))
         var_list.append(configuration.getfloat(variable, "increment"))
       if var_type == "list":
-        var_list.append(".")
-        var_list.append(variable)
+        var_list.append(".%s" % (variable,))
         for i in range(1,1000):
           try:
             var_list.append(configuration.get(variable, "value%i" % (i)))
