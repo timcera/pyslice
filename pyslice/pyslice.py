@@ -51,10 +51,12 @@ import re
 import rexec
 import UserList
 import math
+import shutil
+import stat
 
 #===globals======================
 modname="pyslice"
-__version__="1.0"
+__version__="1.2"
 
 #--option args--
 debug_p=0
@@ -138,6 +140,36 @@ class frange(UserList.UserList):
   def __len__(self):
     return len(self.data)
 
+def mask(charlist):
+  """
+  Construct a mask suitable for string.translate,
+  which marks letters in charlist as "t" and ones not as "b"
+  """
+  mask=""
+  for i in range(256):
+    if chr(i) in charlist: mask=mask+"t"
+    else: mask=mask+"b"
+  return mask
+
+ascii7bit=string.joinfields(map(chr, range(32,127)), "")+"\r\n\t\b"
+ascii7bit_mask=mask(ascii7bit)
+
+def istext(file, check=1024, mask=ascii7bit_mask):
+  """
+  Returns true if the first check characters in file
+  are within mask, false otherwise
+  """
+
+  try:
+    s=file.read(check)
+    file.close()
+    s=string.translate(s, mask)
+    if string.find(s, "b") != -1: return 0
+    return 1
+  except (AttributeError, NameError): # Other exceptions?
+    return istext(open(file, "r"))
+
+
 #====================================
 class Pyslice:
   #---class variables---
@@ -208,7 +240,7 @@ class Pyslice:
       return result
     return [()]      
 
-  def daemonize(self,dir='/', logto="/dev/null"):
+  def daemonize(self,dir='/', logto="/tmp/null"):
     """ Forces current process into the background.
 
     Got off the comp.lang.python newsgroup.  Written by Michael Romberg.
@@ -321,20 +353,34 @@ class Pyslice:
     for var_index in range(len(set)):
       # Create label for output directories
       strtag = string.zfill(var_index,5)
-     
+
       # Operate on each file in template directory 
       for file in os.listdir(template_path):
-        infilepath = os.path.abspath(template_path + os.sep + file)
-        input = open(infilepath,'r')
+
+        # Not ready to deal with sub-directories yet...
+        if os.path.isdir(file):
+          continue
 
         # Should work out a more robust error check
         try:
           os.makedirs(output_path + os.sep + strtag)
         except OSError:
           pass
+
         outfilepath = os.path.abspath(output_path + os.sep + 
                                       strtag + os.sep + file)
+
+        infilepath = os.path.abspath(template_path + os.sep + file)
+
+        # Is this a binary file?  If so, just copy
+        if istext(infilepath):
+          input = open(infilepath,'r')
+        else:
+          shutil.copy(infilepath, outfilepath)
+          continue
+          
         output = open(outfilepath,'w')
+        shutil.copystat(infilepath, outfilepath)
 
         # Search for keywordvarnamekeyword and replace with appropriate value.
         while 1:
