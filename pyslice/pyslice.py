@@ -48,11 +48,11 @@ import sys,os,getopt,time,string
 import os.path
 import signal
 import re
-import rexec
 import UserList
 import math
 import shutil
 import stat
+from ConfigParser import *
 
 #===globals======================
 modname="pyslice"
@@ -184,7 +184,6 @@ class Pyslice:
     """ Reads the pyslice.conf file.
 
     """
-    from ConfigParser import *
     pyslice_conf = os.getcwd() + os.sep + "pyslice.conf"
     if not os.access(pyslice_conf,os.F_OK | os.R_OK):
       NotFound = "\n***\nThe pyslice.conf file was not found or not readable"
@@ -349,7 +348,6 @@ class Pyslice:
     self.daemonize(os.getcwd())
 
     pid_list = []
-    guard = rexec.RExec()
     for var_index in range(len(set)):
       # Create label for output directories
       strtag = string.zfill(var_index,5)
@@ -396,7 +394,7 @@ class Pyslice:
               # replace variable name with number
               match = string.replace(match,key_list[key_index],str(set[var_index][key_index]))
               # evaluate Python statement with restricted eval
-              match = guard.r_eval(match)
+              match = eval(match)
               # replace variable with calculated value
               line = re.sub(search_for,str(match),line,count=1)
           # writes new line out to output file
