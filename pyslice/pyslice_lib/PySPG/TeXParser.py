@@ -1,70 +1,73 @@
 #! /usr/bin/python
 
 import sys
-import os.path, os
+import os.path
+import os
 
 from ParamParser import *
 
-def agr2tex(agr_str):
-  ret=agr_str.replace("\s","_")
-  ret=ret.replace("\S","^")  
-  ret=ret.replace("\\f{Symbol}"," ")  
-  ret=ret.replace("\\f{}"," ")  
-  ret=ret.replace("\\N","  ")  
-  
-  return ret
-
 
 class TeXParser(ParamParser):
+   replacing_rules = {
+             "\s":"_",              
+             "\S":"^",     
+             "\f{Symbol}":" ",     
+             "\\f{}":" ",     
+             "\\N":"   "
+       }
 
-   def __init__(self,commands,lastvar):
-     pTmp=CTParamParser(commands[:]);
+   def __agr2tex(agr_str):
+     ret=agr_str
+     for i in replacing_rules:
+       ret=ret.replace(i,replacing_rules[i])
+  
+     return ret
 
-     lastpos=pTmp.comandos.index(
-                  filter(lambda x: x[0]==lastvar, pTmp.comandos).pop()
-	     );   
+   def __init__(self,comm,var_name):
+     
+     commands= [ i.strip() for i in comm if ( i.strip()[0]!="#" and i.strip()!="")]
+     #print commands
+     
+     pTmp=ParamParser(commands);
+     try:
+       lastvar_idx=pTmp.entities.index(var_name);
+     except:
+       sys.stdout=sys.stderr
+       print "last_var= ",var_name
+       print "var=",lastvar_idx
+       print "exiting... -presumible error: last var you provided does not"
+       print " exist among the variables-"
+       sys.exit()   
 
+     self.parser_original=ParamParser(commands[:lastvar_idx]);
+     
      lastvarpos=commands.index(
-                    filter (lambda x:x[:1] in "+*.", commands).pop() 
-		  )
-
-     self.parser_original=CTParamParser(commands[:lastpos]);
-     self.parser_last=CTParamParser(commands[lastpos:lastvarpos]);
-     self.act=self.parser_original.act
+                    filter (lambda x:x.strip()[0] in "+*/-.", commands).pop() 
+	                  )
      
-   def next(self):
-     self.act= self.parser_original.next()
-     return self.act
+     
+     
+     
    
-   def tex(self,outname="plots.tex",plotnames=[],varotra="",base=""):
+   def __tex(self,outname="plots.tex",plotnames=[]):
 
-     actualDir=os.path.abspath(".")
-     elpath=actualDir
-     self.title=""
+     """
+     for the actual values of the iterator self.parser_original, dumps a agr
+     """
+     cwd=os.path.abspath( os.path.curdir )
+     ####################################################
+     # Directory where the AGR will be located
+     #
+     thepath=self.parser_original.directory_tree(None) 
+     #
+     #####################################################
      
+     os.chdir(thepath)
+     fOut = open (outname,"w")
      
-    ####################################################
-    # Genera el path base, donde estara el ps
-    # 
-     for actorig in self.parser_original.act:
-      # self.title += ", %s=%s"%actorig
-       if actorig[0] in self.parser_original.vars:
-         elpath+="/%s-%s"%actorig
-         try:
- 	   if not os.path.exists(elpath):
- 	     print "Error el path no existe",elpath
- 	     raise TypeError, "Error"
- 	 except:
- 	    sys.exit()  
-    #
-    #
-    #####################################################
-     
-     os.chdir(elpath)
-     os.system("~/opt/bin/ctprint.sh")
+     os.system("~/opt/bin/cts-print.sh")
      cout=sys.stdout
-     sys.stdout=open(elpath+"/"+outname,"w")     
-
+     sys.stdout=fOut
      
      print "\\documentclass[12pt]{article}"
      print 
@@ -75,19 +78,20 @@ class TeXParser(ParamParser):
      print 
      print "Gr\\'aficos generados con los siguientes par\\'ametros:"
      print "\\begin{itemize}"
-     for i in self.parser_original.act:
+     actual_values=self.parser_original.actual_values
+     for i in actual_values:
          print "\\item    { \\tt" ,
-         if i[1] == '':
-	   posunder=i[0].find("_")
+         if actual_values[i] == '':
+	   posunder=i.find("_")
 	   if posunder>0:
-	     posblank=i[0].find("0")
+	     posblank=i.find("0")
 	     print "\\begin{verbatim}"
-	     print i[0],
+	     print i,
 	     print "\\end{verbatim}"
 	   else:
-	     print i[0],
+	     print i,
 	 else:
-	   print " $ %s = %s $" % i , 
+	   print " $ %s = %s $" % ( i , actual_values[i]) , 
 	 print """ }   """  
      print "\\end{itemize}"
      print  
@@ -96,8 +100,7 @@ class TeXParser(ParamParser):
      for i in plotnames:
        print "\\begin{figure}[!ht]"
        print "\\begin{center}"
-       print "\\includegraphics[height=10cm,angle=-90]{%s%s.agr.eps}"%(base+str(i[0]),varotra)
-       print "\\caption{Par\\'ametro $%s$ vs. $%s$}"%(agr2tex(i[1]),varotra)
+       print "\\includegraphics[height=10cm,angle=-90]{%s.eps}"%(i)
        print "\\end{center}"
        print "\\end{figure}"
        ac_floats+=1
@@ -106,20 +109,20 @@ class TeXParser(ParamParser):
        
 
      print "\\end{document}"
+     fOut.close()
      sys.stdout=cout
      os.system("latex %s"%outname)
-     comandoexec= "dvips -o ../%s.ps  %s"%(base+os.path.split(elpath)[-1], os.path.splitext(outname)[0]+".dvi")
+     comandoexec= "dvips -o %s.ps  %s"%(os.path.splitext(outname)[0], os.path.splitext(outname)[0]+".dvi")
+     print comandoexec
      os.system(comandoexec)
      
-     os.chdir(actualDir)
+     os.chdir(cwd)
 
-   def doit(self,outname="plots.tex",plotnames=[],varotra="",base=""):
-
-     flag=1
-  
-     while flag:
-      self.tex(outname,plotnames,varotra,base)
-      flag=self.next()
-     
-     self.parser_original.reset()
+   def doit(self,outname="plots.tex",plotnames=[]):
+     """
+      Suquencially dumps all the plotnames (a list of .agr files) 
+     """
+     for i in self.parser_original:
+       self.__tex(outname,plotnames)
    
+      

@@ -7,6 +7,9 @@
 
 Changelog
 
+2.0.0 (10/01/05) Some documentation
+                 More generic scripts
+		 ParamParser code clean (future changes will not be trivial, however)
 
 
 1.9.1 (30/09/03) Code cleanup

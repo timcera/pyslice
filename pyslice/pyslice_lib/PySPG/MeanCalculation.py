@@ -10,10 +10,15 @@
 
 import sys
 
-class MeanCalculation(ParamParser):
+
+from Load import *
+from ParamParser import *
+from math import *
+
+class MeanCalculation:
    """
      When a simulation is run with a given number of repetitions what is needed is a
-     tool for calculating the mean values
+     tool for calculating the mean values. This is that tool
    """
 
    def __init__(self,lsLines):
@@ -21,8 +26,9 @@ class MeanCalculation(ParamParser):
            i for i in lsLines
            if i.strip()[0] != "#"
          ]
-     ParamParser.__init__(self,ls2)
-
+     
+     self.pp_varying=ParamParser(ls2)
+     
 
    def searchinfile(self,fname,st):
      return [
@@ -33,45 +39,76 @@ class MeanCalculation(ParamParser):
 	    ]
 
 
-   def mean(self,fin_name="out.dat",ncol=2):
+   def mean(self,fin_name="out.dat",fout_name="out.mean"):
 
-          dirname=self.directory_tree()
-          acval=self.act_val(self.isvariable[-1])
-
-   #  for acval in self.dc[self.isvariable[-1]]:
-          fsearch="%s%s-%s/%s"%(dirname,self.isvariable[-1],acval,fin_name)
-
-          try:
-            col=load.loadY(fsearch,ncol)
-          except:
+        dirname=self.pp_varying.directory_tree()
+	
+        fsearch="%s%s"%(dirname,fin_name)
+        fout =  "%s%s"%(dirname,fout_name)
+	
+	try:
+            all_data=loadData(fsearch)
+        except:
 	    print "Error! '%s' file doesn't exist or not enough permissions..."%fsearch
 	    sys.exit()
+	    
+         
 
+        try:
+	  columnas = range(len(all_data[0]))
+	except:
 
-          ac=0.
-          for ic in col:
-            ac+=ic
+	  sys.stderr.write("mean-> error! in directory '%s'\n"%dirname)
+	  sys.stderr.write("all_data = %s\n"%str(all_data))
+	  
+	
+	tmpDict={}
+	
+	for i in all_data:
+	  tmpDict[i[0]]=0
+	valuesX=tmpDict.keys()
+        valuesX.sort()
 
-
-#          print self.isvariable[-1], " = ",acval
-#          print  "%s%s.%.2d"%(dirname,fin_name,ncol)
-          try:
-            foutname="%s%s.%.2d"%(dirname,fin_name,ncol)
-            open(foutname,"a").write("%s\t%s\n"%(acval,ac/len(col) ))
-          except:
-	    print "Error! Couldn't create file '%s' ..."%fsearch
+        xDict={}
+        nPoints={}
+	
+	import copy
+	zeros=[0 for i in columnas]
+	
+ 
+        for i in valuesX:
+          xDict[i]=copy.copy(zeros)
+          nPoints[i]=0.
+  
+        for row in all_data:
+	  if len(row)==len(all_data[0]):
+            nPoints[row[0]]+=1.
+	    vec=xDict[row[0]]
+	    for j in columnas:
+              vec[j]+=row[j]
+ 
+        dataOut=[]
+	
+	for x in valuesX:
+	   if nPoints[x]!=0:
+             dataOut.append( 
+		[ 
+		  xDict[x][j]/nPoints[x]    
+		  for j in columnas  
+		]  
+	     )
+	
+	try:
+            dumpData(fout,dataOut)
+        except:
+	    print "Error! Couldn't create output file '%s' ..."%fsearch
 	    sys.exit()
 
 
-
-
-
-
-   def doit(self,fin_name="out.dat",ncol=2):
-     flag=True
-     while flag:
-       self.mean()
-       flag=self.next()
+   def doit(self,fin_name="out.dat",fout_name="mean.dat"):
+     for i in self.pp_varying:
+       self.mean(fin_name,fout_name)
+       
 
 ######################################################################
 ######################################################################

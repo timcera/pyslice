@@ -40,7 +40,7 @@ class GraceDataSet:
       "color": 1,
       "pattern": 1}
       
-   def __init__(self,n=0,d=[]):
+   def __init__(self,n=0,d=[],gT="xy"):
      self.data=d
      self.name=n
      
@@ -49,7 +49,8 @@ class GraceDataSet:
      self.symbol = self.bassymbol.copy()
      self.line = self.basline.copy()
      self.fill = self.basfill.copy()
-   
+     self.default["type"]=gT
+     
    def __str__(self):
      return "\n".join(
          [
@@ -364,8 +365,8 @@ class GraceDocument:
    ##################################################################
    ##################################################################
      
-   def set_data(self,ls,legend=""):
-     newds=GraceDataSet(len(self.datasets),ls)
+   def set_data(self,ls,legend="",graphType="xy"):
+     newds=GraceDataSet(len(self.datasets),ls,graphType)
      newds.symbol[" "]=len(self.datasets)+1
      newds.line["color"]=len(self.datasets)+1
      newds.symbol["color"]=len(self.datasets)+1
@@ -375,7 +376,7 @@ class GraceDocument:
      newds.default["legend"]=legend
      self.datasets[len(self.datasets)]=newds
 
-   def set_world(self,minx,maxx,miny,maxy):
+   def set_world(self,minx,maxx,miny,maxy,tickx=None,ticky=None):
 
      if minx==maxx:
        minx-=.5
@@ -384,9 +385,10 @@ class GraceDocument:
      if miny==maxy:
        miny-=.5
        maxy+=.5
-       
-     tickx=(maxx-minx)/4.  
-     ticky=(maxy-miny)/4.  
+     if not tickx:  
+      tickx=(maxx-minx)/4.  
+     if not ticky:  
+      ticky=(maxy-miny)/4.  
      
      self.graph.world["xmin"]=minx     
      self.graph.world["xmax"]=maxx     
@@ -396,7 +398,35 @@ class GraceDocument:
      self.graph.xaxis["tick major"]=tickx
      self.graph.yaxis["tick major"]=ticky
    
-   def autoscale(self):
+   def getRoundedValues(self,scale,a2,a1):
+     import math
+     sign1=sign2=1;
+     if a1 < 0:
+       sign1=-1;
+     if a2 < 0:
+       sign2=-1;
+     aa1=abs(a1)
+     aa2=abs(a2)
+     scale1=math.floor(math.log10(max(1e-10,aa1))  )
+     scale2=math.floor(math.log10(max(1e-10,aa2))  )
+
+     int1=eval(("%e"%aa1)[0])+1
+     int2=eval(("%e"%aa2)[0])-1
+
+     if scale is "Normal":
+       propose1 = sign1*int1*10**scale1
+       propose2 = sign2*int2*10**scale2
+       skip = abs((int1*10**scale1-int2*10**scale2)/4)
+       return propose2,propose1,propose1/4
+     else:
+       propose1 = 10**(scale1+1)
+       propose2 = 10**(scale2-1)
+
+       return propose2,propose1,10**int((scale1-scale2)+1)
+
+
+     
+   def autoscale(self,autoscaleaxis="xy"):
      minx = 1e10
      maxx = -1e10
      miny = 1e10
@@ -405,31 +435,26 @@ class GraceDocument:
      for it in self.datasets.values():
        colx= [a[0] for a in it.data] 
        coly= [a[1] for a in it.data] 
-       
-       minx=min(minx,min(colx))
-       miny=min(miny,min(coly))
-
-       maxx=max(maxx,max(colx))
-       maxy=max(maxy,max(coly))
+       if len(colx) > 0 :
+        minx=min(minx,min(colx))
+        maxx=max(maxx,max(colx))
+       if len(coly) > 0:
+        miny=min(miny,min(coly))
+        maxy=max(maxy,max(coly))
      
-     if minx==maxx:
-       minx-=.5
-       maxx+=.5
-
-     if miny==maxy:
-       miny-=.5
-       maxy+=.5
-       
-     tickx=(maxx-minx)/4  
-     ticky=(maxy-miny)/4  
      
-     self.graph.world["xmin"]=minx     
-     self.graph.world["xmax"]=maxx     
-     self.graph.world["ymin"]=miny     
-     self.graph.world["ymax"]=maxy     
+     minx,maxx,tickx=self.getRoundedValues(self.graph.xaxes["scale"],minx,maxx)
+     miny,maxy,ticky=self.getRoundedValues(self.graph.yaxes["scale"],miny,maxy)
+     if autoscaleaxis.find('x')>=0:
+      self.graph.world["xmin"]=minx     
+      self.graph.world["xmax"]=maxx     
+      self.graph.xaxis["tick major"]=tickx
+
+     if autoscaleaxis.find('y')>=0:
+      self.graph.world["ymin"]=miny     
+      self.graph.world["ymax"]=maxy     
    
-     self.graph.xaxis["tick major"]=tickx
-     self.graph.yaxis["tick major"]=ticky
+      self.graph.yaxis["tick major"]=ticky
    
    def set_labels(self,stx,sty):
      self.graph.xaxis["label"]='"'+stx+'"'
@@ -438,7 +463,13 @@ class GraceDocument:
    def set_title(self,st):  
      self.graph.subtitle[" "]='"'+st+'"'
 
-   def dump(self):
+   
+   def dump(self,outStream=None):
+     import sys
+     old_stdout=sys.stdout
+     if outStream:
+       sys.stdout=outStream
+     
      print self
      print self.graph
      for i in self.datasets.keys():
@@ -448,6 +479,8 @@ class GraceDocument:
        print "@type "+str(self.datasets[i].default["type"])
        print "\n".join([ "\t".join(map(str,a)) for a in self.datasets[i].data ] )
        print "\n&"
+       
+     sys.stdout=old_stdout  
        
    def set_scale(self,x="Normal",y="Normal"):
      self.graph.xaxes["scale"]=x;
@@ -466,4 +499,3 @@ class GraceDocument:
 # g1.set_world(-1,1,-1,1)
 #  g1.set_title("Foo")
 #  g1.dump()
-

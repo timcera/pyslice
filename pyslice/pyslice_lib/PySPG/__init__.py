@@ -15,4 +15,8 @@ release_date   = "Wed Sep 30 2003"
 from ParamParser import *
 from Executor import *
 from MultiAgrizer import *
+from Agrizer import *
+from TeXParser import *
 
+from MeanCalculation import *
+from MatrixPlotter import *
