@@ -251,7 +251,7 @@ class Pyslice:
     output_path = self.dequote(configuration.get("paths", "output_path"))
     keyword = self.dequote(configuration.get("flags", "keyword"))
     max_processes = configuration.getint("flags", "max_processes")
-    flat_dirs = self.dequote(configuration.get("flags", "flat_dirs"))
+    flat_dirs = configuration.getboolean("flags", "flat_dirs")
     program = self.dequote(configuration.get("program", "program"))
 
     # Remove the standard configuration sections to leave all of the variables.
@@ -336,7 +336,7 @@ class Pyslice:
 
     for var_index,var_set in enumerate(set):
       # Create label for output directories
-      if flat_dirs[0] == 'Y' or flat_dirs[0] == 'y':
+      if flat_dirs:
         strtag = str(var_index).zfill(5)
       else:
         strtag = var_set[0]
