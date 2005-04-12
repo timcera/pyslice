@@ -298,11 +298,7 @@ class Pyslice:
       # List
       if var_type == "list":
         var_list.append(".%s" % (variable,))
-        for i in range(1,1000):
-          try:
-            var_list.append(configuration.get(variable, "value%i" % (i)))
-          except ConfigParser.NoOptionError:
-            break
+        tmp_var = [var_list.append(i) for i in eval(configuration.get(variable, "values_list"))]
 
       var_list = [str(i) for i in var_list]
       list_list.append(var_list)
