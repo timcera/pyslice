@@ -60,6 +60,7 @@ from random import *
 modname="pyslice"
 __version__="1.4.1"
 
+
 #--option args--
 debug_p = 0
 
@@ -68,8 +69,14 @@ pargs = []
 
 #---other---
 
-# List of the active children of this process.
-activechildren = []
+# Dictionary of model directories using the pid as key.
+# pid tracks children of this process.
+activechildren = {}
+
+# Didn't want to have an infinite amount of jobs.
+# This is just for if user makes max_processes <= 0.
+total_processes = 64
+
 
 #===utilities====================
 def msg(txt):
@@ -179,7 +186,7 @@ class Pyslice:
     path = string.replace(path, "/", os.sep)
     path = string.replace(path, "\\", os.sep)
     if path[-1] == "/" or path[-1] == "\\":
-      path = path[:-1]
+      path = path[:-1] 
     return path
 
 
@@ -234,7 +241,12 @@ class Pyslice:
       pid,stat = os.waitpid(0,os.WNOHANG)
       if not pid:
         break
-      activechildren.remove(pid)
+
+      # Should be able to put post-processing test after this line.
+      os.chdir(activechildren[pid])
+
+      # Remove process id from dictionary
+      activechildren.pop(pid)
 
 
   def run(self):
@@ -251,6 +263,8 @@ class Pyslice:
     output_path = self.dequote(configuration.get("paths", "output_path"))
     keyword = self.dequote(configuration.get("flags", "keyword"))
     max_processes = configuration.getint("flags", "max_processes")
+    if max_processes <= 0:
+      max_processes = total_processes
     flat_dirs = configuration.getboolean("flags", "flat_dirs")
     program = self.dequote(configuration.get("program", "program"))
 
@@ -261,8 +275,8 @@ class Pyslice:
     del section_list[section_list.index("program")]
 
     # Make sure to clean up the paths.
-    template_path = self.path_correction(template_path)
-    output_path = self.path_correction(output_path)
+    template_path = os.path.abspath(self.path_correction(template_path))
+    output_path = os.path.abspath(self.path_correction(output_path))
 
     # Put all variable names from configuration file into key_list.
     # Create list (from each variable) of lists (from start, stop, incr).
@@ -341,22 +355,20 @@ class Pyslice:
       else:
         strtag = var_set[0]
 
+      try:
+        os.makedirs(os.path.join(output_path, strtag))
+      except OSError:
+        pass
+
       # Operate on each file in template directory 
       for files in os.listdir(template_path):
 
         # Not ready to deal with sub-directories yet...
-        if os.path.isdir(files):
+        infilepath = os.path.join(template_path, files)
+        if os.path.isdir(infilepath):
           continue
 
-        # Should work out a more robust error check
-        try:
-          os.makedirs(os.path.join(output_path, strtag))
-        except OSError:
-          pass
-
-        outfilepath = os.path.abspath(os.path.join(output_path, strtag, files))
-
-        infilepath = os.path.abspath(os.path.join(template_path, files))
+        outfilepath = os.path.join(output_path, strtag, files)
 
         # Is this a binary file?  If so, just copy
         if istext(infilepath):
@@ -394,22 +406,23 @@ class Pyslice:
         inputf.close()
         output.close()
 
-      if max_processes > 0:
-        # Wait until there are less than max_processes.
-        while len(activechildren) >= max_processes:
-          self.reapchildren()
-          time.sleep(5)
+      # Wait until there are less than max_processes.
+      while len(activechildren) >= max_processes:
+        self.reapchildren()
+        time.sleep(1)
 
-      # use time.sleep to slightly stagger processes reading the command
-      time.sleep(1)
       # Create new child and execute program.
       childPid = os.fork()
+      abs_path = os.path.join(output_path, strtag)
       if childPid == 0:
-        os.chdir(os.path.join(output_path, strtag))
+        os.chdir(abs_path)
+
+        # Run the command
         command_args = string.split(program)
         os.execvpe(command_args[0], command_args, os.environ)
       else:
-        activechildren.append(childPid)
+        activechildren[childPid] = abs_path
+
 
 #=============================
 def main(args):
