@@ -189,6 +189,56 @@ class Pyslice:
       path = path[:-1] 
     return path
 
+  def create_output(self, var_set, dirname, fnames):
+    for files in fnames:
+      infilepath = os.path.join(dirname, files)
+      rel_dir = infilepath.replace(_template_path + os.sep, '')
+      outfilepath = os.path.join(_output_path, _strtag, rel_dir)
+
+      # Sub-directories in template directory
+      if os.path.isdir(infilepath):
+        try:
+          os.makedirs(outfilepath)
+          continue
+        except OSError:
+          continue
+
+      # Is this a text file?  If so, just open as a template
+      if istext(infilepath):
+        inputf = open(infilepath, 'r')
+      else:
+        shutil.copy(infilepath, outfilepath)
+        continue
+
+      output = open(outfilepath,'w')
+      shutil.copystat(infilepath, outfilepath)
+
+      # Search for _keywordvarname_keyword and replace with appropriate value.
+      while 1:
+        line = inputf.readline()
+        if not line: 
+          break
+        for variables in var_set[1:]:
+          var_name = variables[0]
+          var_value = variables[1]
+          # compile re search for _keyword .* variable_name .* _keyword
+          search_for = re.compile(re.escape(_keyword) + '(' + r'.*?' + var_name + r'.*?' + ')' + re.escape(_keyword))
+          # while there are still matchs available on the line
+          while search_for.search(line):
+            # only have 1 group, but it returns a 2 item tuple, need [0]
+            match = search_for.search(line).groups()[0]
+            # replace variable name with number
+            match = string.replace(match, var_name, str(var_value))
+            # evaluate Python statement with eval
+            match = eval(match)
+            # replace variable with calculated value
+            line = re.sub(search_for, str(match), line, count=1)
+        # writes new line out to output file
+        output.write(line)
+
+      inputf.close()
+      output.close()
+
 
   def daemonize(self, dir_slash='/', logto="/dev/null"):
     """ Forces current process into the background.
@@ -250,6 +300,11 @@ class Pyslice:
 
 
   def run(self):
+    global _strtag
+    global _output_path
+    global _keyword
+    global _template_path
+
     ftn = "Pyslice.run"
     debug(ftn,"hello, world")
 
@@ -259,9 +314,9 @@ class Pyslice:
 
     # Read the configuration file and set appropriate variables.
     configuration = self.read_config(4, 100, ["paths", "flags", "program"])
-    template_path = self.dequote(configuration.get("paths", "template_path"))
-    output_path = self.dequote(configuration.get("paths", "output_path"))
-    keyword = self.dequote(configuration.get("flags", "keyword"))
+    _template_path = self.dequote(configuration.get("paths", "template_path"))
+    _output_path = self.dequote(configuration.get("paths", "output_path"))
+    _keyword = self.dequote(configuration.get("flags", "keyword"))
     max_processes = configuration.getint("flags", "max_processes")
     if max_processes <= 0:
       max_processes = total_processes
@@ -275,8 +330,8 @@ class Pyslice:
     del section_list[section_list.index("program")]
 
     # Make sure to clean up the paths.
-    template_path = os.path.abspath(self.path_correction(template_path))
-    output_path = os.path.abspath(self.path_correction(output_path))
+    _template_path = os.path.abspath(self.path_correction(_template_path))
+    _output_path = os.path.abspath(self.path_correction(_output_path))
 
     # Put all variable names from configuration file into key_list.
     # Create list (from each variable) of lists (from start, stop, incr).
@@ -345,66 +400,21 @@ class Pyslice:
       if inp == 'y' or inp == 'Y':
         break
 
-    # Comment the following command in order to debug
-    self.daemonize(os.getcwd())
+    # The self.daemonize command hides alot of information necessary for
+    # debugging.  With the following can pass '-d' or '--debug' to
+    # pyslice.py and have it turn self.daemonize off.
+    if not debug_p:
+      self.daemonize(os.getcwd())
 
     for var_index,var_set in enumerate(set):
       # Create label for output directories
       if flat_dirs:
-        strtag = str(var_index).zfill(5)
+        _strtag = str(var_index).zfill(5)
       else:
-        strtag = var_set[0]
+        _strtag = var_set[0]
 
-      try:
-        os.makedirs(os.path.join(output_path, strtag))
-      except OSError:
-        pass
-
-      # Operate on each file in template directory 
-      for files in os.listdir(template_path):
-
-        # Not ready to deal with sub-directories yet...
-        infilepath = os.path.join(template_path, files)
-        if os.path.isdir(infilepath):
-          continue
-
-        outfilepath = os.path.join(output_path, strtag, files)
-
-        # Is this a binary file?  If so, just copy
-        if istext(infilepath):
-          inputf = open(infilepath,'r')
-        else:
-          shutil.copy(infilepath, outfilepath)
-          continue
-          
-        output = open(outfilepath,'w')
-        shutil.copystat(infilepath, outfilepath)
-
-        # Search for keywordvarnamekeyword and replace with appropriate value.
-        while 1:
-          line = inputf.readline()
-          if not line: 
-            break
-          for variables in var_set[1:]:
-            var_name = variables[0]
-            var_value = variables[1]
-            # compile re search for keyword .* variable_name .* keyword
-            search_for = re.compile(re.escape(keyword) + '(' + r'.*?' + var_name + r'.*?' + ')' + re.escape(keyword))
-            # while there are still matchs available on the line
-            while search_for.search(line):
-              # only have 1 group, but it returns a 2 item tuple, need [0]
-              match = search_for.search(line).groups()[0]
-              # replace variable name with number
-              match = string.replace(match, var_name, str(var_value))
-              # evaluate Python statement with eval
-              match = eval(match)
-              # replace variable with calculated value
-              line = re.sub(search_for, str(match), line, count=1)
-          # writes new line out to output file
-          output.write(line)
-
-        inputf.close()
-        output.close()
+      # Walks the _template_path directory structure
+      os.path.walk(_template_path, self.create_output, var_set)
 
       # Wait until there are less than max_processes.
       while len(activechildren) >= max_processes:
@@ -413,7 +423,7 @@ class Pyslice:
 
       # Create new child and execute program.
       childPid = os.fork()
-      abs_path = os.path.join(output_path, strtag)
+      abs_path = os.path.join(_output_path, _strtag)
       if childPid == 0:
         os.chdir(abs_path)
 
