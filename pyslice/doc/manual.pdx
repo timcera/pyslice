@@ -8,11 +8,11 @@ toc_p=1
 =head1 Overview
 Pyslice creates input data sets from a template, replacing variables in the template files with a set of values.  It then runs the desired model against each created data set, keeping simultaneous model runs below a specified threshold or submitting jobs to a seperate queueing software.  It is an ideal program when hundreds of runs are required. Example uses would be for calibration or sensitivity analysis.  The input data set creation feature can easily be setup to create thousands of data sets.
 =head1 Tutorial
-See the example directory under the pyslice install directory for an example pyslice.conf, template_path, and output_path diretories.  To run the example, execute the 'go' script.
-=head2 pyslice.conf
-Pyslice requires a configuration file named 'pyslice.conf'.  Sections are identified with square brackets.  Parameters are set within each section with the format 'parameter=value'.  There are three required sections, 'paths', 'flags', and 'program'.  There must be at least one variable section.
+See the example directory under the pyslice install directory for an example pyslice.ini, template_path, and output_path diretories.  To run the example, execute the 'go' script.
+=head2 pyslice.ini
+Pyslice requires a configuration file named 'pyslice.ini'.  Sections are identified with square brackets.  Parameters are set within each section with the format 'parameter=value'.  There are three required sections, 'paths', 'flags', and 'program'.  There must be at least one variable section.
 
-The following example pyslice.conf will take all files in the template_path directory, replacing the variables 'flow', 'function', 'pressure', and 'salinity' within each file.  Note that the set does not included the stop value.
+The following example pyslice.ini will take all files in the template_path directory, replacing the variables 'flow', 'function', 'pressure', and 'salinity' within each file.  Note that the set does not included the stop value.
 =verbatim
 
     [paths]
@@ -95,7 +95,7 @@ The following example pyslice.conf will take all files in the template_path dire
 =end
 
 =head2 Templates
-All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing the variables in pyslice.conf' 'keyword'.  The keyword string and variable names are specified in pyslice.conf.
+All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing the variables in pyslice.ini' 'keyword'.  The keyword string and variable names are specified in pyslice.ini.
 
 An example template file,
 =verbatim
@@ -107,7 +107,7 @@ An example template file,
      F3 $$flow$$ 35.679 $$'%d' % flow$$
 =end
 
-with the example 'pyslice.conf' file above, would result in the following file in the output_path/00000 directory if the flat_dirs option is set, otherwise an entire directory tree is created that incorporates the variable names and the values:
+with the example 'pyslice.ini' file above, would result in the following file in the output_path/00000 directory if the flat_dirs option is set, otherwise an entire directory tree is created that incorporates the variable names and the values:
 =verbatim
      T1 Simulation of salinity in the No Name River
      T2 with flow = 90

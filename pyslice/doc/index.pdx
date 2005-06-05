@@ -55,7 +55,7 @@ Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.3.tar.gz","pys
 =head2 2001-07-10: v1.1
 Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.1.tar.gz","pyslice-1.1.tar.gz">
 =list 1
-=item Removed Python 2.x dependencies.  Variables can now use floating point.  Works correctly to just create data sets by setting max_processes = 0 in pyslice.conf.  Changes to documentation.
+=item Removed Python 2.x dependencies.  Variables can now use floating point.  Works correctly to just create data sets by setting max_processes = 0 in pyslice.ini.  Changes to documentation.
 =end list
 
 =head1 Authors

@@ -7,7 +7,7 @@
 <META NAME="description" CONTENT="">
 <META NAME="creator" CONTENT="Tim Cera">
 <META NAME="owner" CONTENT="">
-<META NAME="date" CONTENT="2005-03-06">
+<META NAME="date" CONTENT="2005-06-04">
 <META NAME="validuntil" CONTENT="2005-12-31">
 <META NAME="robots" CONTENT="none">
 </HEAD>
@@ -33,13 +33,13 @@ Pyslice is implemented in Python. Right now pyslice will only run on UNIX or Lin
 <H1><A NAME="2.">2. Architecture</A></H1>
 The overall process:
 <OL TYPE="1">
-<LI>Parses pyslice.conf file.  'self.read_config()'
+<LI>Parses pyslice.ini file.  'self.read_config()'
 <UL>
-<LI>All quotes within strings in pyslice.conf are removed.  'self.dequote()'
+<LI>All quotes within strings in pyslice.ini are removed.  'self.dequote()'
 
 <LI>All paths are corrected to match the seperator of host machine.  'self.path_correction()'
 </UL>
-<LI>Create cartesian of sets for variables specified in pyslice.conf. 'self.cartesian()'
+<LI>Create cartesian of sets for variables specified in pyslice.ini. 'self.cartesian()'
 
 <LI>Asks user if number of runs is appropriate. If 'n' then bail.
 
@@ -53,7 +53,7 @@ The overall process:
 
 <LI>Copy any binary files, continue to next file template directory. 'istext()'
 
-<LI>For across variable names in pyslice.conf for each line in the file.
+<LI>For across variable names in pyslice.ini for each line in the file.
 <UL>
 <LI>Replace all 'keyword' 'Python statement containing variable name' 'keyword' with the restricted evaluation of the Python statement, replacing variable name with correct number from cartesian set.
 </UL>
@@ -68,7 +68,7 @@ The overall process:
 </TR>
 <TR>
 <TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
-<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2005-03-06<BR><A HREF="http://home.earthlink.net/~timcera">Tim Cera's home page at http://home.earthlink.net/~timcera</A></TD>
+<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2005-06-04<BR><A HREF="http://home.earthlink.net/~timcera">Tim Cera's home page at http://home.earthlink.net/~timcera</A></TD>
 <TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
 </TR>
 </TABLE>

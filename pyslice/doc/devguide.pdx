@@ -10,12 +10,12 @@ Pyslice is implemented in Python. Right now pyslice will only run on UNIX or Lin
 =head1 Architecture
 The overall process:
 =list 1
-  =item Parses pyslice.conf file.  'self.read_config()'
+  =item Parses pyslice.ini file.  'self.read_config()'
   =list *
-    =item All quotes within strings in pyslice.conf are removed.  'self.dequote()'
+    =item All quotes within strings in pyslice.ini are removed.  'self.dequote()'
     =item All paths are corrected to match the seperator of host machine.  'self.path_correction()'
     =end list
-  =item Create cartesian of sets for variables specified in pyslice.conf. 'self.cartesian()'
+  =item Create cartesian of sets for variables specified in pyslice.ini. 'self.cartesian()'
   =item Asks user if number of runs is appropriate. If 'n' then bail.
   =item Forces itself into the background. 'self.daemonize()'
   =item Loops on the sets in the cartesian.
@@ -24,7 +24,7 @@ The overall process:
     =list *
       =item Ignore sub-directories, continue to next file template directory.
       =item Copy any binary files, continue to next file template directory. 'istext()'
-      =item For across variable names in pyslice.conf for each line in the file.
+      =item For across variable names in pyslice.ini for each line in the file.
       =list *
         =item Replace all 'keyword' 'Python statement containing variable name' 'keyword' with the restricted evaluation of the Python statement, replacing variable name with correct number from cartesian set.
         =end list

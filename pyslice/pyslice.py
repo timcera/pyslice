@@ -26,7 +26,7 @@ SYNOPSIS:
     pyslice.py [options] 
 
 DESCRIPTION:
-    Pyslice creates input data sets from information in pyslice.conf
+    Pyslice creates input data sets from information in pyslice.ini
     and files in the template directory.  Pyslice then runs a command
     within each directory, controlling the processes so that at any
     one time there are less than a certain number of processes.
@@ -138,31 +138,31 @@ class Pyslice:
 
   #--------------------------
   def read_config(self, min_sections, max_sections, req_sections_list):
-    """ Reads the pyslice.conf file.
+    """ Reads the pyslice.ini file.
 
     """
 
-    # Can we find pyslice.conf?
-    pyslice_conf = os.path.join(os.getcwd(), "pyslice.conf")
-    if not os.access(pyslice_conf, os.F_OK | os.R_OK):
-      NotFound = "\n***\nThe pyslice.conf file was not found or not readable"
-      raise NotFound,"\npyslice.conf must be in the current directory\n***\n"
+    # Can we find pyslice.ini?
+    pyslice_ini = os.path.join(os.getcwd(), "pyslice.ini")
+    if not os.access(pyslice_ini, os.F_OK | os.R_OK):
+      NotFound = "\n***\nThe pyslice.ini file was not found or not readable"
+      raise NotFound,"\npyslice.ini must be in the current directory\n***\n"
 
     # Read it in.
     config_dict = ConfigParser.ConfigParser()
-    config_dict.read(pyslice_conf)
+    config_dict.read(pyslice_ini)
 
-    # Is pyslice.conf minimally error free?
+    # Is pyslice.ini minimally error free?
     num_sections = len(config_dict.sections())
     if num_sections < min_sections or num_sections > max_sections:
-      ConfigFile = "\n***\nThe pyslice.conf file has an incorrect number of sections"
-      raise ConfigFile, "\npyslice.conf must have between %d and %d sections.\n***\n" % (min_sections, max_sections)
+      ConfigFile = "\n***\nThe pyslice.ini file has an incorrect number of sections"
+      raise ConfigFile, "\npyslice.ini must have between %d and %d sections.\n***\n" % (min_sections, max_sections)
     for sec in req_sections_list:
       if not config_dict.has_section(sec):
-        NoSection = "\n***\nThe pyslice.conf file is missing a required section"
-        raise NoSection,"\npyslice.conf requires the [%s] section.\n***\n" % sec
+        NoSection = "\n***\nThe pyslice.ini file is missing a required section"
+        raise NoSection,"\npyslice.ini requires the [%s] section.\n***\n" % sec
 
-    # Return pyslice.conf as dictionary.
+    # Return pyslice.ini as dictionary.
     return config_dict
 
 

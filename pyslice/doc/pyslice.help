@@ -1,4 +1,4 @@
-pyslice: version=1.3
+pyslice: version=1.4.1
 
 NAME:
     pyslice.py  
@@ -7,7 +7,7 @@ SYNOPSIS:
     pyslice.py [options] 
 
 DESCRIPTION:
-    Pyslice creates input data sets from information in pyslice.conf
+    Pyslice creates input data sets from information in pyslice.ini
     and files in the template directory.  Pyslice then runs a command
     within each directory, controlling the processes so that at any
     one time there are less than a certain number of processes.
