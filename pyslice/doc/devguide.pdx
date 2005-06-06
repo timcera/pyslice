@@ -15,7 +15,7 @@ The overall process:
     =item All quotes within strings in pyslice.ini are removed.  'self.dequote()'
     =item All paths are corrected to match the seperator of host machine.  'self.path_correction()'
     =end list
-  =item Create cartesian of sets for variables specified in pyslice.ini. 'self.cartesian()'
+  =item Create cartesian of sets for variables specified in pyslice.conf. Now handled by PySPG.
   =item Asks user if number of runs is appropriate. If 'n' then bail.
   =item Forces itself into the background. 'self.daemonize()'
   =item Loops on the sets in the cartesian.
