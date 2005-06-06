@@ -7,7 +7,7 @@
 <META NAME="description" CONTENT="">
 <META NAME="creator" CONTENT="Tim Cera">
 <META NAME="owner" CONTENT="">
-<META NAME="date" CONTENT="2005-06-04">
+<META NAME="date" CONTENT="2005-06-05">
 <META NAME="validuntil" CONTENT="2005-12-31">
 <META NAME="robots" CONTENT="none">
 </HEAD>
@@ -24,7 +24,7 @@
 <H1><A NAME="#toc">Table of Contents</A></H1>
 <UL>
 <LI><A HREF="#1."> 1. Overview</A>
-<LI><A HREF="#2."> 2. Tutorial</A>
+<LI><A HREF="#2."> 2. Example</A>
 <UL>
 <LI><A HREF="#2.1."> 2.1. pyslice.ini</A>
 <LI><A HREF="#2.2."> 2.2. Templates</A>
@@ -38,15 +38,45 @@
  </UL><p>
 
 <H1><A NAME="1.">1. Overview</A></H1>
-Pyslice creates input data sets from a template, replacing variables in the template files with a set of values.  It then runs the desired model against each created data set, keeping simultaneous model runs below a specified threshold or submitting jobs to a seperate queueing software.  It is an ideal program when hundreds of runs are required. Example uses would be for calibration or sensitivity analysis.  The input data set creation feature can easily be setup to create thousands of data sets.
+<p>
+Pyslice creates input data sets from a template, replacing variables
+in the template files with a set of values.  It then runs the desired
+model against each created data set, keeping simultaneous model runs
+below a specified threshold or submitting jobs to a seperate queueing
+software.  It is an ideal program when hundreds of runs are required.
+Example uses would be for calibration or sensitivity analysis.  The
+input data set creation feature can easily be setup to create
+thousands of data sets.
+<p>
 
-<H1><A NAME="2.">2. Tutorial</A></H1>
-See the example directory under the pyslice install directory for an example pyslice.ini, template_path, and output_path diretories.  To run the example, execute the 'go' script.
+<H1><A NAME="2.">2. Example</A></H1>
+See the example directory under the pyslice install directory for an
+example pyslice.ini, template_path (equal to 'input_template), and output_path (equal to 'output') directories.  To
+run the example, type 'python ../pyslice.py' (or './go' which does the same thing) from within the 'example' directory.  
+<p>
+
+<PRE>
+    cd pyslice
+    cd example             # so that pyslice.py can find the pyslice.ini
+    python ../pyslice.py   # or './go'
+</PRE>
+<p>
+After answering the questions, directories will begin to appear in the 'example/output' directory based on the 'example/input_template' and configuration of 'pyslice.ini'.
+<p>
 
 <H2><A NAME="2.1.">2.1. pyslice.ini</A></H2>
-Pyslice requires a configuration file named 'pyslice.ini'.  Sections are identified with square brackets.  Parameters are set within each section with the format 'parameter=value'.  There are three required sections, 'paths', 'flags', and 'program'.  There must be at least one variable section.
+Pyslice requires a configuration file named 'pyslice.ini'.  Sections
+are identified with square brackets.  Parameters are set within each
+section with the format 'parameter=value'.  This is a standard '*.ini' file described in the <A HREF="http://www.python.org/doc/current/lib/module-ConfigParser.html">ConfigParser Documentation</A>.
 <p>
-The following example pyslice.ini will take all files in the template_path directory, replacing the variables 'flow', 'function', 'pressure', and 'salinity' within each file.  Note that the set does not included the stop value.
+The 'pyslice.ini' file requires the
+sections, 'paths', 'flags', and 'program'.  There must be at least one
+variable section.  The variable section(s) can be named with any valid Python name (start with letter or underscore and can contain numbers, letters and underscore).
+<p>
+The following example pyslice.ini will take all files in the
+template_path directory, replacing the variables 'flow', 'function',
+'pressure', and 'salinity' within each file.  Note that the set does
+not included the stop value.
 
 <PRE>
 
@@ -107,20 +137,45 @@ The following example pyslice.ini will take all files in the template_path direc
     value5=8
 
     # [rstage] is set to 'samples' values taken from distribution
-    # 'distribution' is the statistical distribution from the random module
+    # 'distribution' is the statistical distribution from the random 
+    # module
     #     uniform(a, b) - Get a random number in the range [a, b).
-    #     randint(a, b) - Return random integer in range [a, b], including both end points.
-    #     betavariate(alpha, beta) - Beta distribution.  Conditions on the parameters are alpha &gt; -1 and beta} &gt; -1.  Returned values range between 0 and 1.
-    #     choice(seq) -  Choose a random element from a non-empty sequence.
-    #     expovariate(lambd) - Exponential distribution.  lambd is 1.0 divided by the desired mean.  (The parameter would be called &quot;lambda&quot;, but that is a reserved word in Python.)  Returned values range from 0 to positive infinity.
-    #     gammavariate(alpha, beta) - Gamma distribution.  Not the gamma function!  Conditions on the parameters are alpha &gt; 0 and beta &gt; 0.
-    #     gauss(mu, sigma) - Gaussian distribution.  mu is the mean, and sigma is the standard deviation.  This is slightly faster than the normalvariate() function.
-    #     lognormvariate(mu, sigma) - Log normal distribution.  If you take the natural logarithm of this distribution, you'll get a normal distribution with mean mu and standard deviation sigma.  mu can have any value, and sigma must be greater than zero.
-    #     normalvariate(mu, sigma) - Normal distribution.  mu is the mean, and sigma is the standard deviation.
-    #     paretovariate(alpha) - Pareto distribution.  alpha is the shape parameter.
+    #     randint(a, b) - Return random integer in range [a, b], 
+    #         including both end points.
+    #     betavariate(alpha, beta) - Beta distribution.  Conditions 
+    #         on the parameters are alpha &gt; -1 and beta} &gt; -1.  
+    #         Returned values range between 0 and 1.
+    #     choice(seq) -  Choose a random element from a non-empty 
+    #         sequence.
+    #     expovariate(lambd) - Exponential distribution.  lambd is 
+    #         1.0 divided by the desired mean.  (The parameter would 
+    #         be called &quot;lambda&quot;, but that is a reserved word in 
+    #         Python.)  Returned values range from 0 to positive 
+    #         infinity.
+    #     gammavariate(alpha, beta) - Gamma distribution.  Not the 
+    #         gamma function!  Conditions on the parameters are 
+    #         alpha &gt; 0 and beta &gt; 0.
+    #     gauss(mu, sigma) - Gaussian distribution.  mu is the mean, 
+    #         and sigma is the standard deviation.  This is slightly 
+    #         faster than the normalvariate() function.
+    #     lognormvariate(mu, sigma) - Log normal distribution.  If 
+    #         you take the natural logarithm of this distribution, 
+    #         you'll get a normal distribution with mean mu and 
+    #         standard deviation sigma.  mu can have any value, and 
+    #         sigma must be greater than zero.
+    #     normalvariate(mu, sigma) - Normal distribution.  mu is the 
+    #         mean, and sigma is the standard deviation.
+    #     paretovariate(alpha) - Pareto distribution.  alpha is the 
+    #         shape parameter.
     #     random(...) random() -&gt; x in the interval [0, 1).
-    #     vonmisesvariate(mu, kappa) - Circular data distribution.  mu is the mean angle, expressed in radians between 0 and 2*pi, and kappa is the concentration parameter, which must be greater than or equal to zero.  If kappa is equal to zero, this distribution reduces to a uniform random angle over the range 0 to 2*pi.
-    #     weibullvariate(alpha, beta) - Weibull distribution.  alpha is the scale parameter and beta is the shape parameter.
+    #     vonmisesvariate(mu, kappa) - Circular data distribution.  
+    #         mu is the mean angle, expressed in radians between 0 
+    #         and 2*pi, and kappa is the concentration parameter, 
+    #         which must be greater than or equal to zero.  If kappa 
+    #         is equal to zero, this distribution reduces to a 
+    #         uniform random angle over the range 0 to 2*pi.
+    #     weibullvariate(alpha, beta) - Weibull distribution.  alpha 
+    #         is the scale parameter and beta is the shape parameter.
     # 'samples' is the number of samples taken from the distribution
     [rstage]
     type=montecarlo
@@ -131,7 +186,10 @@ The following example pyslice.ini will take all files in the template_path direc
 <p>
 
 <H2><A NAME="2.2.">2.2. Templates</A></H2>
-All files in the 'template_path' directory will be processed by replacing each instance of 'keyword' 'any valid Python statement containing the variables in pyslice.ini' 'keyword'.  The keyword string and variable names are specified in pyslice.ini.
+All files in the 'template_path' directory will be processed by
+replacing each instance of 'keyword' 'any valid Python statement
+containing the variables in pyslice.ini' 'keyword'.  The keyword
+string and variable names are specified in pyslice.ini.
 <p>
 An example template file,
 
@@ -144,7 +202,10 @@ An example template file,
      F3 $$flow$$ 35.679 $$'%d' % flow$$
 </PRE>
 <p>
-with the example 'pyslice.ini' file above, would result in the following file in the output_path/00000 directory if the flat_dirs option is set, otherwise an entire directory tree is created that incorporates the variable names and the values:
+with the example 'pyslice.ini' file above, would result in the
+following file in the output_path/00000 directory if the flat_dirs
+option is set, otherwise an entire directory tree is created that
+incorporates the variable names and the values:
 
 <PRE>
      T1 Simulation of salinity in the No Name River
@@ -186,9 +247,14 @@ and the next directory in output_path:
 <p>
 
 <H2><A NAME="2.3.">2.3. Tips and Tricks</A></H2>
-If you want a model data set with a constant value, just manipulate the start and end values.
-If you want several repetitions of the entire parameterization create a false variable that isn't used in any of the templates.  This would be useful if the model imposes some random behavoir that you want to study.
-Another solution to obtain multiple repetitions is rerun pyslice with different output directories.
+If you want a model data set with a constant value, just manipulate
+the start and end values.
+If you want several repetitions of the entire parameterization create
+a false variable that isn't used in any of the templates.  This would
+be useful if the model imposes some random behavoir that you want to
+study.
+Another solution to obtain multiple repetitions is rerun pyslice with
+different output directories.
 <p>
 
 <H1><A NAME="3.">3. Mini Python Reference</A></H1>
@@ -198,7 +264,8 @@ Python controls the format of a number through the following syntax:
 <p>
 <TT>'format_string' % number</TT>
 <p>
-If you want to make a calculation you must enclose the calculation in '()'.
+If you want to make a calculation you must enclose the calculation in
+'()'.
 <p>
 Python number formatting is illustrated in the following table:
 <TABLE BORDER CELLSPACING=2 CELLPADDING=2><CAPTION ALIGN="TOP"> Table of Python format strings</CAPTION >
@@ -209,13 +276,16 @@ Python number formatting is illustrated in the following table:
 <p>
 
 <H1><A NAME="4.">4. Users Manual Disclaimer</A></H1>
-I have manual writers block.  Frankly if anyone can figure out how to operate pyslice from this manual, they are smarter than I am.  :-)  I really want suggestions about how to make this clearer.  Send me a note!
+I have manual writers block.  Frankly if anyone can figure out how to
+operate pyslice from this manual, they are smarter than I am.  :-)  I
+really want suggestions about how to make this clearer.  Send me a
+note!
 </TD>
 <TD VALIGN="TOP" WIDTH=100></TD>
 </TR>
 <TR>
 <TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
-<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2005-06-04<BR><A HREF="http://home.earthlink.net/~timcera">Tim Cera's home page at http://home.earthlink.net/~timcera</A></TD>
+<TD VALIGN="TOP" WIDTH=600><HR>Creator: <A HREF="mailto:timcera@earthlink.net">Tim Cera</A><BR>Updated/Created: 2005-06-05<BR><A HREF="http://home.earthlink.net/~timcera">Tim Cera's home page at http://home.earthlink.net/~timcera</A></TD>
 <TD VALIGN="TOP" WIDTH=100>&nbsp;</TD>
 </TR>
 </TABLE>
