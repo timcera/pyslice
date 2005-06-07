@@ -6,7 +6,9 @@ toc_p=1
 =include article_style.pdx
 
 =head1 Abstract
-Pyslice provides utility functions for parametric modeling.  Parametric modeling is a process of varying many inputs to a model.  A drawback to parametric modeling is that there are usually hundreds to thousands of data sets to prepare and a corresponding number of model runs.  Pyslice will create the model data sets and manage the model runs, or place the model runs in a queue managed by other software.  Pyslice is also useful in establishing the sensitivity of a model to changing parameters.
+Pyslice is a specialized templating system that replaces a variable in a template with a number taken from a series of numbers. It creates a dataset for each number in the series. 
+
+The main function of Pyslice is to provide utility functions for parametric modeling. Parametric modeling is a process of varying many inputs to a model. A drawback to parametric modeling is that there are usually hundreds to thousands of data sets to prepare and a corresponding number of model runs. Pyslice will create the model data sets and manage the model runs, or place the model runs in a queue managed by other software. Pyslice is also useful in establishing the sensitivity of a model to changing parameters. 
 
 =head1 Documentation
 =list *
@@ -31,37 +33,65 @@ Any model executable that can be specified with an absolute path or is inside a 
 =end list
 
 This is a standard UNIX/Linux distutils install:
+
 =verbatim
-  cp pyslice-1.3.tar.gz myworkdir
+  cp pyslice-1.4.tar.gz myworkdir
   cd myworkdir
-  gzip -cd pyslice-1.3.tar.gz | tar xvf -
-  cd pyslice-1.3
+  gzip -cd pyslice-1.4.tar.gz | tar xvf -
+  cd pyslice
   python setup.py build
   python setup.py install  #possibly as root
 =end list
 
+=head1 Example
+Look in L<"manual.html","User manual"> for instructions on how to run the included example.
+
+=head1 Similar Projects
+Some templating systems, which I am not going to list here, might be able to be pressed into service, but it was a difficult enough prospect that I wrote Pyslice. The initial push to write Pyslice was my inability to get the Drone software installed an working. Plus Drone was way overkill for what I really needed. 
+Here are links to similar projects to Pyslice:
+=list *
+=item L<"http://pyspg.sourceforge.net/","PySPG: Pyslice uses PySPG as a library to generate values.">
+=item L<"http://www.maths.ox.ac.uk/~challet/sweepover/sweepover.html","SweepOver: SweepOver seems to have a GUI.">
+=item L<"http://droneutil.sourceforge.net/","Drone:DroneUtil - part of the Drone system.">
+=item L<"http://drone.sourceforge.net/","Drone:Drone - I think a Drone client?">
+=item L<"http://droned.sourceforge.net/","Drone:Droned - Drone server.">
+=end list
+
 =head1 Changes
+
+=head2 2005-06-06: v1.5
+Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.5.tar.gz?download","pyslice-1.5.tar.gz">
+=list 1
+=item Uses 'pyslice.ini' instead of 'pyslice.conf'.  This allows the use of .ini editors to easily map to the correct format.
+=end list
+
+=head2 2005-05-30: v1.4
+Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.4.tar.gz?download","pyslice-1.4.tar.gz">
+=list 1
+=item Can pull variable values from statistical distributions in Python's 'random' package. 
+=item Uses os.path.walk to make considerable faster. 
+=item Minor code clean-up 
+=end list
+
+=head2 2004-12-16: v1.3
+=list 1
+=item Now depends on Python 2.x or better. Am now using the PySPG library (http://pyspg.sourceforge.net/) in order to develop the variable sets. Because of PySPG now have the capability of doing geometric and list based parameter generation. 
+=end list
+
+=head2 2001-07-10: v1.1
+=list 1
+=item Removed Python 2.x dependencies. Variables can now use floating point. Works correctly to just create data sets by setting max_processes = 0 in pyslice.conf. Changes to documentation. 
+=end list
 
 =head2 2001-07-10: v1.0
 =list 1
 =item Initial release
 =end list
 
-=head2 2004-12-16: v1.3
-Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.3.tar.gz","pyslice-1.3.tar.gz">
-=list 1
-=item Now depends on Python 2.x or better.  Am now using the PySPG library (http://pyspg.sourceforge.net/) in order to develop the variable sets.  Because of PySPG now have the capability of doing geometric and list based parameter generation. 
-
-=head2 2001-07-10: v1.1
-Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.1.tar.gz","pyslice-1.1.tar.gz">
-=list 1
-=item Removed Python 2.x dependencies.  Variables can now use floating point.  Works correctly to just create data sets by setting max_processes = 0 in pyslice.ini.  Changes to documentation.
-=end list
-
 =head1 Authors
 =list []
 =item Tim Cera (email: timcera@earthlink.net)
 Initial implementation
-
+=item Claudio J. Tessone, L<"http://pyspg.sourceforge.net/","PySPG"> library
 =end list
 
