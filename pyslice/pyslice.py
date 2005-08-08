@@ -190,10 +190,10 @@ class Pyslice:
     return path
 
   def create_output(self, var_set, dirname, fnames):
-     try:
-       os.makedirs(os.path.join(_output_path, _strtag))
-     except OSError:
-       pass
+    try:
+      os.makedirs(os.path.join(_output_path, _strtag))
+    except OSError:
+      pass
     for files in fnames:
       infilepath = os.path.join(dirname, files)
       rel_dir = infilepath.replace(_template_path + os.sep, '')
