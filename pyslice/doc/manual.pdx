@@ -42,8 +42,9 @@ The following example pyslice.ini will take all files in the
 template_path directory, replacing the variables 'flow', 'function',
 'pressure', and 'salinity' within each file.  Note that the set does
 not included the stop value.
-=verbatim
 
+=head3 Example pyslice.ini
+=verbatim
     [paths]
     # 'template_path' can contain any number of files.  Pyslice even
     #                 correctly handles binary files (just copies them)
@@ -190,7 +191,7 @@ and the next directory in output_path:
 ...etc.
 
 =table Table of example code in template files, 'flow' varies from 1 to 3 by 1 and 'water_level' varies from 9 to 12 by 1.
-=row B<Template Code> & B<Output Directory> & B<Flow Result> & B<Water Level Result>
+=row B<Example Template Code> & B<Output Directory> & B<Flow Result> & B<Water Level Result>
 =row $$'%10.4f' % flow$$<BR>$$water_level$$ & 00000 & 1.0000 & 9
 =row  & 00001 & 1.0000 & 10
 =row  & 00002 & 1.0000 & 11
