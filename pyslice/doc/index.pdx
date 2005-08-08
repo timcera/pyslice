@@ -35,9 +35,9 @@ Any model executable that can be specified with an absolute path or is inside a 
 This is a standard UNIX/Linux distutils install:
 
 =verbatim
-  cp pyslice-1.4.tar.gz myworkdir
+  cp pyslice-1.5.tar.gz myworkdir
   cd myworkdir
-  gzip -cd pyslice-1.4.tar.gz | tar xvf -
+  gzip -cd pyslice-1.5.tar.gz | tar xvf -
   cd pyslice
   python setup.py build
   python setup.py install  #possibly as root
@@ -66,7 +66,6 @@ Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.5.tar.gz?downl
 =end list
 
 =head2 2005-05-30: v1.4
-Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.4.tar.gz?download","pyslice-1.4.tar.gz">
 =list 1
 =item Can pull variable values from statistical distributions in Python's 'random' package. 
 =item Uses os.path.walk to make considerable faster. 
