@@ -30,6 +30,7 @@ Any model executable that can be specified with an absolute path or is inside a 
 =list *
 =item Python 2 or higher
 =item Pdx required to regenerate documentation
+=item Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.5.tar.gz?download","pyslice-1.5.tar.gz">
 =end list
 
 This is a standard UNIX/Linux distutils install:
