@@ -51,6 +51,10 @@ import re
 import ConfigParser
 import shutil
 import pyslice_lib.PySPG as pyspg
+try:
+    import threading as _threading
+except ImportError:
+    import dummy_threading as _threading
 
 # To support montecarlo...
 # Normally like to use just import and explicitly name the module.
@@ -58,7 +62,7 @@ from random import *
 
 #===globals======================
 modname="pyslice"
-__version__="1.4.1"
+__version__="1.6.0"
 
 
 #--option args--
@@ -74,58 +78,58 @@ pargs = []
 activechildren = {}
 
 # Didn't want to have an infinite amount of jobs.
-# This is just for if user makes max_processes <= 0.
+# This is just for if user makes max_threads <= 0.
 total_processes = 64
 
 
 #===utilities====================
 def msg(txt):
-  sys.stdout.write(txt)
-  sys.stdout.flush()
-
-def debug(ftn, txt):
-  if debug_p:
-    tmp=string.join([modname,'.',ftn,':',txt,'\n'],'')
-    sys.stdout.write(tmp)
+    sys.stdout.write(txt)
     sys.stdout.flush()
 
+def debug(ftn, txt):
+    if debug_p:
+      tmp=string.join([modname,'.',ftn,':',txt,'\n'],'')
+      sys.stdout.write(tmp)
+      sys.stdout.flush()
+
 def fatal(ftn, txt):
-  tmp=string.join([modname,'.',ftn,':FATAL:',txt,'\n'],'')
-  raise SystemExit, tmp
+    tmp=string.join([modname,'.',ftn,':FATAL:',txt,'\n'],'')
+    raise SystemExit, tmp
  
 def usage():
-  print __doc__
+    print __doc__
 
 
 def mask(charlist):
-  """
-  Construct a mask suitable for string.translate,
-  which marks letters in charlist as "t" and ones not as "b".
-  Used by 'istext' function to identify text files.
-  """
-  mask=""
-  for i in range(256):
-    if chr(i) in charlist: mask=mask+"t"
-    else: mask=mask+"b"
-  return mask
+    """
+    Construct a mask suitable for string.translate,
+    which marks letters in charlist as "t" and ones not as "b".
+    Used by 'istext' function to identify text files.
+    """
+    mask=""
+    for i in range(256):
+      if chr(i) in charlist: mask=mask+"t"
+      else: mask=mask+"b"
+    return mask
 
 ascii7bit=string.joinfields(map(chr, range(32,127)), "")+"\r\n\t\b"
 ascii7bit_mask=mask(ascii7bit)
 
 def istext(filep, check=1024, mask=ascii7bit_mask):
-  """
-  Returns true if the first check characters in file
-  are within mask, false otherwise. 
-  """
+    """
+    Returns true if the first check characters in file
+    are within mask, false otherwise. 
+    """
 
-  try:
-    s=filep.read(check)
-    filep.close()
-    s=string.translate(s, mask)
-    if string.find(s, "b") != -1: return 0
-    return 1
-  except (AttributeError, NameError): # Other exceptions?
-    return istext(open(filep, "r"))
+    try:
+      s=filep.read(check)
+      filep.close()
+      s=string.translate(s, mask)
+      if string.find(s, "b") != -1: return 0
+      return 1
+    except (AttributeError, NameError): # Other exceptions?
+      return istext(open(filep, "r"))
 
 
 #====================================
@@ -243,65 +247,14 @@ class Pyslice:
       inputf.close()
       output.close()
 
-
-  def daemonize(self, dir_slash='/', logto="/dev/null"):
-    """ Forces current process into the background.
-
-    Got off the comp.lang.python newsgroup.  Written by Michael Romberg.
-
-    """
-
-    # Close open files
-    sys.stdin.close()
-    sys.stdout.close()
-    sys.stderr.close()
-
-    # Change the cwd
-    os.chdir(dir_slash)
-
-    # Background the process by forking and exiting the parent
-    if os.fork() != 0:
-      # If here we are the -- Parent --
-      sys.exit()
-
-    # If here we are the -- Child --
-
-    # redirect stdout and stderr to /dev/null
-    #sys.stdin = open("/dev/null", "r")
-    sys.stdout = open(logto, "wb", 0)
-    sys.stderr = sys.stdout
-
-    # Set the umask
-    os.umask(0)
-
-    # Disassociate from Process Group
-    os.setpgrp()
-
-    # Ignore Terminal I/O Signals
-    if hasattr(signal, 'SIGTTOU'):
-      signal.signal(signal.SIGTTOU, signal.SIG_IGN)
-    if hasattr(signal, 'SIGTTIN'):
-      signal.signal(signal.SIGTTIN, signal.SIG_IGN)
-    if hasattr(signal, 'SIGTSTP'):
-      signal.signal(signal.SIGTSTP, signal.SIG_IGN)
-
-
-  def reapchildren(self):
-    """ Keeps track of child processes.  Waits to the end of all
-        child processes.
-
-    """
-    while activechildren:
-      pid,stat = os.waitpid(0,os.WNOHANG)
-      if not pid:
-        break
-
-      # Should be able to put post-processing test after this line.
-      os.chdir(activechildren[pid])
-
-      # Remove process id from dictionary
-      activechildren.pop(pid)
-
+  # Runs the command *com in a new thread.
+  def start_thread_process(*com):
+      # This is really dumb and so I think I am doing it wrong, but it works.
+      com = string.join(com[1:], '')
+      chstdin,chstdouterr = os.popen4(com)
+      fo = open('pyslice.log', 'w')
+      fo.write(string.join(chstdouterr.readlines()))
+      fo.close()
 
   def run(self):
     global _strtag
@@ -321,9 +274,9 @@ class Pyslice:
     _template_path = self.dequote(configuration.get("paths", "template_path"))
     _output_path = self.dequote(configuration.get("paths", "output_path"))
     _keyword = self.dequote(configuration.get("flags", "keyword"))
-    max_processes = configuration.getint("flags", "max_processes")
-    if max_processes <= 0:
-      max_processes = total_processes
+    max_threads = configuration.getint("flags", "max_threads")
+    if max_threads <= 0:
+      max_threads = total_processes
     flat_dirs = configuration.getboolean("flags", "flat_dirs")
     program = self.dequote(configuration.get("program", "program"))
 
@@ -404,12 +357,6 @@ class Pyslice:
       if inp == 'y' or inp == 'Y':
         break
 
-    # The self.daemonize command hides alot of information necessary for
-    # debugging.  With the following can pass '-d' or '--debug' to
-    # pyslice.py and have it turn self.daemonize off.
-    if not debug_p:
-      self.daemonize(os.getcwd())
-
     for var_index,var_set in enumerate(set):
       # Create label for output directories
       if flat_dirs:
@@ -417,25 +364,20 @@ class Pyslice:
       else:
         _strtag = var_set[0]
 
+      # Create the files and directories from the template
       # Walks the _template_path directory structure
       os.path.walk(_template_path, self.create_output, var_set)
 
-      # Wait until there are less than max_processes.
-      while len(activechildren) >= max_processes:
-        self.reapchildren()
-        time.sleep(1)
+      # Wait until there are less than max_threads.
+      while _threading.activeCount() > max_threads:
+        time.sleep(0.01)
 
-      # Create new child and execute program.
-      childPid = os.fork()
       abs_path = os.path.join(_output_path, _strtag)
-      if childPid == 0:
-        os.chdir(abs_path)
 
-        # Run the command
-        command_args = string.split(program)
-        os.execvpe(command_args[0], command_args, os.environ)
-      else:
-        activechildren[childPid] = abs_path
+      os.chdir(abs_path)
+
+      a = _threading.Thread(target=self.start_thread_process,args=(program))
+      a.start()
 
 
 #=============================

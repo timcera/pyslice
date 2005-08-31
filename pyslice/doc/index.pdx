@@ -30,15 +30,15 @@ Any model executable that can be specified with an absolute path or is inside a 
 =list *
 =item Python 2 or higher
 =item Pdx required to regenerate documentation
-=item Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.5.tar.gz?download","pyslice-1.5.tar.gz">
+=item Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.6.tar.gz?download","pyslice-1.6.tar.gz">
 =end list
 
 This is a standard UNIX/Linux distutils install:
 
 =verbatim
-  cp pyslice-1.5.tar.gz myworkdir
+  cp pyslice-1.6.tar.gz myworkdir
   cd myworkdir
-  gzip -cd pyslice-1.5.tar.gz | tar xvf -
+  gzip -cd pyslice-1.6.tar.gz | tar xvf -
   cd pyslice
   python setup.py build
   python setup.py install  #possibly as root
@@ -60,8 +60,13 @@ Here are links to similar projects to Pyslice:
 
 =head1 Changes
 
+=head2 2005-08-30: v1.6
+Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.6.tar.gz?download","pyslice-1.6.tar.gz">
+=list 1
+=item Moved to threads rather than 'os.fork/os.exec' which means that pyslice.py should be able to run on Windows, though not tested.  Eliminated a bunch of code required by the 'os.fork/os.exec' that should make pyslice.py easier to maintain.
+=end list
+
 =head2 2005-06-06: v1.5
-Download: L<"http://prdownloads.sourceforge.net/pyslice/pyslice-1.5.tar.gz?download","pyslice-1.5.tar.gz">
 =list 1
 =item Uses 'pyslice.ini' instead of 'pyslice.conf'.  This allows the use of .ini editors to easily map to the correct format.
 =end list

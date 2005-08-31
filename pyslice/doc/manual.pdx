@@ -27,7 +27,7 @@ run the example, type 'python ../pyslice.py' (or './go' which does the same thin
     python ../pyslice.py   # or './go'
 =end 
 
-After answering the questions, directories will begin to appear in the 'example/output' directory based on files in the 'example/input_template' directory and the configuration in 'pyslice.ini'.
+After answering the questions, directories will begin to appear in the 'example/output' directory based on template files in the 'example/input_template' directory and the configuration in 'pyslice.ini'.
 
 =head2 pyslice.ini
 Pyslice requires a configuration file named 'pyslice.ini'.  Sections
@@ -49,12 +49,16 @@ not included the stop value.
     # 'template_path' can contain any number of files.  Pyslice even
     #                 correctly handles binary files (just copies them)
     #                 and permissions.
+    # 'output_path' is the directory were the output datasets, in their
+    #               own sub-directories will be created.
     template_path=/path/to/directory/holding/the/template/datasets
     output_path=/path/to/where/output/directories/will/be/made
 
     # [flags] identify global options
     # 'keyword' can be changed if '$$' means something in your datasets
-    # 'max_processes' should be set to 0 if you just want all the jobs
+    #           'keyword' is used to bracket the Python code to have
+    #           pyslice.py evaluate.
+    # 'max_threads'   should be set to 1 if you just want all the jobs
     #                 to be run.  This is useful if you have seperate
     #                 queueing software.  Otherwise set to the number
     #                 of simultaneous model runs you can allow on your
@@ -64,7 +68,7 @@ not included the stop value.
     #             values.
     [flags]
     keyword="$$"
-    max_processes=8
+    max_threads=8
     flat_dirs="N"
 
     # [program] is the command you want run in each of the output 

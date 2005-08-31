@@ -1,4 +1,4 @@
-pyslice: version=1.5
+pyslice: version=1.6.0
 
 NAME:
     pyslice.py  

@@ -6,7 +6,8 @@ toc_p=1
 =include article_style.pdx
 
 =head1 Overview
-Pyslice is implemented in Python. Right now pyslice will only run on UNIX or Linux machines, but that shouldn't be a problem because most Beowulf clusters are UNIX or Linux.
+Pyslice is implemented in Python. Even though Python is available on several platforms, pyslice.py has only been tested on Linux.  As of pyslice.py 1.6, with the removal of 'os.fork', pyslice.py should work on Windows (untested).
+
 =head1 Architecture
 The overall process:
 =list 1
@@ -17,21 +18,19 @@ The overall process:
     =end list
   =item Create cartesian of sets for variables specified in pyslice.conf. Now handled by PySPG.
   =item Asks user if number of runs is appropriate. If 'n' then bail.
-  =item Forces itself into the background. 'self.daemonize()'
   =item Loops on the sets in the cartesian.
   =list *
     =item Loops across all files in template directory.
     =list *
-      =item Ignore sub-directories, continue to next file template directory.
       =item Copy any binary files, continue to next file template directory. 'istext()'
       =item For across variable names in pyslice.ini for each line in the file.
       =list *
-        =item Replace all 'keyword' 'Python statement containing variable name' 'keyword' with the restricted evaluation of the Python statement, replacing variable name with correct number from cartesian set.
+        =item Replace all 'keyword' 'Python statement containing variable name' 'keyword' with the evaluation of the Python statement, replacing variable name with correct number from cartesian set.
         =end list
       =item Write out new line to correct output directory and output file.
       =end list
-    =item If number of controlled processes is greater than max_processes, wait. 'self.reapChildren()'
-    =item Create new child process, recording new pid in activeChildren list.
+    =item If number of thread is greater than max_processes, wait.
+    =item Create new thread, use 'os.popen4' to pull output and error from the program and put in 'pyslice.log'.
     =end list
   =end list
 
