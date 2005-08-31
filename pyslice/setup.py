@@ -84,7 +84,7 @@ def main():
            ,author = "Tim Cera"
            ,author_email = "timcera@earthlink.net"
            ,url="http://home.earthlink.net/~timcera"
-           ,licence = "GPL"
+           ,license = "GPL"
 
            #---scripts,modules and packages---
            ,scripts=['pyslice.py']

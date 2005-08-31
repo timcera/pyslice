@@ -46,7 +46,6 @@ EXAMPLES:
 #===imports======================
 import sys, os, getopt, time, string
 import os.path
-import signal
 import re
 import ConfigParser
 import shutil
@@ -72,10 +71,6 @@ debug_p = 0
 pargs = []    
 
 #---other---
-
-# Dictionary of model directories using the pid as key.
-# pid tracks children of this process.
-activechildren = {}
 
 # Didn't want to have an infinite amount of jobs.
 # This is just for if user makes max_threads <= 0.
@@ -248,7 +243,7 @@ class Pyslice:
       output.close()
 
   # Runs the command *com in a new thread.
-  def start_thread_process(*com):
+  def start_thread_process(self, *com):
       # This is really dumb and so I think I am doing it wrong, but it works.
       com = string.join(com[1:], '')
       chstdin,chstdouterr = os.popen4(com)
@@ -324,7 +319,8 @@ class Pyslice:
       # List
       if var_type == "list":
         var_list.append(".%s" % (variable,))
-        tmp_var = [var_list.append(i) for i in eval(configuration.get(variable, "values_list"))]
+        for i in eval(configuration.get(variable, "values_list")):
+          var_list.append(i)
 
       var_list = [str(i) for i in var_list]
       list_list.append(var_list)
