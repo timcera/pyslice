@@ -56,8 +56,7 @@ except ImportError:
     import dummy_threading as _threading
 
 # To support montecarlo...
-# Normally like to use just import and explicitly name the module.
-from random import *
+import random
 
 #===globals======================
 modname="pyslice"
@@ -244,8 +243,7 @@ class Pyslice:
 
   # Runs the command *com in a new thread.
   def start_thread_process(self, *com):
-      # This is really dumb and so I think I am doing it wrong, but it works.
-      com = string.join(com[1:], '')
+      com = string.join(com, ' ')
       chstdin,chstdouterr = os.popen4(com)
       fo = open('pyslice.log', 'w')
       fo.write(string.join(chstdouterr.readlines()))
@@ -297,7 +295,7 @@ class Pyslice:
         # Cheat by using list type
         var_list.append(".%s" % (variable,))
         # Find out distribution
-        distribution = configuration.get(variable, "distribution")
+        distribution = 'random.' + configuration.get(variable, "distribution")
         samples = configuration.getint(variable, "samples")
         for samp in range(samples):
           var_list.append(eval(distribution))
@@ -372,7 +370,7 @@ class Pyslice:
 
       os.chdir(abs_path)
 
-      a = _threading.Thread(target=self.start_thread_process,args=(program))
+      a = _threading.Thread(target=self.start_thread_process,args=(program,))
       a.start()
 
 
