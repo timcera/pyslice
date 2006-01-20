@@ -66,6 +66,9 @@ __version__="1.6.0"
 #--option args--
 debug_p = 0
 
+global input_file
+input_file = "pyslice.ini"
+
 #---positional args, default is empty---
 pargs = []    
 
@@ -141,10 +144,10 @@ class Pyslice:
     """
 
     # Can we find pyslice.ini?
-    pyslice_ini = os.path.join(os.getcwd(), "pyslice.ini")
+    pyslice_ini = os.path.join(os.getcwd(), input_file)
     if not os.access(pyslice_ini, os.F_OK | os.R_OK):
-      NotFound = "\n***\nThe pyslice.ini file was not found or not readable"
-      raise NotFound,"\npyslice.ini must be in the current directory\n***\n"
+      NotFound = "\n***\nThe %s file was not found or not readable" % (input_file,)
+      raise NotFound,"\n%s was not found or not readable\n***\n" % (input_file,)
 
     # Read it in.
     config_dict = ConfigParser.ConfigParser()
@@ -362,6 +365,7 @@ class Pyslice:
       # Walks the _template_path directory structure
       os.path.walk(_template_path, self.create_output, var_set)
 
+
       # Wait until there are less than max_threads.
       while _threading.activeCount() > max_threads:
         time.sleep(0.01)
@@ -375,15 +379,20 @@ class Pyslice:
 
 
 #=============================
-def main(args):
+def main(option_dict):
   main_x=Pyslice()
   main_x.run()
     
 #-------------------------
 if __name__ == '__main__':
   ftn = "main"
-  opts, pargs = getopt.getopt(sys.argv[1:], 'hvd',
-               ['help', 'version', 'debug'])
+
+  option_dict = {
+                 'debug':0,
+                 'file':'',
+                }
+  opts, pargs = getopt.getopt(sys.argv[1:], 'hvdf:',
+               ['help', 'version', 'debug', 'file='])
   for opt in opts:
     if opt[0] == '-h' or opt[0] == '--help':
       print modname+": version="+__version__
@@ -393,8 +402,14 @@ if __name__ == '__main__':
       print modname+": version="+__version__
       sys.exit(0)
     elif opt[0] == '-d' or opt[0] == '--debug':
-      debug_p = 1
+      option_dict['debug'] = 1
+      sys.argv.remove(opt[0])
+    elif opt[0] == '-f' or opt[0] == '--file':
+      option_dict['file'] = opt[1]
+      input_file = opt[1]
+      sys.argv.remove(opt[0])
+      sys.argv.remove(opt[1])
 
   #---make the object and run it---
-  main(pargs)
+  main(option_dict)
 
