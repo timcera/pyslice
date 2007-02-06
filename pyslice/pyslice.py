@@ -59,8 +59,8 @@ except ImportError:
 import random
 
 #===globals======================
-modname="pyslice"
-__version__="1.6.0"
+modname = "pyslice"
+__version__ = "1.6.0"
 
 
 #--option args--
@@ -86,12 +86,12 @@ def msg(txt):
 
 def debug(ftn, txt):
     if debug_p:
-      tmp=string.join([modname,'.',ftn,':',txt,'\n'],'')
-      sys.stdout.write(tmp)
-      sys.stdout.flush()
+        tmp = string.join([modname, '.', ftn, ':', txt, '\n'], '')
+        sys.stdout.write(tmp)
+        sys.stdout.flush()
 
 def fatal(ftn, txt):
-    tmp=string.join([modname,'.',ftn,':FATAL:',txt,'\n'],'')
+    tmp = string.join([modname, '.', ftn, ':FATAL:', txt, '\n'], '')
     raise SystemExit, tmp
  
 def usage():
@@ -104,14 +104,16 @@ def mask(charlist):
     which marks letters in charlist as "t" and ones not as "b".
     Used by 'istext' function to identify text files.
     """
-    mask=""
+    mask = ""
     for i in range(256):
-      if chr(i) in charlist: mask=mask+"t"
-      else: mask=mask+"b"
+        if chr(i) in charlist: 
+            mask = mask + "t"
+        else: 
+            mask = mask + "b"
     return mask
 
-ascii7bit=string.joinfields(map(chr, range(32,127)), "")+"\r\n\t\b"
-ascii7bit_mask=mask(ascii7bit)
+ascii7bit = string.joinfields(map(chr, range(32, 127)), "")+"\r\n\t\b"
+ascii7bit_mask = mask(ascii7bit)
 
 def istext(filep, check=1024, mask=ascii7bit_mask):
     """
@@ -120,13 +122,14 @@ def istext(filep, check=1024, mask=ascii7bit_mask):
     """
 
     try:
-      s=filep.read(check)
-      filep.close()
-      s=string.translate(s, mask)
-      if string.find(s, "b") != -1: return 0
-      return 1
+        s = filep.read(check)
+        filep.close()
+        s = string.translate(s, mask)
+        if string.find(s, "b") != -1: 
+            return 0
+        return 1
     except (AttributeError, NameError): # Other exceptions?
-      return istext(open(filep, "r"))
+        return istext(open(filep, "r"))
 
 
 #====================================
@@ -218,7 +221,8 @@ class Pyslice:
             output = open(outfilepath,'w')
             shutil.copystat(infilepath, outfilepath)
   
-            # Search for _keywordvarname_keyword and replace with appropriate value.
+            # Search for _keywordvarname_keyword and replace with appropriate
+            # value.
             while 1:
                 line = inputf.readline()
                 if not line: 
@@ -226,11 +230,15 @@ class Pyslice:
                 for variables in var_set[1:]:
                     var_name = variables[0]
                     var_value = variables[1]
-                    # compile re search for _keyword .* variable_name .* _keyword
-                    search_for = re.compile(re.escape(_keyword) + '(' + r'.*?' + var_name + r'.*?' + ')' + re.escape(_keyword))
+                    # compile re search for _keyword .* variable_name .*
+                    # _keyword
+                    search_for = re.compile(
+                        re.escape(_keyword) + '(' + r'.*?' + 
+                        var_name + r'.*?' + ')' + re.escape(_keyword))
                     # while there are still matchs available on the line
                     while search_for.search(line):
-                        # only have 1 group, but it returns a 2 item tuple, need [0]
+                        # only have 1 group, but it returns a 2 item tuple,
+                        # need [0]
                         match = search_for.search(line).groups()[0]
                         # replace variable name with number
                         match = string.replace(match, var_name, str(var_value))
@@ -247,7 +255,7 @@ class Pyslice:
     # Runs the command *com in a new thread.
     def start_thread_process(self, *com):
         com = string.join(com, ' ')
-        chstdin,chstdouterr = os.popen4(com)
+        chstdin, chstdouterr = os.popen4(com)
         fo = open('pyslice.log', 'w')
         fo.write(string.join(chstdouterr.readlines()))
         fo.close()
@@ -261,13 +269,20 @@ class Pyslice:
         ftn = "Pyslice.run"
         debug(ftn,"hello, world")
 
-        print "\n    Pyslice will replace all files in the output directories with the\n    same name as files in the template directory.  If this is not\n    what you want, move the files as necessary.  Pyslice also does\n    not check if the permutation schedule is the same and may not use\n    the same number of output directories from previous pyslice runs.\n" 
-        raw_input('Press any key to continue . . .')
-        print
+        raw_input("""
+        Pyslice will replace all files in the output directories with the same
+        name as files in the template directory.  If this is not what you want,
+        move the files as necessary.  Pyslice also does not check if the
+        permutation schedule is the same and may not use the same number of
+        output directories from previous pyslice runs. 
+
+        'Press any key to continue . . .'
+                  """)
 
         # Read the configuration file and set appropriate variables.
         configuration = self.read_config(4, 100, ["paths", "flags", "program"])
-        _template_path = self.dequote(configuration.get("paths", "template_path"))
+        _template_path = self.dequote(configuration.get("paths", 
+                                                        "template_path"))
         _output_path = self.dequote(configuration.get("paths", "output_path"))
         _keyword = self.dequote(configuration.get("flags", "keyword"))
         max_threads = configuration.getint("flags", "max_threads")
@@ -276,7 +291,8 @@ class Pyslice:
         flat_dirs = configuration.getboolean("flags", "flat_dirs")
         program = self.dequote(configuration.get("program", "program"))
 
-        # Remove the standard configuration sections to leave all of the variables.
+        # Remove the standard configuration sections to leave all of the
+        # variables.
         section_list = configuration.sections()
         del section_list[section_list.index("paths")]
         del section_list[section_list.index("flags")]
@@ -298,7 +314,8 @@ class Pyslice:
                 # Cheat by using list type
                 var_list.append(".%s" % (variable,))
                 # Find out distribution
-                distribution = 'random.' + configuration.get(variable, "distribution")
+                distribution = 'random.' + configuration.get(variable, 
+                                                             "distribution")
                 samples = configuration.getint(variable, "samples")
                 for samp in range(samples):
                     var_list.append(eval(distribution))
@@ -321,7 +338,7 @@ class Pyslice:
             if var_type == "list":
                 var_list.append(".%s" % (variable,))
                 for i in eval(configuration.get(variable, "values_list")):
-                  var_list.append(i)
+                    var_list.append(i)
 
             var_list = [str(i) for i in var_list]
             list_list.append(var_list)
@@ -331,9 +348,11 @@ class Pyslice:
         # This does the cartesian of all of the parameter values.
         pyspg_obj = pyspg.ParamParser(list_list)
 
-        # set will contain ['directory', [var, var_value], [var1, var1_value], ...]
+        # set will contain ['directory', [var, var_value], [var1, var1_value],
+        # ...]
         set = []
-        # Loop reorganizes the output from PySPG and retrieves the actual values.
+        # Loop reorganizes the output from PySPG and retrieves the actual
+        # values.
         while 1:
             tmp = []
             # Had to add the 'limit=None' in order to get directories created
@@ -348,13 +367,16 @@ class Pyslice:
                 break
 
         while 1:
-            inp =  raw_input('Current configuration results in %s permutations. Continue? (y/n) > ' % (len(set) - 1,))[0] 
+            inp =  raw_input(
+                'Configuration results in %s permutations. Continue? (y/n) > ' 
+                % (len(set) - 1,)
+                )[0] 
             if inp == 'n' or inp == 'N':
                 return
             if inp == 'y' or inp == 'Y':
                 break
 
-        for var_index,var_set in enumerate(set):
+        for var_index, var_set in enumerate(set):
             # Create label for output directories
             if flat_dirs:
                 _strtag = str(var_index).zfill(5)
@@ -374,13 +396,14 @@ class Pyslice:
 
             os.chdir(abs_path)
 
-            a = _threading.Thread(target=self.start_thread_process,args=(program,))
+            a = _threading.Thread(target=self.start_thread_process, 
+                                  args=(program,))
             a.start()
 
 
 #=============================
 def main(option_dict):
-    main_x=Pyslice()
+    main_x = Pyslice()
     main_x.run()
       
 #-------------------------
