@@ -61,7 +61,7 @@ import random
 
 #===globals======================
 modname = "pyslice"
-__version__ = "1.6.2"
+__version__ = "1.6.3"
 
 
 #--option args--
@@ -134,19 +134,21 @@ def istext(filep, check=1024, mask=ascii7bit_mask):
 
 
 # User-defined Exceptions
-class Error(Exception):
-    def __init__(self, message):
-        self.message = message
-
-class NumberConfigSectionsError(Error):
+class NumberConfigSectionsError(Exception):
     pass
 
-class ConfigFileNotFoundError(Error):
+class ConfigFileNotFoundError(Exception):
     pass
 
-class RequiredSectionNotFoundError(Error):
+class RequiredSectionNotFoundError(Exception):
     pass
         
+class NotValidTypeError(Exception):
+    pass
+
+class TemplatePathNotFoundError(Exception):
+    pass
+
 #====================================
 class Pyslice:
     #---class variables---
@@ -206,6 +208,7 @@ class Pyslice:
         return path
 
     def create_output(self, var_set, dirname, fnames):
+        print var_set, dirname, fnames
         try:
             os.makedirs(os.path.join(_output_path, _strtag))
         except OSError:
@@ -315,6 +318,9 @@ class Pyslice:
         _template_path = os.path.abspath(self.path_correction(_template_path))
         _output_path = os.path.abspath(self.path_correction(_output_path))
 
+        if not os.path.exists(_template_path):
+            raise TemplatePathNotFoundError("The template path doesn't exists at '%s'" % (_template_path))
+
         # Put all variable names from configuration file into key_list.
         # Create list (from each variable) of lists (from start, stop, incr).
         list_list = []
@@ -332,26 +338,25 @@ class Pyslice:
                 samples = configuration.getint(variable, "samples")
                 for samp in range(samples):
                     var_list.append(eval(distribution))
-
             # Arithmetic
-            if var_type == "arithmetic":
+            elif var_type == "arithmetic":
                 var_list.append("+%s" % (variable,))
-
             # Geometric
-            if var_type == "geometric":
+            elif var_type == "geometric":
                 var_list.append("*%s" % (variable,))
+            # List
+            elif var_type == "list":
+                var_list.append(".%s" % (variable,))
+                for i in eval(configuration.get(variable, "values_list")):
+                    var_list.append(i)
+            else:
+                raise NotValidTypeError("'%s' is not a valid type - ['arithmetic', 'geometric', 'list', or 'montecarlo']" % (var_type,))
 
             # Arithmetic and Geometric types have the same variables
             if var_type == "arithmetic" or var_type == "geometric":
                 var_list.append(configuration.getfloat(variable, "start"))
                 var_list.append(configuration.getfloat(variable, "stop"))
                 var_list.append(configuration.getfloat(variable, "increment"))
-
-            # List
-            if var_type == "list":
-                var_list.append(".%s" % (variable,))
-                for i in eval(configuration.get(variable, "values_list")):
-                    var_list.append(i)
 
             var_list = [str(i) for i in var_list]
             list_list.append(var_list)

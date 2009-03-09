@@ -20,10 +20,6 @@ OPTIONS:
     bdist               make a binary distribution
     clean               remove build temporaries
 
-    Additional commands:
-    test                run the test suite
-    doc                 build the documents
-
     Additional options:
     --help              this message
     
@@ -48,36 +44,8 @@ version=string.strip(open("VERSION").readline())
 exec_prefix=sys.exec_prefix
 #=============================
 
-#--------------------
-def debug(ftn,txt):
-    sys.stdout.write(modname+'.'+ftn+':'+txt+'\n')
-    sys.stdout.flush()
-    
-#--------------------
-def fatal(ftn,txt):
-    sys.stdout.write(string.join([modname,'.',ftn,':FATAL:',txt,'\n'],''))
-    sys.stdout.flush()
-    sys.exit(1)
-
-#--------------------
-def usage():
-    print __doc__
-
-#--------------------
-def do_test():
-    ftn="do_test"
-    debug(ftn,"begin")
-    os.system("cd test; go")
-
 #----------------------
-def do_doc():
-    ftn="do_doc"
-    debug(ftn,"begin")
-    os.system("cd doc; go")
-
-#----------------------
-def main():
-    setup (#---meta-data---
+setup (#---meta-data---
            name = "pyslice"
            ,version = version
            ,description = "pyslice"
@@ -101,26 +69,3 @@ def main():
 
            )
 #==============================
-if __name__ == '__main__':
-    opts,pargs=getopt.getopt(sys.argv[1:],'hv',
-                 ['help','version','exec-prefix'])
-    for opt in opts:
-        if opt[0]=='-h' or opt[0]=='--help':
-            usage()
-            sys.exit(0)
-        elif opt[0]=='-v' or opt[0]=='--version':
-            print modname+": version="+version
-        elif opt[0]=='--exec-prefix':
-            exec_prefix=opt[1]
-
-    for arg in pargs:
-        if arg=='test':
-            do_test()
-            sys.exit(0)
-        elif arg=='doc':
-            do_doc()
-            sys.exit(0)
-        else:
-            pass
-
-    main()
