@@ -45,6 +45,7 @@ EXAMPLES:
 """
 #===imports======================
 import sys, os, getopt, time, string
+import subprocess
 import os.path
 import re
 import ConfigParser
@@ -60,7 +61,7 @@ import random
 
 #===globals======================
 modname = "pyslice"
-__version__ = "1.6.0"
+__version__ = "1.6.2"
 
 
 #--option args--
@@ -132,6 +133,20 @@ def istext(filep, check=1024, mask=ascii7bit_mask):
         return istext(open(filep, "r"))
 
 
+# User-defined Exceptions
+class Error(Exception):
+    def __init__(self, message):
+        self.message = message
+
+class NumberConfigSectionsError(Error):
+    pass
+
+class ConfigFileNotFoundError(Error):
+    pass
+
+class RequiredSectionNotFoundError(Error):
+    pass
+        
 #====================================
 class Pyslice:
     #---class variables---
@@ -149,8 +164,7 @@ class Pyslice:
         # Can we find pyslice.ini?
         pyslice_ini = os.path.join(os.getcwd(), input_file)
         if not os.access(pyslice_ini, os.F_OK | os.R_OK):
-            NotFound = "\n***\nThe %s file was not found or not readable" % (input_file,)
-            raise NotFound,"\n%s was not found or not readable\n***\n" % (input_file,)
+            raise ConfigFileNotFound("%s was not found or not readable ***" % (input_file,))
   
         # Read it in.
         config_dict = ConfigParser.ConfigParser()
@@ -159,12 +173,10 @@ class Pyslice:
         # Is pyslice.ini minimally error free?
         num_sections = len(config_dict.sections())
         if num_sections < min_sections or num_sections > max_sections:
-            ConfigFile = "\n***\nThe pyslice.ini file has an incorrect number of sections"
-            raise ConfigFile, "\npyslice.ini must have between %d and %d sections.\n***\n" % (min_sections, max_sections)
+            raise NumberConfigSectionsError("pyslice.ini must have between %d and %d sections." % (min_sections, max_sections))
         for sec in req_sections_list:
             if not config_dict.has_section(sec):
-                NoSection = "\n***\nThe pyslice.ini file is missing a required section"
-                raise NoSection,"\npyslice.ini requires the [%s] section.\n***\n" % sec
+                raise RequiredSectionNotFoundError("pyslice.ini requires the [%s] section." % sec)
     
         # Return pyslice.ini as dictionary.
         return config_dict
@@ -255,7 +267,8 @@ class Pyslice:
     # Runs the command *com in a new thread.
     def start_thread_process(self, *com):
         com = string.join(com, ' ')
-        chstdin, chstdouterr = os.popen4(com)
+        p = subprocess.Popen(com, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True)
+        (chstdin, chstdouterr) = (p.stdin, p.stdout)
         fo = open('pyslice.log', 'w')
         fo.write(string.join(chstdouterr.readlines()))
         fo.close()

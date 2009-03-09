@@ -137,10 +137,10 @@ def transformXYZ(ls,xFormula="x",yFormula="y",zFormula="z"):
          ]
 
 try:
- import Numeric
+ import numpy
 except:
   import sys
-  sys.stderr.write("Numeric Package Not found...\n")
+  sys.stderr.write("numpy Package Not found...\n")
   sys.stderr.write("Not histogram capability present...\n")
 else:
  def histogram(data, nbins,maxboxsize=10000,minx=-1e64,maxx=1e64):
