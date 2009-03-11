@@ -61,7 +61,7 @@ import random
 
 #===globals======================
 modname = "pyslice"
-__version__ = "1.6.3"
+__version__ = "1.6.4"
 
 
 #--option args--
@@ -208,7 +208,6 @@ class Pyslice:
         return path
 
     def create_output(self, var_set, dirname, fnames):
-        print var_set, dirname, fnames
         try:
             os.makedirs(os.path.join(_output_path, _strtag))
         except OSError:
@@ -238,10 +237,7 @@ class Pyslice:
   
             # Search for _keywordvarname_keyword and replace with appropriate
             # value.
-            while 1:
-                line = inputf.readline()
-                if not line: 
-                    break
+            for line in inputf:
                 for variables in var_set[1:]:
                     var_name = variables[0]
                     var_value = variables[1]
@@ -270,8 +266,16 @@ class Pyslice:
     # Runs the command *com in a new thread.
     def start_thread_process(self, *com):
         com = string.join(com, ' ')
-        p = subprocess.Popen(com, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True)
+        if os.name != 'nt':
+            p = subprocess.Popen(com, shell=True, stdin=subprocess.PIPE,
+                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True)
+        else:
+            # close_fds is not supported on Windows
+            p = subprocess.Popen(com, shell=True, stdin=subprocess.PIPE,
+                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        
         (chstdin, chstdouterr) = (p.stdin, p.stdout)
+
         fo = open('pyslice.log', 'w')
         fo.write(string.join(chstdouterr.readlines()))
         fo.close()
@@ -371,7 +375,8 @@ class Pyslice:
         set = []
         # Loop reorganizes the output from PySPG and retrieves the actual
         # values.
-        while 1:
+
+        for iter in pyspg_obj:
             tmp = []
             # Had to add the 'limit=None' in order to get directories created
             # for the last variable.  Is this a bug in PySPG?
@@ -379,20 +384,20 @@ class Pyslice:
             for i in pyspg_obj.actual_values.items():
                 tmp.append(i)
             set.append(tmp)
-            try:
-                pyspg_obj.next()
-            except StopIteration:
-                break
 
         while 1:
             inp =  raw_input(
-                'Configuration results in %s permutations. Continue? (y/n) > ' 
+                '''Configuration results in %s permutations. Continue? (y/n) > ''' 
                 % (len(set) - 1,)
-                )[0] 
-            if inp == 'n' or inp == 'N':
-                return
+                )
+            if not inp:
+                continue
+            inp = inp[0]
             if inp == 'y' or inp == 'Y':
                 break
+            if inp == 'n' or inp == 'N':
+                return
+            continue
 
         for var_index, var_set in enumerate(set):
             # Create label for output directories
