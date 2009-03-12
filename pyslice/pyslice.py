@@ -61,7 +61,7 @@ import random
 
 #===globals======================
 modname = "pyslice"
-__version__ = "1.6.4"
+__version__ = "1.6.5"
 
 
 #--option args--
@@ -388,7 +388,7 @@ class Pyslice:
         while 1:
             inp =  raw_input(
                 '''Configuration results in %s permutations. Continue? (y/n) > ''' 
-                % (len(set) - 1,)
+                % (len(set),)
                 )
             if not inp:
                 continue
