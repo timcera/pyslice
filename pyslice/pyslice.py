@@ -166,7 +166,7 @@ class Pyslice:
         # Can we find pyslice.ini?
         pyslice_ini = os.path.join(os.getcwd(), input_file)
         if not os.access(pyslice_ini, os.F_OK | os.R_OK):
-            raise ConfigFileNotFound("%s was not found or not readable ***" % (input_file,))
+            raise ConfigFileNotFoundError("%s was not found or not readable ***" % (input_file,))
   
         # Read it in.
         config_dict = ConfigParser.ConfigParser()
