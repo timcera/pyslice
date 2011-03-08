@@ -1,0 +1,6 @@
+
+# Blank lines and
+# simple comments are allowed
+1|    {water_level} {flow}
+4|              {flow} compared to {water_level}
+210|     {water_level}
