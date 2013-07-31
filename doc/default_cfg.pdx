@@ -1,9 +1,0 @@
-=cfg
-banner==<table width="100%"><tr><td><A href="http://pyslice.sourceforge.net">Pyslice</A></td><td><A href="http://sourceforge.net"> <IMG align="right" src="http://sourceforge.net/sflogo.php?group_id=33368" width="88" height="31" border="0" alt="SourceForge Logo"></td></tr></table></A>
-author = Tim Cera
-author_email= timcera@earthlink.net
-body==<BODY BGCOLOR="#ffffff" TEXT="#000000"  LINK="#0000ff" VLINK="#990099" ALINK="#FF0000">
-robots==none
-toc_p=1
-numbered_heads_p=1
-=end cfg

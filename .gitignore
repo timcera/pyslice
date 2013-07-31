@@ -1,0 +1,9 @@
+*.pyc
+_build/*
+_build
+build
+build/*
+__pycache__
+__pycache__/*
+dist
+dist/*

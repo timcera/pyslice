@@ -1,50 +1,53 @@
-=include default_cfg.pdx
-=cfg
-title=pyslice User Manual
-toc_p=1
-=end cfg
-=include article_style.pdx
+.. Manual
 
-=head1 Overview
+===========
+User Manual
+===========
 
-Pyslice creates input data sets from a template, replacing variables
-in the template files with a set of values.  It then runs the desired
-model against each created data set, keeping simultaneous model runs
-below a specified threshold or submitting jobs to a seperate queueing
-software.  It is an ideal program when hundreds of runs are required.
-Example uses would be for calibration or sensitivity analysis.  The
-input data set creation feature can easily be setup to create
-thousands of data sets.
+Overview
+========
 
-=head1 Example
-See the example directory under the pyslice install directory for an
-example pyslice.ini, template_path (equal to 'input_template), and output_path (equal to 'output') directories.  To
-run the example, type 'python ../pyslice.py' (or './go' which does the same thing) from within the 'example' directory.  
+Pyslice creates input data sets from a template, replacing variables in the
+template files with a set of values.  It then runs the desired model against
+each created data set, keeping simultaneous model runs below a specified
+threshold or submitting jobs to a seperate queueing software.  It is an ideal
+program when hundreds of runs are required.  Example uses would be for
+calibration or sensitivity analysis.  The input data set creation feature can
+easily be setup to create thousands of data sets.
 
-=verbatim
+See the example directory under the pyslice install directory for an example
+pyslice.ini, template_path (equal to 'input_template), and output_path (equal
+to 'output') directories.  To run the example, type 'python ../pyslice.py' (or
+'./go' which does the same thing) from within the 'example' directory.  
+
+::
+
     cd pyslice
     cd example             # so that pyslice.py can find the pyslice.ini
     python ../pyslice.py   # or './go'
-=end 
 
-After answering the questions, directories will begin to appear in the 'example/output' directory based on template files in the 'example/input_template' directory and the configuration in 'pyslice.ini'.
+After answering the questions, directories will begin to appear in the
+'example/output' directory based on template files in the
+'example/input_template' directory and the configuration in 'pyslice.ini'.
 
-=head2 pyslice.ini
+Configuration File: pyslice.ini
+===============================
 Pyslice requires a configuration file named 'pyslice.ini'.  Sections
 are identified with square brackets.  Parameters are set within each
-section with the format 'parameter=value'.  This is a standard '*.ini' file described in the L<"http://www.python.org/doc/current/lib/module-ConfigParser.html","ConfigParser Documentation">.
+section with the format 'parameter=value'.  This is a standard '.ini' file described in the ConfigParser Documentation <"http://www.python.org/doc/current/lib/module-ConfigParser.html">.
 
-The 'pyslice.ini' file requires the
-sections, 'paths', 'flags', and 'program'.  There must be at least one
-variable section.  The variable section(s) can be named with any valid Python name (start with letter or underscore and can contain numbers, letters and underscores).
+The 'pyslice.ini' file requires the sections, 'paths', 'flags', and 'program'.
+There must be at least one variable section.  The variable section(s) can be
+named with any valid Python name (start with letter or underscore and can
+contain numbers, letters and underscores).
 
 The following example pyslice.ini will take all files in the
 template_path directory, replacing the variables 'flow', 'function',
 'pressure', and 'salinity' within each file.  Note that the set does
 not included the stop value.
 
-=head3 Example pyslice.ini
-=verbatim
+::
+
     [paths]
     # 'template_path' can contain any number of files.  Pyslice even
     #                 correctly handles binary files (just copies them)
@@ -53,7 +56,7 @@ not included the stop value.
     #               own sub-directories will be created.
     template_path=/path/to/directory/holding/the/template/datasets
     output_path=/path/to/where/output/directories/will/be/made
-
+    
     # [flags] identify global options
     # 'keyword' can be changed if '$$' means something in your datasets
     #           'keyword' is used to bracket the Python code to have
@@ -70,12 +73,12 @@ not included the stop value.
     keyword="$$"
     max_threads=8
     flat_dirs="N"
-
+    
     # [program] is the command you want run in each of the output 
     #           directories.
     [program]
     program="model -f "
-
+    
     # [flow] is set to 90, 92, 94, 96, 98
     # 'arithmetic' is (increment + previous_value) 
     [flow]
@@ -83,7 +86,7 @@ not included the stop value.
     start=90
     stop=100
     increment=2
-
+    
     # [function] is set to 5, 10, 20, 40
     # 'geometric' is (increment * previous_value)
     [function]
@@ -91,7 +94,7 @@ not included the stop value.
     start=5
     stop=41
     increment=2
-
+    
     # [pressure] is set to 1, 20, 24, 5, 8
     # 'list' takes the values in turn
     # 'value_type' can be int, float, or str
@@ -104,7 +107,7 @@ not included the stop value.
     value3=24
     value4=5
     value5=8
-
+    
     # [rstage] is set to 'samples' values taken from distribution
     # 'distribution' is the statistical distribution from the random 
     # module
@@ -151,66 +154,82 @@ not included the stop value.
     distribution=uniform(50, 1000000)
     samples=100
 
-=end
-
-=head2 Templates
+Template Directory
+==================
 All files in the 'template_path' directory will be processed by
-replacing each instance of 'keyword' 'any valid Python statement
-containing the variables in pyslice.ini' 'keyword'.  The keyword
-string and variable names are specified in pyslice.ini.
+replacing each instance of
 
-An example template file,
-=verbatim
+ <keyword> <Python statement that can use variables in pyslice.ini> <keyword>
+
+in EVERY text file.  Binary files are copied, without processing, to the target directory.
+
+The keyword string (default is '$$') and variable names are specified in pyslice.ini.
+
+An example template file::
+
      T1 Simulation of salinity in the No Name River
      T2 with flow = $$flow$$
      # Any valid Python statement can be used
      F1 $$'%10.3f' % flow$$
      F2 46.58 $$'%10.3f' % (flow * 100)$$
      F3 $$flow$$ 35.679 $$'%d' % flow$$
-=end
 
 with the example 'pyslice.ini' file above, would result in the
 following file in the output_path/00000 directory if the flat_dirs
 option is set, otherwise an entire directory tree is created that
-incorporates the variable names and the values:
-=verbatim
+incorporates the variable names and the values::
+
      T1 Simulation of salinity in the No Name River
      T2 with flow = 90
      # Any valid Python statement can be used
      F1     90.000
      F2 46.58   9000.000
      F3 90 35.679 90
-=end
 
-and the next directory in output_path:
-=verbatim
+and the next directory in output_path::
+
      T1 Simulation of salinity in the No Name River
      T2 with flow = 92
      # Any valid Python statement can be used
      F1     92.000
      F2 46.58   9200.000
      F3 92 35.679 92
-=end
 
 ...etc.
 
-=table Table of example code in template files, 'flow' varies from 1 to 3 by 1 and 'water_level' varies from 9 to 12 by 1.
-=row B<Example Template Code> & B<Output Directory> & B<Flow Result> & B<Water Level Result>
-=row $$'%10.4f' % flow$$<BR>$$water_level$$ & 00000 & 1.0000 & 9
-=row  & 00001 & 1.0000 & 10
-=row  & 00002 & 1.0000 & 11
-=row  & 00003 & 2.0000 & 9
-=row  & 00004 & 2.0000 & 10
-=row  & 00005 & 2.0000 & 11
-=row $$'%10.4f' % (flow * 0.1)$$<BR>$$(water_level * 0.2)$$ & 00000 & 0.1000 & 1.8
-=row  & 00001 & 0.1000 & 2.0
-=row  & 00002 & 0.1000 & 2.2
-=row  & 00003 & 0.2000 & 1.8
-=row  & 00004 & 0.2000 & 2.0
-=row  & 00005 & 0.2000 & 2.2
-=end table
+Table of example code in template files, 'flow' varies from 1 to 3 by 1 and 'water_level' varies from 9 to 12 by 1.
 
-=head2 Tips and Tricks
++---------------------------+---------+-----------+------------------+
+|Example Template Code      |Output   |Flow Result|Water Level Result|
+|                           |Directory|Flow Result|Water Level Result|
++===========================+=========+===========+==================+
+| | $$'%10.4f' % flow$$     |00000    |1.0000     |9                 |
+| | $$water_level$$         +---------+-----------+------------------+
+|                           |00001    |1.0000     |10                |
+|                           +---------+-----------+------------------+
+|                           |00002    |1.0000     |11                |
+|                           +---------+-----------+------------------+
+|                           |00003    |2.0000     |9                 |
+|                           +---------+-----------+------------------+
+|                           |00004    |2.0000     |10                |
+|                           +---------+-----------+------------------+
+|                           |00005    |2.0000     |11                |
++---------------------------+---------+-----------+------------------+
+| | $$'%10.4f' % (flow*.1)$$|00000    |0.1000     |1.8               |
+| | $$(water_level*0.2)$$   +---------+-----------+------------------+
+|                           |00001    |0.1000     |2.0               |
+|                           +---------+-----------+------------------+
+|                           |00002    |0.1000     |2.2               |
+|                           +---------+-----------+------------------+
+|                           |00003    |0.2000     |1.8               |
+|                           +---------+-----------+------------------+
+|                           |00004    |0.2000     |2.0               |
+|                           +---------+-----------+------------------+
+|                           |00005    |0.2000     |2.2               |
++---------------------------+---------+-----------+------------------+
+
+Tips and Tricks
+===============
 If you want a model data set with a constant value, just manipulate
 the start and end values.
 If you want several repetitions of the entire parameterization create
@@ -220,26 +239,32 @@ study.
 Another solution to obtain multiple repetitions is rerun pyslice with
 different output directories.
 
-=head1 Mini Python Reference
-=head2 Format
+Mini Python Reference: String Formatting
+========================================
 
-L<"http://www.python.org","Python"> controls the format of a number through the following syntax:
+Python controls the format of a number through the following syntax:
 
-C<'format_string' % number>
+'format_string' % number
 
 If you want to make a calculation you must enclose the calculation in
 '()'.
 
 Python number formatting is illustrated in the following table:
-=table Table of Python format strings
-=row B<Format> & B<Format String> & B<Definition> & B<Example> & B<Result>
-=row Floating point & C<'%m.nf'> & m=total width<BR>n=places after decimal & C<'%10.3f' % 12.2> & C<    12.200>
-=row Integer & C<'%md'> & m=total width & C<'%10d' % 12.2> & C<        12>
-=end table
 
-For additional detail refer to L<"http://docs.python.org/lib/typesseq-strings.html#l2h-211","String Formatting Operations">.
++----------------+---------+------------------------+-----------------+-----------+
+| Format         | Format  | Definition             | Example         | Result    |
+|                | String  |                        |                 |           |
++================+=========+========================+=================+===========+
+| Floating point | '%m.nf' | m=total width          | '%10.3f' % 12.2 | 12.200    |
+|                |         | n=places after decimal |                 |           |
++----------------+---------+------------------------+-----------------+-----------+
+| Integer        | '%md'   | m=total width          | '%10d' % 12.2   |        12 |
++----------------+---------+------------------------+-----------------+-----------+
 
-=head1 Users Manual Disclaimer
+For additional detail refer to Python String Formatting Operations <"http://docs.python.org/lib/typesseq-strings.html#l2h-211">.
+
+Users Manual Disclaimer
+-----------------------
 I have manual writers block.  Frankly if anyone can figure out how to
 operate pyslice from this manual, they are smarter than I am.  :-)  I
 really want suggestions about how to make this clearer.  Send me a

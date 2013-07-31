@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-# pyslice.py 
+
+from __future__ import print_function
+
+# pyslice.py
 #    Copyright (C) 2001  Tim Cera timcera@earthlink.net
 #    http://home.earthlink.net/~timcera
 #
@@ -20,10 +23,10 @@
 
 """
 NAME:
-    pyslice.py  
+    pyslice.py
 
 SYNOPSIS:
-    pyslice.py [options] 
+    pyslice.py [options]
 
 DESCRIPTION:
     Pyslice creates input data sets from information in pyslice.ini
@@ -38,7 +41,7 @@ OPTIONS:
 
 EXAMPLES:
     1. As standalone
-        pyslice.py 
+        pyslice.py
     2. As library
         import pyslice
         ...
@@ -48,7 +51,7 @@ import sys, os, getopt, time, string
 import subprocess
 import os.path
 import re
-import ConfigParser
+import configparser
 import shutil
 import filecmp
 import pyslice_lib.PySPG as pyspg
@@ -73,7 +76,7 @@ global input_file
 input_file = "pyslice.ini"
 
 #---positional args, default is empty---
-pargs = []    
+pargs = []
 
 #---other---
 
@@ -96,10 +99,10 @@ def debug(ftn, txt):
 
 def fatal(ftn, txt):
     tmp = string.join([modname, '.', ftn, ':FATAL:', txt, '\n'], '')
-    raise SystemExit, tmp
- 
+    raise SystemExit(tmp)
+
 def usage():
-    print __doc__
+    print(__doc__)
 
 
 def mask(charlist):
@@ -110,26 +113,26 @@ def mask(charlist):
     """
     mask = ""
     for i in range(256):
-        if chr(i) in charlist: 
+        if chr(i) in charlist:
             mask = mask + "t"
-        else: 
+        else:
             mask = mask + "b"
     return mask
 
-ascii7bit = string.joinfields(map(chr, range(32, 127)), "")+"\r\n\t\b"
+ascii7bit = string.joinfields(list(map(chr, list(range(32, 127)))), "")+"\r\n\t\b"
 ascii7bit_mask = mask(ascii7bit)
 
 def istext(filep, check=1024, mask=ascii7bit_mask):
     """
     Returns true if the first check characters in file
-    are within mask, false otherwise. 
+    are within mask, false otherwise.
     """
 
     try:
         s = filep.read(check)
         filep.close()
         s = string.translate(s, mask)
-        if string.find(s, "b") != -1: 
+        if string.find(s, "b") != -1:
             return 0
         return 1
     except (AttributeError, NameError): # Other exceptions?
@@ -176,7 +179,7 @@ class Pyslice:
         if not os.access(pyslice_ini, os.F_OK | os.R_OK):
             raise ConfigFileNotFoundError("%s was not found or not readable ***" % (input_file,))
         # Read it in.
-        config_dict = ConfigParser.ConfigParser()
+        config_dict = configparser.ConfigParser()
         config_dict.read(pyslice_ini)
 
         # Is pyslice.ini minimally error free?
@@ -279,7 +282,7 @@ class Pyslice:
                     if len(words) == 1:
                         linetemplate = words[0]
                         blocklen = 1
-                    
+
                     # if template includes | ... too hot
                     # right now MUST include block length
                     if len(words) > numargs:
@@ -297,7 +300,7 @@ class Pyslice:
                     if '~' == linetemplate[1]:
                         # Only want to open file once by checking dictionary
                         lookupno, filename = words[0].split()[1:3]
-                        lookupno = lookupno.split('~')[1] 
+                        lookupno = lookupno.split('~')[1]
                         try:
                             speciallines[filename]
                         except KeyError:
@@ -317,7 +320,7 @@ class Pyslice:
                         line_sub = linetemplate.format(**var_dict)
 
                     for blockline in range(blocklen):
-                        linein = inputf.next()
+                        linein = next(inputf)
                         nline = []
                         for index, char in enumerate(line_sub):
                             if char == '*':
@@ -373,19 +376,19 @@ class Pyslice:
         debug(ftn,"hello, world")
 
         if len(sys.argv) == 1:
-            raw_input("""
+            input("""
             Pyslice will replace all files in the output directories with the same
             name as files in the template directory.  If this is not what you want,
             move the files as necessary.  Pyslice also does not check if the
             permutation schedule is the same and may not use the same number of
-            output directories from previous pyslice runs. 
+            output directories from previous pyslice runs.
 
             'Press any key to continue . . .'
                       """)
 
         # Read the configuration file and set appropriate variables.
         configuration = self.read_config(4, 100, ["paths", "flags", "program"])
-        _template_path = self.dequote(configuration.get("paths", 
+        _template_path = self.dequote(configuration.get("paths",
                                                         "template_path"))
         _output_path = self.dequote(configuration.get("paths", "output_path"))
         _keyword = self.dequote(configuration.get("flags", "keyword"))
@@ -433,7 +436,7 @@ class Pyslice:
                 # Cheat by using list type
                 var_list.append(".%s" % (variable,))
                 # Find out distribution
-                distribution = 'random.' + configuration.get(variable, 
+                distribution = 'random.' + configuration.get(variable,
                                                              "distribution")
                 samples = configuration.getint(variable, "samples")
                 for samp in range(samples):
@@ -477,7 +480,7 @@ class Pyslice:
             # Had to add the 'limit=None' in order to get directories created
             # for the last variable.  Is this a bug in PySPG?
             tmp.append(pyspg_obj.directory_tree(limit=None))
-            for i in pyspg_obj.actual_values.items():
+            for i in list(pyspg_obj.actual_values.items()):
                 tmp.append(i)
             set.append(tmp)
 
@@ -487,7 +490,7 @@ class Pyslice:
                     break
             except IndexError:
                 pass
-            inp =  raw_input(
+            inp =  input(
                 '''Configuration results in %s permutations. Continue? (y/n) > '''
                 % (len(set),)
                 )
@@ -522,7 +525,7 @@ class Pyslice:
 
             os.chdir(abs_path)
 
-            a = _threading.Thread(target=self.start_thread_process, 
+            a = _threading.Thread(target=self.start_thread_process,
                                   args=(program,))
             a.start()
 
@@ -544,11 +547,11 @@ if __name__ == '__main__':
                  ['help', 'version', 'debug', 'file='])
     for opt in opts:
         if opt[0] == '-h' or opt[0] == '--help':
-            print modname+": version="+__version__
+            print(modname+": version="+__version__)
             usage()
             sys.exit(0)
         elif opt[0] == '-v' or opt[0] == '--version':
-            print modname+": version="+__version__
+            print(modname+": version="+__version__)
             sys.exit(0)
         elif opt[0] == '-d' or opt[0] == '--debug':
             option_dict['debug'] = 1

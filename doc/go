@@ -1,5 +1,0 @@
-../pyslice.py -h > pyslice.help
-pdx2html.py index.pdx
-pdx2html.py deshist.pdx
-pdx2html.py manual.pdx
-pdx2html.py devguide.pdx
