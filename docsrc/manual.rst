@@ -52,7 +52,7 @@ not included the stop value.
     # 'template_path' can contain any number of files.  Pyslice even
     #                 correctly handles binary files (just copies them)
     #                 and permissions.
-    # 'output_path' is the directory were the output datasets, in their
+    # 'output_path' is the directory where the output datasets, in their
     #               own sub-directories will be created.
     template_path=/path/to/directory/holding/the/template/datasets
     output_path=/path/to/where/output/directories/will/be/made
@@ -239,8 +239,8 @@ study.
 Another solution to obtain multiple repetitions is rerun pyslice with
 different output directories.
 
-Mini Python Reference: String Formatting
-========================================
+Mini Python Reference: Old Style String Formatting
+==================================================
 
 Python controls the format of a number through the following syntax:
 
@@ -251,15 +251,17 @@ If you want to make a calculation you must enclose the calculation in
 
 Python number formatting is illustrated in the following table:
 
-+----------------+---------+------------------------+-----------------+-----------+
-| Format         | Format  | Definition             | Example         | Result    |
-|                | String  |                        |                 |           |
-+================+=========+========================+=================+===========+
-| Floating point | '%m.nf' | m=total width          | '%10.3f' % 12.2 | 12.200    |
-|                |         | n=places after decimal |                 |           |
-+----------------+---------+------------------------+-----------------+-----------+
-| Integer        | '%md'   | m=total width          | '%10d' % 12.2   |        12 |
-+----------------+---------+------------------------+-----------------+-----------+
++----------+---------+----------------+-----------------+-----------+
+| Format   | Format  | Definition     | Example         | Result    |
+|          | String  |                |                 |           |
++==========+=========+================+=================+===========+
+| Floating | '%m.nf' | m=total width  | '%10.3f' % 12.2 | 12.200    |
+| point    | '%m.nf' | m=total width  | '%10.3f' % 12.2 | 12.200    |
+|          |         | n=places after |                 |           |
+|          |         | decimal        |                 |           |
++----------+---------+----------------+-----------------+-----------+
+| Integer  | '%md'   | m=total width  | '%10d' % 12.2   |        12 |
++----------+---------+----------------+-----------------+-----------+
 
 For additional detail refer to Python String Formatting Operations <"http://docs.python.org/lib/typesseq-strings.html#l2h-211">.
 

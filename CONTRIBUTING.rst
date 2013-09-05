@@ -5,7 +5,37 @@ Contributing
 Contributions are welcome, and they are greatly appreciated! Every
 little bit helps, and credit will always be given. 
 
-You can contribute in many ways:
+Development is managed on bitbucket at
+   https://bitbucket.org/timcera/pyslice/overview.
+
+Architecture
+============
+The overall process:
+
++ Parses pyslice.ini file.  'self.read_config()'
++ All quotes within strings in pyslice.ini are removed.  'self.dequote()'
++ All paths are corrected to match the seperator of host machine.  
+  'self.path_correction()'
++ Create cartesian of sets for variables specified in pyslice.conf. 
+  Now handled by PySPG.
++ Asks user if number of runs is appropriate. If 'n' then bail.
++ Loops on the sets in the cartesian.
+
+  * Loops across all files in template directory.
+  
+    - Copy any binary files, continue to next file template directory.
+      'istext()'
+    - For across variable names in pyslice.ini for each line in the file.
+  
+      + Replace all 
+        'keyword' 'Python statement containing variable name' 'keyword' 
+        with the evaluation of the Python statement, replacing variable 
+        name with correct number from cartesian set.
+      + Write out new line to correct output directory and output file.
+    - If number of thread is greater than max_processes, wait.
+    - Create new thread, use 'os.popen4' to pull output and error from the
+      program and put in 'pyslice.log'.
+
 
 Types of Contributions
 ----------------------
