@@ -15,15 +15,19 @@ if sys.argv[-1] == 'publish':
 readme = open('README.rst').read()
 history = open('CHANGES.rst').read().replace('.. :changelog:', '')
 
-pkgname = 'Pyslice'
+pkgname = 'pyslice'
 modname = 'setup.py'
 version = open("VERSION").readline().strip()
 exec_prefix = sys.exec_prefix
+
+install_requires = [
+        'six',
+        ]
 #=============================
 
 #----------------------
 setup(  # ---meta-data---
-    name="Pyslice",
+    name="pyslice",
     version=version,
     description="Pyslice is a templating engine to easily create data sets for parametric modeling.",
     long_description=readme + '\n\n' + history,
@@ -33,6 +37,7 @@ setup(  # ---meta-data---
     url="http://timcera.bitbucket.org",
     license="GPL2",
 
+    install_requires=install_requires,
     packages=['pyslice',
         'pyslice/pyslice_lib',
         'pyslice/pyslice_lib/PySPG'],

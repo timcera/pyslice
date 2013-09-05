@@ -10,8 +10,10 @@
 import sys
 from math import *
 
+from six import Iterator
 
-class SPGIterator:
+
+class SPGIterator(Iterator):
 
     """
     This is a subsidiary abstract class for the ParamParser one.  It defines the iteration type in the constructor. Must be subclassed (it's abstract)
@@ -39,7 +41,7 @@ class SPGIterator:
         """
         pass
 
-    def next(self):
+    def __next__(self):
         self.index += 1
         if self.index == len(self.data):
             raise StopIteration

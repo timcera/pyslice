@@ -46,12 +46,12 @@ EXAMPLES:
         import pyslice
         ...
 """
+
 #===imports======================
 import sys
 import os
 import getopt
 import time
-import string
 import subprocess
 import os.path
 import re
@@ -120,39 +120,34 @@ def usage():
 
 def mask(charlist):
     """
-    Construct a mask suitable for string.translate,
+    Construct a mask suitable for s.translate,
     which marks letters in charlist as "t" and ones not as "b".
     Used by 'istext' function to identify text files.
     """
-    mask = ""
+    maskvar = ""
     for i in range(256):
         if chr(i) in charlist:
-            mask = mask + "t"
+            maskvar = maskvar + "t"
         else:
-            mask = mask + "b"
-    return mask
+            maskvar = maskvar + "b"
+    return maskvar
 
 ascii7bit = "".join(
     list(map(chr, list(range(32, 127))))) + "\r\n\t\b"
 ascii7bit_mask = mask(ascii7bit)
 
 
-def istext(filep, check=1024, mask=ascii7bit_mask):
+def istext(filename, check=1024, mask=ascii7bit_mask):
     """
     Returns true if the first check characters in file
     are within mask, false otherwise.
     """
-
-    try:
+    with open(filename, 'r') as filep:
         s = filep.read(check)
-        filep.close()
-        s = string.translate(s, mask)
-        if string.find(s, "b") != -1:
-            return 0
-        return 1
-    except (AttributeError, NameError):  # Other exceptions?
-        return istext(open(filep, "r"))
-
+    s = s.translate(mask)
+    if s.find("b") != -1:
+        return 0
+    return 1
 
 def assignment(var1, var2):
     try:
@@ -212,7 +207,8 @@ class Pyslice:
         num_sections = len(config_dict.sections())
         if num_sections < min_sections or num_sections > max_sections:
             raise NumberConfigSectionsError(
-                "pyslice.ini must have between %d and %d sections." % (min_sections, max_sections))
+                "pyslice.ini must have between %d and %d sections." %
+                (min_sections, max_sections))
         for sec in req_sections_list:
             if not config_dict.has_section(sec):
                 raise RequiredSectionNotFoundError(
@@ -226,8 +222,8 @@ class Pyslice:
             This corrects a mistake that I would commonly make.
 
         """
-        in_str = string.replace(in_str, '\'', '')
-        in_str = string.replace(in_str, '\"', '')
+        in_str = in_str.replace('\'', '')
+        in_str = in_str.replace('\"', '')
         return in_str
 
     def path_correction(self, path):
@@ -237,8 +233,8 @@ class Pyslice:
         platform running the script.
 
         """
-        path = string.replace(path, "/", os.sep)
-        path = string.replace(path, "\\", os.sep)
+        path = path.replace("/", os.sep)
+        path = path.replace("\\", os.sep)
         if path[-1] == "/" or path[-1] == "\\":
             path = path[:-1]
         return path
@@ -361,8 +357,8 @@ class Pyslice:
                         for var_name in var_dict:
                             if var_name in matches:
                                 # replace variable name with number
-                                match = string.replace(
-                                    matches, var_name, str(var_dict[var_name]))
+                                match = matches.replace(
+                                    var_name, str(var_dict[var_name]))
                                 # evaluate Python statement with eval
                                 match = eval(match)
                                 # replace variable with calculated value
@@ -381,17 +377,24 @@ class Pyslice:
     def start_thread_process(self, *com):
         com = ' '.join(com)
         if os.name != 'nt':
-            p = subprocess.Popen(com, shell=True, stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True)
+            p = subprocess.Popen(com,
+                                 shell=True,
+                                 stdin=subprocess.PIPE,
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT,
+                                 close_fds=True)
         else:
             # close_fds is not supported on Windows
-            p = subprocess.Popen(com, shell=True, stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(com,
+                                 rshell=True,
+                                 stdin=subprocess.PIPE,
+                                 stdout=subprocess.PIPE,
+                                 stderr=subprocess.STDOUT)
 
         (chstdin, chstdouterr) = (p.stdin, p.stdout)
 
         fo = open('pyslice.log', 'w')
-        fo.write(' '.join(chstdouterr.readlines()))
+        fo.write(' '.join(str(i) for i in chstdouterr.readlines()))
         fo.close()
 
     def run(self):
@@ -406,14 +409,20 @@ class Pyslice:
         debug(ftn, "hello, world")
 
         if len(sys.argv) == 1:
-            toss = raw_input("""
-            Pyslice will replace all files in the output directories with the same
-            name as files in the template directory.  If this is not what you want,
-            move the files as necessary.  Pyslice also does not check if the
-            permutation schedule is the same and may not use the same number of
-            output directories from previous pyslice runs.
 
-            'Press any key to continue . . .' """)
+            toss = """
+            Pyslice will replace all files in the output directories
+            with the same name as files in the template directory.  If
+            this is not what you want, move the files as necessary.  Pyslice
+            also does not check if the permutation schedule is the same and
+            may not use the same number of output directories from previous
+            pyslice runs.
+
+            'Press any key to continue . . .' """
+            try:
+                toss_again = raw_input(toss)
+            except NameError:
+                toss_again = input(toss)
 
         # Read the configuration file and set appropriate variables.
         configuration = self.read_config(4, 100, ["paths", "flags", "program"])
@@ -491,7 +500,8 @@ class Pyslice:
             if var_type == "arithmetic" or var_type == "geometric":
                 var_list.append(configuration.getfloat(variable, "start"))
                 var_list.append(configuration.getfloat(variable, "stop"))
-                var_list.append(configuration.getfloat(variable, "increment"))
+                var_list.append(configuration.getfloat(variable,
+                    "increment"))
 
             var_list = [str(i) for i in var_list]
             list_list.append(var_list)
@@ -522,10 +532,12 @@ class Pyslice:
                     break
             except IndexError:
                 pass
-            inp = input(
-                '''Configuration results in %s permutations. Continue? (y/n) > '''
-                % (len(set),)
-            )
+
+            toss = '''Configuration results in %s permutations. Continue? (y/n) > ''' % (len(set),)
+            try:
+                inp = raw_input(toss)
+            except NameError:
+                inp = input(toss)
             if not inp:
                 continue
             inp = inp[0]

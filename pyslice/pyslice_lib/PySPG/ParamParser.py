@@ -12,20 +12,19 @@ release_date = "Thu Jan 07 01:24:18 CEST 2005"
 # Please visit http://www.gnu.org
 #
 
-import sys
-import string
 from . import ParamIterators
 
 #:::~ Important: for constants and functions already defined
 from math import *
 
+from six import Iterator, advance_iterator
 #
 #
 #
 #
 
 
-class ParamParser:
+class ParamParser(Iterator):
 
     """
       Initialized with a list of strings, each one containing commands.
@@ -112,12 +111,12 @@ class ParamParser:
         self.entities = [i_iter.get_varname()
                          for i_iter in self.iterator_list]
 
-    def next(self):
+    def __next__(self):
         """
          next() iterates over the possible values raising a StopIteration when the possible values
           are exhausted
         """
-        if self.is_reset == True:
+        if self.is_reset:
             self.is_reset = False
             return self.actual_values
 
@@ -125,7 +124,7 @@ class ParamParser:
             last_iterated = i_iter
             varname = i_iter.get_varname()
             try:
-                self.actual_values[varname] = i_iter.next()
+                self.actual_values[varname] = advance_iterator(i_iter)
 
                 break
             except StopIteration:
