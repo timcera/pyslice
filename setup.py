@@ -1,64 +1,51 @@
-"""
-NAME:
-    setup.py
-
-SYNOPSIS:
-    python setup.py [options] [command]
-
-
-DESCRIPTION:
-    Using distutils "setup", build, install, or make tarball of the package.
-
-OPTIONS:
-    See Distutils documentation for details on options and commands.
-    Common commands:
-    build               build the package, in preparation for install
-    install             install module(s)/package(s) [runs build if needed]
-    install_data        install datafiles (e.g., in a share dir)
-    install_scripts     install executable scripts (e.g., in a bin dir)
-    sdist               make a source distribution
-    bdist               make a binary distribution
-    clean               remove build temporaries
-
-    Additional options:
-    --help              this message
-
-EXAMPLES:
-    cd mydir
-    (cp myfile-0.1.tar.gz here)
-    gzip -cd myfile-0.1.tar.gz | tar xvf -
-    cd myfile-0.1
-    python setup.py build
-    python setup.py test
-    python setup.py install
-    python setup.py sdist
-"""
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 #===configuration=============
-import os,sys,re,getopt,shutil
-from setuptools import setup
+import os, sys, re, getopt, shutil
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
-pkgname='Pyslice'
-modname='setup.py'
-version=open("VERSION").readline().strip()
-exec_prefix=sys.exec_prefix
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist upload')
+    sys.exit()
+
+readme = open('README.rst').read()
+history = open('CHANGES.rst').read().replace('.. :changelog:', '')
+
+pkgname = 'pyslice'
+modname = 'setup.py'
+version = open("VERSION").readline().strip()
+exec_prefix = sys.exec_prefix
+
+install_requires = [
+        'six',
+        ]
 #=============================
 
 #----------------------
-setup (#---meta-data---
-           name = "Pyslice"
-           ,version = version
-           ,description = "Pyslice is a templating engine to easily create data sets for parametric modeling."
-           ,author = "Tim Cera"
-           ,author_email = "tim@cerazone.net"
-           ,url="http://timcera.bitbucket.org"
-           ,license = "GPL"
+setup(  # ---meta-data---
+    name="pyslice",
+    version=version,
+    description="Pyslice is a templating engine to easily create data sets for parametric modeling.",
+    long_description=readme + '\n\n' + history,
 
-           #---scripts,modules and packages---
-           ,scripts=['pyslice.py']
-##            ,py_modules = ['']
-           ,packages = ['pyslice_lib'
-                       ,'pyslice_lib/PySPG']
+    author="Tim Cera, P.E.",
+    author_email="tim@cerazone.net",
+    url="http://timcera.bitbucket.org",
+    license="GPL2",
 
-           )
+    install_requires=install_requires,
+    packages=['pyslice',
+        'pyslice/pyslice_lib',
+        'pyslice/pyslice_lib/PySPG'],
+    include_package_data=True,
+    zip_safe=False,
+    entry_points={
+        'console_scripts':
+            ['pyslice=pyslice:main']
+        }
+    )
 #==============================
