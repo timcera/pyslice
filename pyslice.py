@@ -47,21 +47,36 @@ EXAMPLES:
         ...
 """
 #===imports======================
-import sys, os, getopt, time, string
+import sys
+import os
+import getopt
+import time
+import string
 import subprocess
 import os.path
 import re
-import configparser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 import shutil
 import filecmp
-import pyslice_lib.PySPG as pyspg
+import math
+# To support montecarlo...
+import random
+
 try:
     import threading as _threading
 except ImportError:
     import dummy_threading as _threading
 
-# To support montecarlo...
-import random
+import pyslice_lib.PySPG as pyspg
+
+# 2/3 compatibility
+try:
+    input = raw_input
+except NameError:
+    pass
 
 #===globals======================
 modname = "pyslice"
@@ -457,9 +472,15 @@ class Pyslice:
 
             # Arithmetic and Geometric types have the same variables
             if var_type == "arithmetic" or var_type == "geometric":
-                var_list.append(configuration.getfloat(variable, "start"))
-                var_list.append(configuration.getfloat(variable, "stop"))
-                var_list.append(configuration.getfloat(variable, "increment"))
+                start = configuration.getfloat(variable, "start")
+                stop = configuration.getfloat(variable, "stop")
+                increment = configuration.getfloat(variable, "increment")
+
+                for i in [start, stop, increment]:
+                    tmpi = i
+                    if i == math.floor(i):
+                        tmpi = int(i)
+                    var_list.append(tmpi)
 
             var_list = [str(i) for i in var_list]
             list_list.append(var_list)

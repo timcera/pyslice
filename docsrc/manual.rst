@@ -102,11 +102,7 @@ not included the stop value.
     [pressure]
     type=list
     value_type=int
-    value1=1
-    value2=20
-    value3=24
-    value4=5
-    value5=8
+    values_list=[1,20,24,5,8]
     
     # [rstage] is set to 'samples' values taken from distribution
     # 'distribution' is the statistical distribution from the random 
