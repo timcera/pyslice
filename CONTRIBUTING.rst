@@ -90,7 +90,7 @@ Ready to contribute? Here's how to set up `pyslice` for local development.
 1. Fork the `pyslice` repo on bitbucket.
 2. Clone your fork locally::
 
-    $ git clone git@bitbucket.org:your_github_login/pyslice.git
+    $ git clone git@bitbucket.org:your_bitbucket_login/pyslice.git
 
 3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
 
