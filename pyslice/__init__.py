@@ -398,7 +398,7 @@ class Pyslice:
         else:
             # close_fds is not supported on Windows
             p = subprocess.Popen(com,
-                                 rshell=True,
+                                 shell=True,
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.STDOUT)
