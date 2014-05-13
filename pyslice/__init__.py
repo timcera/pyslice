@@ -300,7 +300,7 @@ class Pyslice:
                 escaped_keyword + '(.*?)' + escaped_keyword)
 
             for lineraw in inputf:
-                line = lineraw.rstrip(LINEENDS)
+                line = lineraw
                 # Active comments first...
                 if CODE == line[:len(CODE)]:
                     filetotalizer.append(line)
@@ -379,11 +379,7 @@ class Pyslice:
                 else:
                     filetotalizer.append(line)
             inputf.close()
-            if line == lineraw:
-                output.write(os.linesep.join(filetotalizer[:-1]))
-                output.write(line)
-            else:
-                output.write(os.linesep.join(filetotalizer))
+            output.write(''.join(filetotalizer))
             output.close()
 
     # Runs the command *com in a new thread.
