@@ -385,6 +385,9 @@ class Pyslice:
     # Runs the command *com in a new thread.
     def start_thread_process(self, *com):
         com = ' '.join(com)
+        # PYSLICE can be used in subprocess to do different things if script
+        # is run outside of Pyslice.
+        os.environ['PYSLICE'] = '1'
         if os.name != 'nt':
             p = subprocess.Popen(com,
                                  shell=True,
