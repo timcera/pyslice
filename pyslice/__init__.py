@@ -379,7 +379,11 @@ class Pyslice:
                 else:
                     filetotalizer.append(line)
             inputf.close()
-            output.write(os.linesep.join(filetotalizer))
+            if line == lineraw:
+                output.write(os.linesep.join(filetotalizer[:-1]))
+                output.write(line)
+            else:
+                output.write(os.linesep.join(filetotalizer))
             output.close()
 
     # Runs the command *com in a new thread.
