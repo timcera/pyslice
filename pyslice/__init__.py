@@ -55,6 +55,7 @@ import time
 import subprocess
 import os.path
 import re
+import shlex
 try:
     import configparser
 except ImportError:
@@ -278,113 +279,109 @@ class Pyslice:
 
             # Is this a text file?  If so, just open as a template
             if istext(infilepath):
-                inputf = open(infilepath, 'r')
+                with open(infilepath, 'r') as inputf:
+                    with open(outfilepath, 'w') as output:
+                        shutil.copystat(infilepath, outfilepath)
+
+                        filetotalizer = []
+                        # Search for _keywordvarname_keyword and replace with appropriate
+                        # value.
+                        escaped_keyword = re.escape(_keyword)
+                        keyword_search = re.compile(escaped_keyword)
+                        search_for = re.compile(
+                            escaped_keyword + '(.*?)' + escaped_keyword)
+
+                        for lineraw in inputf:
+                            line = lineraw
+                            # Active comments first...
+                            if CODE == line[:len(CODE)]:
+                                filetotalizer.append(line)
+                                words = line.split('|')
+                                # There is the possibility that a datafile would WANT to use |
+                                # So fix words up to have 1 or two items...
+
+                                # if block length is missing... too cold
+                                if len(words) == 1:
+                                    linetemplate = words[0]
+                                    blocklen = 1
+
+                                # if template includes | ... too hot
+                                # right now MUST include block length
+                                if len(words) > numargs:
+                                    linetemplate = words[:-2].join('|')
+                                    blocklen = int(words[-1])
+
+                                # ... just right
+                                if len(words) == 2:
+                                    linetemplate = words[0]
+                                    blocklen = int(words[1])
+
+                                linetemplate = linetemplate[len(CODE):]
+
+                                # Process special directives
+                                if '~' == linetemplate[1]:
+                                    # Only want to open file once by checking dictionary
+                                    lookupno, filename = words[0].split()[1:3]
+                                    lookupno = lookupno.split('~')[1]
+                                    try:
+                                        speciallines[filename]
+                                    except KeyError:
+                                        speciallines.setdefault(filename, {})
+                                        for linespecial in open(filename, 'r'):
+                                            # Handle comments and blank lines
+                                            if '#' == linespecial[0]:
+                                                continue
+                                            recno, sep, stemplate = linespecial.partition(
+                                                '|')
+                                            if not stemplate:
+                                                continue
+                                            stemplate = stemplate.rstrip(LINEENDS)
+                                            speciallines[filename][recno] = stemplate
+                                    line_sub = speciallines[filename][
+                                        lookupno].format(**var_dict)
+
+                                else:
+                                    line_sub = linetemplate.format(**var_dict)
+
+                                for blockline in range(blocklen):
+                                    linein = next(inputf)
+                                    nline = []
+                                    for index, char in enumerate(line_sub):
+                                        if char == '*':
+                                            nline.append(linein[index])
+                                        else:
+                                            nline.append(line_sub[index])
+                                    filetotalizer.append(''.join(nline))
+                            elif keyword_search.search(line):
+                                matchline = line
+                                for matches in search_for.findall(matchline):
+                                    for var_name in var_dict:
+                                        if var_name in matches:
+                                            # replace variable name with number
+                                            match = matches.replace(
+                                                var_name, str(var_dict[var_name]))
+                                            # evaluate Python statement with eval
+                                            match = eval(match)
+                                            # replace variable with calculated value
+                                            matchwhat = re.escape(
+                                                _keyword + matches + _keyword)
+                                            matchline = re.sub(
+                                                matchwhat, str(match), matchline, count=1)
+                                filetotalizer.append(matchline)
+                            else:
+                                filetotalizer.append(line)
+                        output.write(''.join(filetotalizer))
             else:
                 try:
                     equalfiles = filecmp.cmp(infilepath, outfilepath)
                 except OSError:
-                    equalfiles = False
-                if not equalfiles:
                     shutil.copy(infilepath, outfilepath)
                 continue
-
-            output = open(outfilepath, 'w')
-            shutil.copystat(infilepath, outfilepath)
-
-            filetotalizer = []
-            # Search for _keywordvarname_keyword and replace with appropriate
-            # value.
-            escaped_keyword = re.escape(_keyword)
-            keyword_search = re.compile(escaped_keyword)
-            search_for = re.compile(
-                escaped_keyword + '(.*?)' + escaped_keyword)
-
-            for lineraw in inputf:
-                line = lineraw
-                # Active comments first...
-                if CODE == line[:len(CODE)]:
-                    filetotalizer.append(line)
-                    words = line.split('|')
-                    # There is the possibility that a datafile would WANT to use |
-                    # So fix words up to have 1 or two items...
-
-                    # if block length is missing... too cold
-                    if len(words) == 1:
-                        linetemplate = words[0]
-                        blocklen = 1
-
-                    # if template includes | ... too hot
-                    # right now MUST include block length
-                    if len(words) > numargs:
-                        linetemplate = words[:-2].join('|')
-                        blocklen = int(words[-1])
-
-                    # ... just right
-                    if len(words) == 2:
-                        linetemplate = words[0]
-                        blocklen = int(words[1])
-
-                    linetemplate = linetemplate[len(CODE):]
-
-                    # Process special directives
-                    if '~' == linetemplate[1]:
-                        # Only want to open file once by checking dictionary
-                        lookupno, filename = words[0].split()[1:3]
-                        lookupno = lookupno.split('~')[1]
-                        try:
-                            speciallines[filename]
-                        except KeyError:
-                            speciallines.setdefault(filename, {})
-                            for linespecial in open(filename, 'r'):
-                                # Handle comments and blank lines
-                                if '#' == linespecial[0]:
-                                    continue
-                                recno, sep, stemplate = linespecial.partition(
-                                    '|')
-                                if not stemplate:
-                                    continue
-                                stemplate = stemplate.rstrip(LINEENDS)
-                                speciallines[filename][recno] = stemplate
-                        line_sub = speciallines[filename][
-                            lookupno].format(**var_dict)
-
-                    else:
-                        line_sub = linetemplate.format(**var_dict)
-
-                    for blockline in range(blocklen):
-                        linein = next(inputf)
-                        nline = []
-                        for index, char in enumerate(line_sub):
-                            if char == '*':
-                                nline.append(linein[index])
-                            else:
-                                nline.append(line_sub[index])
-                        filetotalizer.append(''.join(nline))
-                elif keyword_search.search(line):
-                    matchline = line
-                    for matches in search_for.findall(matchline):
-                        for var_name in var_dict:
-                            if var_name in matches:
-                                # replace variable name with number
-                                match = matches.replace(
-                                    var_name, str(var_dict[var_name]))
-                                # evaluate Python statement with eval
-                                match = eval(match)
-                                # replace variable with calculated value
-                                matchwhat = re.escape(
-                                    _keyword + matches + _keyword)
-                                matchline = re.sub(
-                                    matchwhat, str(match), matchline, count=1)
-                    filetotalizer.append(matchline)
-                else:
-                    filetotalizer.append(line)
-            inputf.close()
-            output.write(''.join(filetotalizer))
-            output.close()
 
     # Runs the command *com in a new thread.
     def start_thread_process(self, *com):
         com = ' '.join(com)
+        com = shlex.split(com)
         # PYSLICE can be used in subprocess to do different things if script
         # is run outside of Pyslice.
         os.environ['PYSLICE'] = '1'
@@ -405,9 +402,10 @@ class Pyslice:
 
         (chstdin, chstdouterr) = (p.stdin, p.stdout)
 
-        fo = open('pyslice.log', 'w')
-        fo.write(' '.join(str(i) for i in chstdouterr.readlines()))
-        fo.close()
+        if _keep_log is True:
+            with open('pyslice.log', 'w') as fo:
+                fo.write(' '.join(str(i) for i in chstdouterr.readlines()))
+
 
     def run(self):
         global _strtag
@@ -415,6 +413,7 @@ class Pyslice:
         global _keyword
         global _template_path
         global _exclude_list
+        global _keep_log
         global CODE
 
         ftn = "Pyslice.run"
@@ -459,6 +458,11 @@ class Pyslice:
         if max_threads <= 0:
             max_threads = total_processes
         flat_dirs = configuration.getboolean("flags", "flat_dirs")
+        try:
+            _keep_log = configuration.getboolean("flags", "keep_log")
+        except:
+            _keep_log = True
+
         program = self.dequote(configuration.get("program", "program"))
 
         # Remove the standard configuration sections to leave all of the
