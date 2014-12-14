@@ -71,15 +71,16 @@ try:
 except ImportError:
     import dummy_threading as _threading
 
-import pyslice_lib.PySPG as pyspg
+try:
+    import pyslice_lib.PySPG as pyspg
+except ImportError:
+    from .pyslice_lib import PySPG as pyspg
 
 # 2/3 compatibility
 try:
     input = raw_input
 except NameError:
     pass
-
-from .pyslice_lib import PySPG as pyspg
 
 #===globals======================
 modname = "pyslice"
