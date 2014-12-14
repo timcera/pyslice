@@ -35,8 +35,6 @@ setup(  # ---meta-data---
     author="Tim Cera, P.E.",
     author_email="tim@cerazone.net",
     url="http://timcera.bitbucket.org",
-    license="GPL2",
-
     install_requires=install_requires,
     packages=['pyslice',
         'pyslice/pyslice_lib',
@@ -46,6 +44,22 @@ setup(  # ---meta-data---
     entry_points={
         'console_scripts':
             ['pyslice=pyslice:main']
-        }
+        },
+    classifiers=[
+          # Get strings from
+          # http://pypi.python.org/pypi?%3Aaction=list_classifiers
+          'Development Status :: 5 - Production/Stable',
+          'Intended Audience :: Science/Research',
+          'Intended Audience :: End Users/Desktop',
+          'Environment :: Console',
+          'License :: OSI Approved :: BSD License',
+          'Natural Language :: English',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 3',
+          'Topic :: Scientific/Engineering :: Information Analysis',
+          'Topic :: Scientific/Engineering',
+          'Topic :: Text Processing :: General',
+      ],
     )
 #==============================
