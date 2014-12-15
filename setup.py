@@ -37,8 +37,8 @@ setup(  # ---meta-data---
     url="http://timcera.bitbucket.org",
     install_requires=install_requires,
     packages=['pyslice',
-        'pyslice/pyslice_lib',
-        'pyslice/pyslice_lib/PySPG'],
+        'pyslice.pyslice_lib',
+        'pyslice.pyslice_lib.PySPG'],
     include_package_data=True,
     zip_safe=False,
     entry_points={
