@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #
 # :::~ Copyright (C) 2005 by Claudio J. Tessone <tessonec@imedea.uib.es>
 #
@@ -11,6 +12,8 @@ import sys
 from math import *
 
 from six import Iterator
+from six.moves import map
+from six.moves import range
 
 
 class SPGIterator(Iterator):
@@ -79,7 +82,7 @@ class ItOperator(SPGIterator):
         str_rest = command.split(separator)
         self.varname = str_rest[0].strip()
         try:
-            [xmin, xmax, xstep] = map(eval, str_rest[1:])
+            [xmin, xmax, xstep] = list(map(eval, str_rest[1:]))
         except:
             raise ValueError("Line: '{0}' incorrect number of parameters (found {1}) for iterator       '{2}' over '{3}'".format(
                 command, len(str_rest) - 1, self.it_type, self.varname))
@@ -189,7 +192,7 @@ class ItRepetition(SPGIterator):
     def set_command(self, command, separator=" "):
         try:
             self.varname = False
-            self.data = range(eval(command))
+            self.data = list(range(eval(command)))
         except:
             raise ValueError(
                 "Line: '{0}' iterator '#' could not eval()".format(command))

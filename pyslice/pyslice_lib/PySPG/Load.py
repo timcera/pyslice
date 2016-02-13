@@ -1,6 +1,9 @@
+from __future__ import absolute_import
 #! /usr/bin/python
 
 from . import PyGrace
+from six.moves import map
+from six.moves import range
 
 
 def loadData(s):
@@ -13,7 +16,7 @@ def loadData(s):
         sys.exit()
     try:
         return [
-            map(float, strLine.replace("D", "E").strip().split())
+            list(map(float, strLine.replace("D", "E").strip().split()))
             for strLine in fIn.readlines() if strLine.find("nan") == -1 and strLine.strip() != "" and strLine.find("inf") == -1
         ]
     except:
@@ -179,7 +182,7 @@ else:
                 sys.stderr.write("\n".join([
                                            "%s = %s" % (
                                                str(k), str(locals()[k]))
-                                           for k in locals().keys() if k is not "data"
+                                           for k in list(locals().keys()) if k is not "data"
                                            ]) + "\n"
                                  )
 

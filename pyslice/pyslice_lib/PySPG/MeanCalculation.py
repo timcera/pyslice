@@ -1,6 +1,7 @@
 #! /usr/bin/python
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 #
 #
@@ -16,6 +17,7 @@ from math import *
 
 from .Load import *
 from .ParamParser import *
+from six.moves import range
 
 
 class MeanCalculation:
@@ -55,7 +57,7 @@ class MeanCalculation:
             sys.exit()
 
         try:
-            columnas = range(len(all_data[0]))
+            columnas = list(range(len(all_data[0])))
         except:
 
             sys.stderr.write("mean-> error! in directory '%s'\n" % dirname)
@@ -65,7 +67,7 @@ class MeanCalculation:
 
         for i in all_data:
             tmpDict[i[0]] = 0
-        valuesX = tmpDict.keys()
+        valuesX = list(tmpDict.keys())
         valuesX.sort()
 
         xDict = {}

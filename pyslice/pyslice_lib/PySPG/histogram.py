@@ -1,8 +1,10 @@
 #! /usr/bin/python
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 import math
+from six.moves import range
 
 class SPGHistogram:
     __boxsize = 1
@@ -19,14 +21,14 @@ class SPGHistogram:
 
         nearest = self.__get_nearest(value)
 
-        if self.__dict.has_key(nearest):
+        if nearest in self.__dict:
             return self.__dict[nearest] / self.__elements
         else:
             return 0.
 
     def add_value(self, value):
         nearest = self.__get_nearest(value)
-        if self.__dict.has_key(nearest):
+        if nearest in self.__dict:
             self.__dict[nearest] += 1.
         else:
             self.__dict[nearest] = 1.
@@ -35,7 +37,7 @@ class SPGHistogram:
     def __str__(self):
         if self.__elements == 0:
             return " "
-        keys = self.__dict.keys()
+        keys = list(self.__dict.keys())
         keys.sort()
         return "\n".join([
                          "%f\t%f" % (k, (self.__dict[k] / self.__elements))
@@ -48,7 +50,7 @@ class SPGHistogram:
     def get_dataset(self):
         if self.__elements == 0:
             return [[0, 0]]
-        keys = self.__dict.keys()
+        keys = list(self.__dict.keys())
         keys.sort()
         return [
             [k, (self.__dict[k] / self.__elements)]

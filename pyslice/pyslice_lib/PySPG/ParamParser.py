@@ -1,6 +1,7 @@
 #! /usr/bin/python
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 version_number = "1.9.9"
 release_date = "Thu Jan 07 01:24:18 CEST 2005"

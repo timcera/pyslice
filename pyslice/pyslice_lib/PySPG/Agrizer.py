@@ -1,6 +1,7 @@
 #! /usr/bin/python
 
 from __future__ import print_function
+from __future__ import absolute_import
 
 #
 #
@@ -26,6 +27,7 @@ from .ParamParser import *
 from . import Load
 from math import *
 from . import PyGrace
+from six.moves import range
 
 
 class Agrizer(ParamParser):
@@ -186,7 +188,7 @@ class Agrizer(ParamParser):
                         ls[i + 1] - ls[i]
                         for i in range(len(ls) - 1)
                     ]
-                import histogram
+                from . import histogram
 
                 hist = histogram.SPGHistogram(self.box_size)
 
@@ -218,7 +220,7 @@ class Agrizer(ParamParser):
             else:
                 self.agr(pattern, patternname)
 
-            flag = self.next()
+            flag = next(self)
         self.reset()
 
     def dohist(self, pattern, mustCalculateDif=0, patternname=None, autoscale="xy"):
@@ -226,5 +228,5 @@ class Agrizer(ParamParser):
 
         while flag:
             self.hist(pattern, mustCalculateDif, patternname)
-            flag = self.next()
+            flag = next(self)
         self.reset()

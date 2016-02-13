@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 #! /usr/bin/python
 #
 #:::~ Author: Claudio J. Tessone <tessonec@imedea.uib.es>

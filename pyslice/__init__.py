@@ -1,25 +1,35 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+from __future__ import absolute_import
+from six.moves import map
+from six.moves import range
+from six.moves import input
 
 # pyslice.py
-#    Copyright (C) 2001  Tim Cera timcera@earthlink.net
-#    http://home.earthlink.net/~timcera
+#    Copyright (C) 2001  Tim Cera tim@cerazone.net
 #
-#    This program is free software; you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation; either version 2 of the License, or
-#    (at your option) any later version.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name pyslice nor the
+#       names of its contributors may be used to endorse or promote products
+#       derived from this software without specific prior written permission.
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 NAME:
@@ -47,7 +57,7 @@ EXAMPLES:
         ...
 """
 
-#===imports======================
+# ===imports======================
 import sys
 import os
 import getopt
@@ -56,10 +66,7 @@ import subprocess
 import os.path
 import re
 import shlex
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+import six.moves.configparser as configparser
 import shutil
 import filecmp
 import math
@@ -71,10 +78,7 @@ try:
 except ImportError:
     import dummy_threading as _threading
 
-try:
-    import pyslice_lib.PySPG as pyspg
-except ImportError:
-    from .pyslice_lib import PySPG as pyspg
+from pyslice.pyslice_lib import PySPG as pyspg
 
 # 2/3 compatibility
 try:
@@ -82,22 +86,22 @@ try:
 except NameError:
     pass
 
-#===globals======================
+# ===globals======================
 modname = "pyslice"
 __version__ = "1.6.5"
 LINEENDS = '\r\n'
 
 
-#--option args--
+# --option args--
 debug_p = 0
 
 global input_file
 input_file = "pyslice.ini"
 
-#---positional args, default is empty---
+# ---positional args, default is empty---
 pargs = []
 
-#---other---
+# ---other---
 
 # Didn't want to have an infinite amount of jobs.
 # This is just for if user makes max_threads <= 0.
@@ -105,7 +109,7 @@ total_processes = 64
 numargs = 2
 speciallines = {}
 
-#===utilities====================
+# ===utilities====================
 
 
 def msg(txt):
@@ -160,6 +164,7 @@ def istext(filename, check=1024, mask=ascii7bit_mask):
         return 0
     return 1
 
+
 def assignment(var1, var2):
     try:
         return var1
@@ -188,18 +193,18 @@ class NotValidTypeError(Exception):
 class TemplatePathNotFoundError(Exception):
     pass
 
-#====================================
+# ====================================
 
 
 class Pyslice:
-    #---class variables---
-    #--------------------------
+    # ---class variables---
+    # --------------------------
 
     def __init__(self):
-        #---instance variables---
+        # ---instance variables---
         pass
 
-    #--------------------------
+    # --------------------------
     def read_config(self, min_sections, max_sections, req_sections_list):
         """ Reads the pyslice.ini file.
 
@@ -285,8 +290,8 @@ class Pyslice:
                         shutil.copystat(infilepath, outfilepath)
 
                         filetotalizer = []
-                        # Search for _keywordvarname_keyword and replace with appropriate
-                        # value.
+                        # Search for _keywordvarname_keyword and replace with
+                        # appropriate value.
                         escaped_keyword = re.escape(_keyword)
                         keyword_search = re.compile(escaped_keyword)
                         search_for = re.compile(
@@ -298,8 +303,9 @@ class Pyslice:
                             if CODE == line[:len(CODE)]:
                                 filetotalizer.append(line)
                                 words = line.split('|')
-                                # There is the possibility that a datafile would WANT to use |
-                                # So fix words up to have 1 or two items...
+                                # There is the possibility that a datafile
+                                # would WANT to use | So fix words up to have
+                                # 1 or two items...
 
                                 # if block length is missing... too cold
                                 if len(words) == 1:
@@ -321,7 +327,8 @@ class Pyslice:
 
                                 # Process special directives
                                 if '~' == linetemplate[1]:
-                                    # Only want to open file once by checking dictionary
+                                    # Only want to open file once by checking
+                                    # dictionary
                                     lookupno, filename = words[0].split()[1:3]
                                     lookupno = lookupno.split('~')[1]
                                     try:
@@ -361,9 +368,11 @@ class Pyslice:
                                             # replace variable name with number
                                             match = matches.replace(
                                                 var_name, str(var_dict[var_name]))
-                                            # evaluate Python statement with eval
+                                            # evaluate Python statement with
+                                            # eval
                                             match = eval(match)
-                                            # replace variable with calculated value
+                                            # replace variable with calculated
+                                            # value
                                             matchwhat = re.escape(
                                                 _keyword + matches + _keyword)
                                             matchline = re.sub(
@@ -432,9 +441,9 @@ class Pyslice:
 
             'Press any key to continue . . .' """
             try:
-                toss_again = raw_input(toss)
-            except NameError:
                 toss_again = input(toss)
+            except NameError:
+                toss_again = eval(input(toss))
 
         # Read the configuration file and set appropriate variables.
         configuration = self.read_config(4, 100, ["paths", "flags", "program"])
@@ -557,9 +566,9 @@ class Pyslice:
 
             toss = '''Configuration results in %s permutations. Continue? (y/n) > ''' % (len(set),)
             try:
-                inp = raw_input(toss)
-            except NameError:
                 inp = input(toss)
+            except NameError:
+                inp = eval(input(toss))
             if not inp:
                 continue
             inp = inp[0]
@@ -578,7 +587,7 @@ class Pyslice:
 
             # Create the files and directories from the template
             # Walks the _template_path directory structure
-            #os.path.walk(_template_path, self.create_output, var_set)
+            # os.path.walk(_template_path, self.create_output, var_set)
             for root, dirs, files in os.walk(_template_path):
                 self.create_output(var_set, root, dirs, files)
 
@@ -595,7 +604,7 @@ class Pyslice:
             a.start()
 
 
-#=============================
+# =============================
 class Usage(Exception):
 
     def __init__(self, msg):
@@ -635,7 +644,7 @@ def main(argv=None):
             argv.remove(opt[0])
             argv.remove(opt[1])
 
-    #---make the object and run it---
+    # ---make the object and run it---
     main_x = Pyslice()
     main_x.run()
 

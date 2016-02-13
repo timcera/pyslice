@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+from __future__ import print_function
+from six.moves import range
 #!/usr/bin/python
 
 #
@@ -22,16 +25,16 @@ paramFile = "param.dat"
 
 
 def usage():
-    print "usage is: %s [options] executable" % sys.argv[0]
-    print
-    print ' -f param-file.dat : Reads parameters from param-file.dat \n\t\t (by default, "param.dat") '
-    print ' -i in-file.dat : The name of the file read by the executable \n\t\t(by default, "in.dat") '
-    print ' - : Reads parameters from standard input '
-    print ''
-    print 'Repetedly executes "executable". ',
-    print 'If you do not plan to change the name \nof the executable, you can directly modify the "execFile" variable \ninside this script'
-    print
-    print
+    print("usage is: %s [options] executable" % sys.argv[0])
+    print()
+    print(' -f param-file.dat : Reads parameters from param-file.dat \n\t\t (by default, "param.dat") ')
+    print(' -i in-file.dat : The name of the file read by the executable \n\t\t(by default, "in.dat") ')
+    print(' - : Reads parameters from standard input ')
+    print('')
+    print('Repetedly executes "executable". ', end=' ')
+    print('If you do not plan to change the name \nof the executable, you can directly modify the "execFile" variable \ninside this script')
+    print()
+    print()
 
 try:
     os.path.isdir(PySPGPATH)
@@ -58,6 +61,6 @@ except:
 
 
 for i in range(1, 9):
-    print i
+    print(i)
     mc = MeanCalculation(lsLines)
     mc.doit("out.dat", 0, i)

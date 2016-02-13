@@ -1,6 +1,8 @@
 #! /usr/bin/python
 
 from __future__ import print_function
+from __future__ import absolute_import
+from six.moves import map
 
 #
 # IMPLEMENTS A GRACE DATASET         ###########
@@ -55,22 +57,22 @@ class GraceDataSet:
         return "\n".join(
             [
                 "@    s" + str(self.name) + " " + a + " " + str(b)
-                for a, b in self.default.items()
+                for a, b in list(self.default.items())
             ]
         ) + "\n" + "\n".join(
             [
                 "@    s" + str(self.name) + " symbol " + a + " " + str(b)
-                for a, b in self.symbol.items()
+                for a, b in list(self.symbol.items())
             ]
         ) + "\n" + "\n".join(
             [
                 "@    s" + str(self.name) + " line " + a + " " + str(b)
-                for a, b in self.line.items()
+                for a, b in list(self.line.items())
             ]
         ) + "\n" + "\n".join(
             [
                 "@    s" + str(self.name) + " fill " + a + " " + str(b)
-                for a, b in self.fill.items()
+                for a, b in list(self.fill.items())
             ]
         )
 
@@ -214,48 +216,48 @@ class GraceGraph:
         return "\n".join(
             [
                 "@g" + str(self.name) + " " + a + " " + str(b)
-                for a, b in self.default.items()
+                for a, b in list(self.default.items())
             ]) + "\n@with g" + str(self.name) + "\n" + "\n".join(
             [
                 "@    world " + a + " " + str(b)
-                for a, b in self.world.items()
+                for a, b in list(self.world.items())
             ]) + "\n" + "\n".join(
             [
                 "@    view " + a + " " + str(b)
-                for a, b in self.view.items()
+                for a, b in list(self.view.items())
             ]) + "\n" + "\n".join(
             [
                 "@    title " + a + " " + str(b)
-                for a, b in self.title.items()
+                for a, b in list(self.title.items())
             ]) + "\n" + "\n".join(
             [
                 "@    subtitle " + a + " " + str(b)
-                for a, b in self.subtitle.items()
+                for a, b in list(self.subtitle.items())
             ]) + "\n" + "\n".join(
             [
                 "@    xaxes " + a + " " + str(b)
-                for a, b in self.xaxes.items()
+                for a, b in list(self.xaxes.items())
             ]) + "\n" + "\n".join(
             [
                 "@    yaxes " + a + " " + str(b)
-                for a, b in self.yaxes.items()
+                for a, b in list(self.yaxes.items())
             ]) + "\n" + "\n".join(
             [
                 "@    xaxis " + a + " " + str(b)
-                for a, b in self.xaxis.items()
+                for a, b in list(self.xaxis.items())
             ]
         ) + "\n" + "\n".join(
             [
                 "@    yaxis " + a + " " + str(b)
-                for a, b in self.yaxis.items()
+                for a, b in list(self.yaxis.items())
             ]) + "\n" + "\n".join(
             [
                 "@    legend " + a + " " + str(b)
-                for a, b in self.legend.items()
+                for a, b in list(self.legend.items())
             ]) + "\n" + "\n".join(
             [
                 "@    frame " + a + " " + str(b)
-                for a, b in self.frame.items()
+                for a, b in list(self.frame.items())
             ]
         ) + "\n"
 
@@ -321,17 +323,17 @@ class GraceDocument:
         return "\n".join(
             [
                 "@" + a + " " + str(b)
-                for a, b in self.default.items()
+                for a, b in list(self.default.items())
             ]
         ) + "\n" + "\n".join(
             [
                 "@page " + a + " " + str(b)
-                for a, b in self.page.items()
+                for a, b in list(self.page.items())
             ]
         ) + "\n" + "\n".join(
             [
                 "@map font " + str(a) + " to " + b + ", " + c
-                for a, (b, c) in self.map_font.items()
+                for a, (b, c) in list(self.map_font.items())
             ]
         ) + "\n" + "\n".join(
             [
@@ -339,7 +341,7 @@ class GraceDocument:
                 str(a) +
                 " to (" + str(b) + "," + str(
                     c) + "," + str(d) + "), " + str(e)
-                for a, ((b, c, d), e) in self.map_color.items()
+                for a, ((b, c, d), e) in list(self.map_color.items())
             ]
         )
 
@@ -415,7 +417,7 @@ class GraceDocument:
         miny = 1e10
         maxy = -1e10
 
-        for it in self.datasets.values():
+        for it in list(self.datasets.values()):
             colx = [a[0] for a in it.data]
             coly = [a[1] for a in it.data]
             if len(colx) > 0:
@@ -455,9 +457,9 @@ class GraceDocument:
 
         print(self)
         print(self.graph)
-        for i in self.datasets.keys():
+        for i in list(self.datasets.keys()):
             print(self.datasets[i])
-        for i in self.datasets.keys():
+        for i in list(self.datasets.keys()):
             print("@target G" + str(self.graph.name) + ".S" + str(i))
             print("@type " + str(self.datasets[i].default["type"]))
             print("\n".join(["\t".join(map(str, a)) for a in self.datasets[i].data]))
