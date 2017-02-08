@@ -34,7 +34,7 @@ setup(  # ---meta-data---
 
     author="Tim Cera, P.E.",
     author_email="tim@cerazone.net",
-    url="http://timcera.bitbucket.org",
+    url="http://timcera.bitbucket.org/pyslice/docsrc/index.html",
     install_requires=install_requires,
     packages=['pyslice',
         'pyslice.pyslice_lib',

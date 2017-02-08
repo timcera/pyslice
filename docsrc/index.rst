@@ -1,8 +1,11 @@
 .. include:: ../BADGES.rst
-Pyslice Documentation
-=====================
 
-This is the documentation for Pyslice, a templating tool focused on building data sets for simulations.
+.. _pyslice_documentation:  
+
+pyslice
+=======
+
+This is the documentation for pyslice, a templating tool focused on building data sets for simulations.
 
 Table of Contents
 -----------------
@@ -16,6 +19,6 @@ Table of Contents
    changes
    license
 
-Related Work
-------------
+Other Projects
+--------------
 http://timcera.bitbucket.org
