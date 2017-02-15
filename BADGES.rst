@@ -10,10 +10,6 @@
     :alt: Latest release
     :target: https://pypi.python.org/pypi/pyslice
 
-.. image:: https://img.shields.io/pypi/dm/pyslice.svg
-    :alt: PyPI downloads count
-    :target: https://pypi.python.org/pypi/pyslice
-
 .. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
     :alt: pyslice license
     :target: https://pypi.python.org/pypi/pyslice/
