@@ -28,6 +28,28 @@ from __future__ import absolute_import
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# ===imports======================
+import sys
+import os
+import getopt
+import time
+import subprocess
+import os.path
+import re
+import shlex
+import shutil
+import filecmp
+import math
+# To support montecarlo...
+import random
+
+try:
+    import threading as _threading
+except ImportError:
+    import dummy_threading as _threading
+
+import configparser as configparser
+
 from future import standard_library
 standard_library.install_aliases()
 from builtins import chr
@@ -37,6 +59,8 @@ from builtins import next
 from builtins import str
 from builtins import range
 from builtins import object
+
+from pyslice.pyslice_lib import PySPG as pyspg
 """
 NAME:
     pyslice.py
@@ -63,29 +87,6 @@ EXAMPLES:
         ...
 """
 
-# ===imports======================
-import sys
-import os
-import getopt
-import time
-import subprocess
-import os.path
-import re
-import shlex
-import shutil
-import filecmp
-import math
-# To support montecarlo...
-import random
-
-try:
-    import threading as _threading
-except ImportError:
-    import dummy_threading as _threading
-
-import configparser as configparser
-
-from pyslice.pyslice_lib import PySPG as pyspg
 
 # ===globals======================
 modname = "pyslice"
@@ -406,7 +407,6 @@ class Pyslice(object):
         os.environ['PYSLICE'] = '1'
         if os.name != 'nt':
             p = subprocess.Popen(com,
-                                 shell=True,
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.STDOUT,
@@ -414,16 +414,15 @@ class Pyslice(object):
         else:
             # close_fds is not supported on Windows
             p = subprocess.Popen(com,
-                                 shell=True,
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.STDOUT)
 
-        (_, chstdouterr) = (p.stdin, p.stdout)
+        chstdouterr = p.communicate()[0]
 
         if _keep_log is True:
             with open('pyslice.log', 'w') as fo:
-                fo.write(' '.join(str(i) for i in chstdouterr.readlines()))
+                fo.write(chstdouterr)
 
     def run(self):
         global _strtag
@@ -510,7 +509,7 @@ class Pyslice(object):
                 distribution = 'random.' + configuration.get(variable,
                                                              "distribution")
                 samples = configuration.getint(variable, "samples")
-                for samp in range(samples):
+                for _ in range(samples):
                     var_list.append(eval(distribution))
             # Arithmetic
             elif var_type == "arithmetic":
@@ -598,7 +597,7 @@ class Pyslice(object):
 
             # Wait until there are less than max_threads.
             while _threading.activeCount() > max_threads:
-                time.sleep(0.01)
+                time.sleep(0.1)
 
             abs_path = os.path.join(_output_path, _strtag)
 
