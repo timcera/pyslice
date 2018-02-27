@@ -11,6 +11,8 @@ from __future__ import absolute_import
 # Please visit www.gnu.org
 #
 
+from builtins import str
+from builtins import object
 import sys
 import os.path
 import os
@@ -19,7 +21,7 @@ from .ParamParser import *
 from math import *
 
 
-class Executor:
+class Executor(object):
     #
     # :::~ This variable specifies how many VARIABLEs will be kept off
     #      the directory heirarchy (NOTE THAT MUST HAVE A MINUS SIGN)

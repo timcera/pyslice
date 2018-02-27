@@ -11,6 +11,11 @@ from __future__ import absolute_import
 # Please visit www.gnu.org
 #
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import filter
+from builtins import str
+from builtins import object
 import sys
 import os.path
 
@@ -19,7 +24,7 @@ from . import Load
 from .ParamParser import *
 
 
-class MatrixPlotter:
+class MatrixPlotter(object):
 
     save_mtv = False
 

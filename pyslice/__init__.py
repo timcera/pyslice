@@ -28,6 +28,15 @@ from __future__ import absolute_import
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import chr
+from builtins import map
+from builtins import input
+from builtins import next
+from builtins import str
+from builtins import range
+from builtins import object
 """
 NAME:
     pyslice.py
@@ -74,7 +83,7 @@ try:
 except ImportError:
     import dummy_threading as _threading
 
-import ConfigParser as configparser
+import configparser as configparser
 
 from pyslice.pyslice_lib import PySPG as pyspg
 
@@ -189,7 +198,7 @@ class TemplatePathNotFoundError(Exception):
 # ====================================
 
 
-class Pyslice:
+class Pyslice(object):
     # ---class variables---
     # --------------------------
 
@@ -439,10 +448,7 @@ class Pyslice:
             pyslice runs.
 
             'Press any key to continue . . .' """
-            try:
-                _ = input(toss)
-            except NameError:
-                _ = eval(input(toss))
+            _ = input(toss)
 
         # Read the configuration file and set appropriate variables.
         configuration = self.read_config(4, 100, ["paths", "flags", "program"])
@@ -567,10 +573,7 @@ class Pyslice:
 
             toss = ('Configuration results in %s permutations. '
                     'Continue? (y/n) > ') % (len(set),)
-            try:
-                inp = input(toss)
-            except NameError:
-                inp = eval(input(toss))
+            inp = input(toss)
             if not inp:
                 continue
             inp = inp[0]

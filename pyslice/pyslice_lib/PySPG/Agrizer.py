@@ -19,6 +19,9 @@ from __future__ import absolute_import
 #
 #
 
+from builtins import next
+from builtins import str
+from builtins import range
 import sys
 import os.path
 import os
@@ -27,7 +30,6 @@ from .ParamParser import *
 from . import Load
 from math import *
 from . import PyGrace
-from six.moves import range
 
 
 class Agrizer(ParamParser):

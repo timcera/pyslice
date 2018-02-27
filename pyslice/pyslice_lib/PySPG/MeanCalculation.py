@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
 
 #
 #
@@ -12,15 +13,18 @@ from __future__ import absolute_import
 #
 #
 
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import sys
 from math import *
 
 from .Load import *
 from .ParamParser import *
-from six.moves import range
 
 
-class MeanCalculation:
+class MeanCalculation(object):
 
     """
       When a simulation is run with a given number of repetitions what is needed is a
@@ -93,7 +97,7 @@ class MeanCalculation:
             if nPoints[x] != 0:
                 dataOut.append(
                     [
-                        xDict[x][j] / nPoints[x]
+                        old_div(xDict[x][j], nPoints[x])
                         for j in columnas
                     ]
                 )

@@ -11,6 +11,10 @@ from __future__ import absolute_import
 # Please visit www.gnu.org
 #
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import filter
+from builtins import object
 from . import PyGrace
 from . import Load
 from .ParamParser import *
@@ -18,7 +22,7 @@ import sys
 import os.path
 
 
-class MultiAgrizer:
+class MultiAgrizer(object):
 
     def __init__(self, comm, var_name):
         """

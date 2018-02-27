@@ -2,13 +2,17 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
-from six.moves import map
+from __future__ import division
 
 #
 # IMPLEMENTS A GRACE DATASET         ###########
 #
 
-class GraceDataSet:
+from builtins import str
+from builtins import map
+from past.utils import old_div
+from builtins import object
+class GraceDataSet(object):
     basdefault = {
         "hidden": "false",
         "type": "xy",
@@ -80,7 +84,7 @@ class GraceDataSet:
 #
 # IMPLEMENTS A GRACE GRAPH           #########
 #
-class GraceGraph:
+class GraceGraph(object):
     bdefault = {
         " ": "on",
         "hidden": "false",
@@ -265,7 +269,7 @@ class GraceGraph:
 #
 # IMPLEMENTS A GRACE DOC        ################
 #
-class GraceDocument:
+class GraceDocument(object):
   #
   #:::~ Constants
     basdefault = {"version": 50100}
@@ -373,9 +377,9 @@ class GraceDocument:
             miny -= .5
             maxy += .5
         if not tickx:
-            tickx = (maxx - minx) / 4.
+            tickx = old_div((maxx - minx), 4.)
         if not ticky:
-            ticky = (maxy - miny) / 4.
+            ticky = old_div((maxy - miny), 4.)
 
         self.graph.world["xmin"] = minx
         self.graph.world["xmax"] = maxx
@@ -403,8 +407,8 @@ class GraceDocument:
         if scale is "Normal":
             propose1 = sign1 * int1 * 10 ** scale1
             propose2 = sign2 * int2 * 10 ** scale2
-            skip = abs((int1 * 10 ** scale1 - int2 * 10 ** scale2) / 4)
-            return propose2, propose1, propose1 / 4
+            skip = abs(old_div((int1 * 10 ** scale1 - int2 * 10 ** scale2), 4))
+            return propose2, propose1, old_div(propose1, 4)
         else:
             propose1 = 10 ** (scale1 + 1)
             propose2 = 10 ** (scale2 - 1)

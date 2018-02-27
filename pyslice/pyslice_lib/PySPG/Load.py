@@ -1,9 +1,12 @@
 from __future__ import absolute_import
+from __future__ import division
 #! /usr/bin/python
 
+from builtins import map
+from builtins import str
+from builtins import range
+from past.utils import old_div
 from . import PyGrace
-from six.moves import map
-from six.moves import range
 
 
 def loadData(s):
@@ -165,12 +168,12 @@ else:
         maxa = min(max(data), maxx)
 #  mina=min(data)
 #  maxa=max(data)
-        boxsize = min(maxboxsize, (maxa - mina) / nbins)
-        out = [0] * int(math.ceil((maxa - mina) / boxsize))
+        boxsize = min(maxboxsize, old_div((maxa - mina), nbins))
+        out = [0] * int(math.ceil(old_div((maxa - mina), boxsize)))
         import sys
         for idata in data:
             try:
-                pos = int(math.floor((idata - mina) / boxsize))
+                pos = int(math.floor(old_div((idata - mina), boxsize)))
                 if pos == len(out):
                     pos = len(out) - 1
                 sys.stderr.write("%d\n" % pos)
@@ -190,7 +193,7 @@ else:
         suma = Numeric.sum(out)
 
         out3 = [
-            x / suma for x in out
+            old_div(x, suma) for x in out
         ]
         out2 = []
 

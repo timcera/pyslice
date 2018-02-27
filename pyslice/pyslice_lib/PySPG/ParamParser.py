@@ -13,19 +13,20 @@ release_date = "Thu Jan 07 01:24:18 CEST 2005"
 # Please visit http://www.gnu.org
 #
 
+from builtins import object
+from builtins import next
 from . import ParamIterators
 
 #:::~ Important: for constants and functions already defined
 from math import *
 
-from six import Iterator, advance_iterator
 #
 #
 #
 #
 
 
-class ParamParser(Iterator):
+class ParamParser(object):
 
     """
       Initialized with a list of strings, each one containing commands.
@@ -125,7 +126,7 @@ class ParamParser(Iterator):
             last_iterated = i_iter
             varname = i_iter.get_varname()
             try:
-                self.actual_values[varname] = advance_iterator(i_iter)
+                self.actual_values[varname] = next(i_iter)
 
                 break
             except StopIteration:

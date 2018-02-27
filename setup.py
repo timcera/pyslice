@@ -23,6 +23,7 @@ exec_prefix = sys.exec_prefix
 install_requires = [
         'six',
         'parse',
+        'future',
         ]
 #=============================
 

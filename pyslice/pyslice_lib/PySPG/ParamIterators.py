@@ -8,19 +8,21 @@ from __future__ import absolute_import
 #            (see http://www.gnu.org)
 #
 #
+from builtins import map
+from builtins import range
+from builtins import object
 import sys
 from math import *
 
-from six import Iterator
-from six.moves import map
-from six.moves import range
 
-
-class SPGIterator(Iterator):
+class SPGIterator(object):
 
     """
-    This is a subsidiary abstract class for the ParamParser one.  It defines the iteration type in the constructor. Must be subclassed (it's abstract)
-    In principle there is no need to touch anything here (well, you can always improve the code) only you must subclass this object if you wish to add other iterator types
+    This is a subsidiary abstract class for the ParamParser one.  It defines
+    the iteration type in the constructor. Must be subclassed (it's abstract)
+    In principle there is no need to touch anything here (well, you can always
+    improve the code) only you must subclass this object if you wish to add
+    other iterator types
     """
 
     def __init__(self):

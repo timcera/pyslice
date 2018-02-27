@@ -2,11 +2,14 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
 
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import math
-from six.moves import range
 
-class SPGHistogram:
+class SPGHistogram(object):
     __boxsize = 1
     __dict = {}
     __elements = 0
@@ -22,7 +25,7 @@ class SPGHistogram:
         nearest = self.__get_nearest(value)
 
         if nearest in self.__dict:
-            return self.__dict[nearest] / self.__elements
+            return old_div(self.__dict[nearest], self.__elements)
         else:
             return 0.
 
@@ -40,12 +43,12 @@ class SPGHistogram:
         keys = list(self.__dict.keys())
         keys.sort()
         return "\n".join([
-                         "%f\t%f" % (k, (self.__dict[k] / self.__elements))
+                         "%f\t%f" % (k, (old_div(self.__dict[k], self.__elements)))
                          for k in keys
                          ])
 
     def __get_nearest(self, value):
-        return self.__boxsize * math.floor(value / self.__boxsize)
+        return self.__boxsize * math.floor(old_div(value, self.__boxsize))
 
     def get_dataset(self):
         if self.__elements == 0:
@@ -53,7 +56,7 @@ class SPGHistogram:
         keys = list(self.__dict.keys())
         keys.sort()
         return [
-            [k, (self.__dict[k] / self.__elements)]
+            [k, (old_div(self.__dict[k], self.__elements))]
             for k in keys
         ]
 
