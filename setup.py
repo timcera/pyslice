@@ -22,6 +22,7 @@ exec_prefix = sys.exec_prefix
 
 install_requires = [
         'six',
+        'parse',
         ]
 #=============================
 
@@ -34,7 +35,7 @@ setup(  # ---meta-data---
 
     author="Tim Cera, P.E.",
     author_email="tim@cerazone.net",
-    url="http://timcera.bitbucket.org/pyslice/docsrc/index.html",
+    url="http://timcera.bitbucket.io/pyslice/docsrc/index.html",
     install_requires=install_requires,
     packages=['pyslice',
         'pyslice.pyslice_lib',

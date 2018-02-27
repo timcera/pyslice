@@ -2,9 +2,6 @@
 
 from __future__ import print_function
 from __future__ import absolute_import
-from six.moves import map
-from six.moves import range
-from six.moves import input
 
 # pyslice.py
 #    Copyright (C) 2001  Tim Cera tim@cerazone.net
@@ -66,7 +63,6 @@ import subprocess
 import os.path
 import re
 import shlex
-import six.moves.configparser as configparser
 import shutil
 import filecmp
 import math
@@ -78,13 +74,9 @@ try:
 except ImportError:
     import dummy_threading as _threading
 
-from pyslice.pyslice_lib import PySPG as pyspg
+import ConfigParser as configparser
 
-# 2/3 compatibility
-try:
-    input = raw_input
-except NameError:
-    pass
+from pyslice.pyslice_lib import PySPG as pyspg
 
 # ===globals======================
 modname = "pyslice"
@@ -146,6 +138,7 @@ def mask(charlist):
         else:
             maskvar = maskvar + "b"
     return maskvar
+
 
 ascii7bit = "".join(
     list(map(chr, list(range(32, 127))))) + "\r\n\t\b"
@@ -335,16 +328,19 @@ class Pyslice:
                                         speciallines[filename]
                                     except KeyError:
                                         speciallines.setdefault(filename, {})
-                                        for linespecial in open(filename, 'r'):
+                                        for line in open(filename, 'r'):
                                             # Handle comments and blank lines
-                                            if '#' == linespecial[0]:
+                                            if '#' == line[0]:
                                                 continue
-                                            recno, sep, stemplate = linespecial.partition(
-                                                '|')
+                                            (recno,
+                                             sep,
+                                             stemplate) = line.partition('|')
                                             if not stemplate:
                                                 continue
-                                            stemplate = stemplate.rstrip(LINEENDS)
-                                            speciallines[filename][recno] = stemplate
+                                            stemplate = stemplate.rstrip(
+                                                LINEENDS)
+                                            speciallines[filename][recno] = (
+                                                stemplate)
                                     line_sub = speciallines[filename][
                                         lookupno].format(**var_dict)
 
@@ -367,7 +363,8 @@ class Pyslice:
                                         if var_name in matches:
                                             # replace variable name with number
                                             match = matches.replace(
-                                                var_name, str(var_dict[var_name]))
+                                                var_name, str(
+                                                    var_dict[var_name]))
                                             # evaluate Python statement with
                                             # eval
                                             match = eval(match)
@@ -375,15 +372,18 @@ class Pyslice:
                                             # value
                                             matchwhat = re.escape(
                                                 _keyword + matches + _keyword)
-                                            matchline = re.sub(
-                                                matchwhat, str(match), matchline, count=1)
+                                            matchline = re.sub(matchwhat,
+                                                               str(match),
+                                                               matchline,
+                                                               count=1)
                                 filetotalizer.append(matchline)
                             else:
                                 filetotalizer.append(line)
                         output.write(''.join(filetotalizer))
             else:
                 try:
-                    equalfiles = filecmp.cmp(infilepath, outfilepath)
+                    if filecmp.cmp(infilepath, outfilepath) is False:
+                        shutil.copy(infilepath, outfilepath)
                 except OSError:
                     shutil.copy(infilepath, outfilepath)
                 continue
@@ -410,12 +410,11 @@ class Pyslice:
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.STDOUT)
 
-        (chstdin, chstdouterr) = (p.stdin, p.stdout)
+        (_, chstdouterr) = (p.stdin, p.stdout)
 
         if _keep_log is True:
             with open('pyslice.log', 'w') as fo:
                 fo.write(' '.join(str(i) for i in chstdouterr.readlines()))
-
 
     def run(self):
         global _strtag
@@ -441,9 +440,9 @@ class Pyslice:
 
             'Press any key to continue . . .' """
             try:
-                toss_again = input(toss)
+                _ = input(toss)
             except NameError:
-                toss_again = eval(input(toss))
+                _ = eval(input(toss))
 
         # Read the configuration file and set appropriate variables.
         configuration = self.read_config(4, 100, ["paths", "flags", "program"])
@@ -520,7 +519,9 @@ class Pyslice:
                     var_list.append(i)
             else:
                 raise NotValidTypeError(
-                    "'%s' is not a valid type - ['arithmetic', 'geometric', 'list', or 'montecarlo']" % (var_type,))
+                    "'%s' is not a valid type - "
+                    "['arithmetic', 'geometric', 'list', "
+                    "or 'montecarlo']" % (var_type,))
 
             # Arithmetic and Geometric types have the same variables
             if var_type == "arithmetic" or var_type == "geometric":
@@ -564,7 +565,8 @@ class Pyslice:
             except IndexError:
                 pass
 
-            toss = '''Configuration results in %s permutations. Continue? (y/n) > ''' % (len(set),)
+            toss = ('Configuration results in %s permutations. '
+                    'Continue? (y/n) > ') % (len(set),)
             try:
                 inp = input(toss)
             except NameError:
@@ -647,6 +649,7 @@ def main(argv=None):
     # ---make the object and run it---
     main_x = Pyslice()
     main_x.run()
+
 
 if __name__ == '__main__':
     sys.exit(main())
