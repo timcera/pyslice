@@ -10,7 +10,7 @@ before_install:
   - env
 
 install:
-  - pip install coverage future
+  - pip install coverage
   - python setup.py install
   - pip install coveralls
 
