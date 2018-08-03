@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 #! /usr/bin/python
 
+from builtins import str
 import os.path
 BASEDIR = os.path.expanduser("~/devel/")
 

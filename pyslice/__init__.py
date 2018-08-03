@@ -31,10 +31,10 @@ from __future__ import absolute_import
 # ===imports======================
 import sys
 import os
+import os.path
 import getopt
 import time
 import subprocess
-import os.path
 import re
 import shlex
 import shutil
@@ -99,9 +99,6 @@ debug_p = 0
 
 global input_file
 input_file = "pyslice.ini"
-
-# ---positional args, default is empty---
-pargs = []
 
 # ---other---
 
@@ -422,7 +419,7 @@ class Pyslice(object):
 
         if _keep_log is True:
             with open('pyslice.log', 'w') as fo:
-                fo.write(chstdouterr)
+                fo.write(str(chstdouterr))
 
     def run(self):
         global _strtag
@@ -446,7 +443,7 @@ class Pyslice(object):
             may not use the same number of output directories from previous
             pyslice runs.
 
-            'Press any key to continue . . .' """
+            'Press "Enter" to continue . . .' """
             _ = input(toss)
 
         # Read the configuration file and set appropriate variables.
@@ -554,7 +551,7 @@ class Pyslice(object):
         # Loop reorganizes the output from PySPG and retrieves the actual
         # values.
 
-        for iter in pyspg_obj:
+        for _ in pyspg_obj:
             tmp = []
             # Had to add the 'limit=None' in order to get directories created
             # for the last variable.  Is this a bug in PySPG?
@@ -619,15 +616,14 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    ftn = "main"
-
     option_dict = {
         'debug': 0,
         'file': '',
-    }
+        }
     try:
-        opts, pargs = getopt.getopt(argv[1:], 'hvdf:',
-                                    ['help', 'version', 'debug', 'file='])
+        opts, _ = getopt.getopt(argv[1:],
+                                'hvdf:',
+                                ['help', 'version', 'debug', 'file='])
     except getopt.error as msg:
         raise Usage(msg)
 
@@ -644,7 +640,6 @@ def main(argv=None):
             sys.argv.remove(opt[0])
         elif opt[0] == '-f' or opt[0] == '--file':
             option_dict['file'] = opt[1]
-            input_file = opt[1]
             argv.remove(opt[0])
             argv.remove(opt[1])
 

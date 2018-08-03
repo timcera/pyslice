@@ -1,5 +1,6 @@
 from __future__ import absolute_import
-from six.moves import range
+from builtins import str
+from builtins import range
 #! /usr/bin/python
 
 #
