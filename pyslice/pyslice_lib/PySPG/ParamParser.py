@@ -204,19 +204,24 @@ class ParamParser(object):
 # 1
     def directory_tree(self, limit=-1):
         """
-          returns the directory path conducting to the actual values of the parameter set.
-          by default (limit=-1) the directory tree is extended to all the variables list
-          except for the last variable.
-          By setting limit to something else, you change the amount of variables kept left from
-          the directory generation. (i.e. limit=-2, will leave out of the directory path the last two variables)
+        returns the directory path conducting to the actual values of the
+        parameter set.  by default (limit=-1) the directory tree is extended to
+        all the variables list except for the last variable.
+
+        By setting limit to something else, you change the amount of variables
+        kept left from the directory generation. (i.e. limit=-2, will leave out
+        of the directory path the last two variables)
+
         """
 
         import os.path
         thepath = os.path.curdir + os.path.sep
 
         for i_iter in self.variables_list[:limit]:
-            thepath += "%s-%s" % (
-                i_iter.get_varname(), self.actual_values[i_iter.get_varname()]) + os.path.sep
+            thepath += "%s-%s%s" % (
+                i_iter.get_varname(),
+                self.actual_values[i_iter.get_varname()],
+                os.path.sep)
 
         return thepath
 

@@ -335,19 +335,20 @@ class Pyslice(object):
                                         speciallines[filename]
                                     except KeyError:
                                         speciallines.setdefault(filename, {})
-                                        for line in open(filename, 'r'):
-                                            # Handle comments and blank lines
-                                            if '#' == line[0]:
-                                                continue
-                                            (recno,
-                                             sep,
-                                             stemplate) = line.partition('|')
-                                            if not stemplate:
-                                                continue
-                                            stemplate = stemplate.rstrip(
-                                                LINEENDS)
-                                            speciallines[filename][recno] = (
-                                                stemplate)
+                                        with open(filename, 'r') as lout:
+                                            for line in lout:
+                                                # Handle comments and blank lines
+                                                if '#' == line[0]:
+                                                    continue
+                                                (recno,
+                                                 sep,
+                                                 stemplate) = line.partition('|')
+                                                if not stemplate:
+                                                    continue
+                                                stemplate = stemplate.rstrip(
+                                                    LINEENDS)
+                                                speciallines[filename][recno] = (
+                                                    stemplate)
                                     line_sub = speciallines[filename][
                                         lookupno].format(**var_dict)
 
@@ -545,20 +546,33 @@ class Pyslice(object):
         # This does the cartesian of all of the parameter values.
         pyspg_obj = pyspg.ParamParser(list_list)
 
-        # set will contain ['directory', [var, var_value], [var1, var1_value],
+        # nset will contain ['directory', [var, var_value], [var1, var1_value],
         # ...]
-        set = []
+        nset = []
         # Loop reorganizes the output from PySPG and retrieves the actual
         # values.
 
+        nmax = {}
+        allints = {}
         for _ in pyspg_obj:
             tmp = []
             # Had to add the 'limit=None' in order to get directories created
             # for the last variable.  Is this a bug in PySPG?
             tmp.append(pyspg_obj.directory_tree(limit=None))
             for i in list(pyspg_obj.actual_values.items()):
-                tmp.append(i)
-            set.append(tmp)
+                try:
+                    nval = int(i[1])
+                except ValueError:
+                    allints[i[0]] = False
+                    try:
+                        nval = float(i[1])
+                    except ValueError:
+                        nval = i[1]
+                if isinstance(nval, int):
+                    if nmax.setdefault(i[0], float('-inf')) < nval:
+                        nmax[i[0]] = nval
+                tmp.append([i[0], nval])
+            nset.append(tmp)
 
         while 1:
             try:
@@ -568,7 +582,7 @@ class Pyslice(object):
                 pass
 
             toss = ('Configuration results in %s permutations. '
-                    'Continue? (y/n) > ') % (len(set),)
+                    'Continue? (y/n) > ') % (len(nset),)
             inp = input(toss)
             if not inp:
                 continue
@@ -579,12 +593,21 @@ class Pyslice(object):
                 return
             continue
 
-        for var_index, var_set in enumerate(set):
+        nlen = len(str(len(nset)))
+        for var_index, var_set in enumerate(nset):
             # Create label for output directories
             if flat_dirs:
-                _strtag = str(var_index).zfill(5)
+                _strtag = str(var_index + 1).zfill(nlen)
             else:
-                _strtag = var_set[0]
+                _strtag = os.path.curdir + os.path.sep
+                for ivar in var_set[1:]:
+                    if ivar[0] in allints:
+                        fstr = "{0}-{1}{2}"
+                    else:
+                        fstr = "{0}-{1:0" + str(math.ceil(math.log10(nmax[ivar[0]] + 1))) + "d}{2}"
+                    _strtag = _strtag + fstr.format(ivar[0],
+                                                    ivar[1],
+                                                    os.path.sep)
 
             # Create the files and directories from the template
             # Walks the _template_path directory structure
