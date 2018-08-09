@@ -559,19 +559,22 @@ class Pyslice(object):
             # Had to add the 'limit=None' in order to get directories created
             # for the last variable.  Is this a bug in PySPG?
             tmp.append(pyspg_obj.directory_tree(limit=None))
-            for i in list(pyspg_obj.actual_values.items()):
+
+            for i_iter in pyspg_obj.variables_list:
+                vname = i_iter.get_varname()
+                nval = pyspg_obj.actual_values[vname]
                 try:
-                    nval = int(i[1])
+                    nval = int(nval)
                 except ValueError:
-                    allints[i[0]] = False
+                    allints[vname] = False
                     try:
-                        nval = float(i[1])
+                        nval = float(nval)
                     except ValueError:
-                        nval = i[1]
+                        pass
                 if isinstance(nval, int):
-                    if nmax.setdefault(i[0], float('-inf')) < nval:
-                        nmax[i[0]] = nval
-                tmp.append([i[0], nval])
+                    if nmax.setdefault(vname, float('-inf')) < nval:
+                        nmax[vname] = nval
+                tmp.append([vname, nval])
             nset.append(tmp)
 
         while 1:
