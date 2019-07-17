@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 #! /usr/bin/python
 
 #
@@ -17,9 +18,7 @@ xlabel = "\\f{Times-Italic}t\\sk"
 # before plotting
 #
 
-histvec = [
-    "{size}.dat"
-]
+histvec = ["{size}.dat"]
 
 
 # configuration File
@@ -39,6 +38,7 @@ PySPGPATH = "/t/users1/tessonec/devel/"
 
 import os.path
 import sys
+
 try:
     os.path.isdir(PySPGPATH)
     sys.path.append(os.path.expanduser(PySPGPATH))
@@ -49,8 +49,7 @@ except:
 try:
     from PySPG import *
 except:
-    sys.stderr.write(
-        "couldn't import PySPG package, check PySPGPATH variable\n")
+    sys.stderr.write("couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("and verify that PySPG lives there\n")
     sys.stderr.write("actual value: '%s'\n" % PySPGPATH)
 
@@ -58,11 +57,9 @@ except:
 
 
 for histvar in histvec:
-    p2 = Agrizer(
-        open(inputFile, "r").readlines()
-    )
+    p2 = Agrizer(open(inputFile, "r").readlines())
 
     p2.xlabel = xlabel
     p2.ylabel = "\\f{Times-Italic}P\\f{}(%s\\f{}\\N)" % xlabel
 
-    p2.dohist(histvar,)
+    p2.dohist(histvar)

@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 #
 # :::~ Copyright (C) 2005 by Claudio J. Tessone <tessonec@imedea.uib.es>
 #
@@ -79,28 +80,38 @@ class ItOperator(SPGIterator):
         try:
             [xmin, xmax, xstep] = list(map(eval, str_rest[1:]))
         except:
-            raise ValueError("Line: '{0}' incorrect number of parameters (found {1}) for iterator       '{2}' over '{3}'".format(
-                command, len(str_rest) - 1, self.it_type, self.varname))
+            raise ValueError(
+                "Line: '{0}' incorrect number of parameters (found {1}) for iterator       '{2}' over '{3}'".format(
+                    command, len(str_rest) - 1, self.it_type, self.varname
+                )
+            )
             #
             #   Block that raises exception in the case that iteration requested
             #   do not reaches xmax
 
         try:
-            if (xmin < xmax) and (xmin >= eval("%s %s %s" % (xmin, self.it_type, xstep))):
+            if (xmin < xmax) and (
+                xmin >= eval("%s %s %s" % (xmin, self.it_type, xstep))
+            ):
                 raise AssertError("")
 
-            if (xmin > xmax) and (xmin <= eval("%s %s %s" % (xmin, self.it_type, xstep))):
+            if (xmin > xmax) and (
+                xmin <= eval("%s %s %s" % (xmin, self.it_type, xstep))
+            ):
                 raise AssertError("")
         except:
-            raise ValueError("Line: '{0}' Variable '{1}': Error! {2}{3}{4} do not seem to tend to {5}".format(
-                command, self.varname, xmin, self.it_type, xstep, xmax))
+            raise ValueError(
+                "Line: '{0}' Variable '{1}': Error! {2}{3}{4} do not seem to tend to {5}".format(
+                    command, self.varname, xmin, self.it_type, xstep, xmax
+                )
+            )
         #
         #
 
         lsTmp = []
         xact = xmin
 
-        while((xmin > xmax) ^ (xact <= xmax)):  # ^ is xor in python !
+        while (xmin > xmax) ^ (xact <= xmax):  # ^ is xor in python !
             lsTmp.append(xact)
             xact = eval("%s%s%s" % (xact, self.it_type, xstep))
 
@@ -108,31 +119,26 @@ class ItOperator(SPGIterator):
 
 
 class ItOperatorPlus(ItOperator):
-
     def __init__(self):
         ItOperator.__init__(self, "+")
 
 
 class ItOperatorMinus(ItOperator):
-
     def __init__(self):
         ItOperator.__init__(self, "-")
 
 
 class ItOperatorProduct(ItOperator):
-
     def __init__(self):
         ItOperator.__init__(self, "*")
 
 
 class ItOperatorDivision(ItOperator):
-
     def __init__(self):
         ItOperator.__init__(self, "/")
 
 
 class ItOperatorPower(ItOperator):
-
     def __init__(self):
         ItOperator.__init__(self, "**")
 
@@ -164,7 +170,7 @@ class ItPunctual(SPGIterator):
     def set_command(self, command, separator=" "):
         str_rest = command.split(separator)
         self.varname = str_rest[0].strip()
-#	 self.data = [eval (i.strip()) for i in str_rest[1:] ]
+        # 	 self.data = [eval (i.strip()) for i in str_rest[1:] ]
         self.data = [i.strip() for i in str_rest[1:]]
 
 
@@ -173,7 +179,8 @@ class ItRepetition(SPGIterator):
     trying to repit the run of the program with the same parameters.
     """
 
-    def __init__(self): SPGIterator.__init__(self)
+    def __init__(self):
+        SPGIterator.__init__(self)
 
     def set_command(self, command, separator=" "):
         try:
@@ -181,7 +188,8 @@ class ItRepetition(SPGIterator):
             self.data = list(range(eval(command)))
         except:
             raise ValueError(
-                "Line: '{0}' iterator '#' could not eval()".format(command))
+                "Line: '{0}' iterator '#' could not eval()".format(command)
+            )
             sys.exit()
 
     def is_variable(self):

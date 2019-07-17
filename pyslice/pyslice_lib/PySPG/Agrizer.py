@@ -33,7 +33,7 @@ from . import PyGrace
 
 
 class Agrizer(ParamParser):
-    box_size = 1.
+    box_size = 1.0
     min_value = None
     xcol = 0
     ycol = 1
@@ -43,10 +43,10 @@ class Agrizer(ParamParser):
     ylabel = "y"
     xscale = "Normal"
     yscale = "Normal"
-    minx = 0.
-    maxx = 1.
-    miny = 0.
-    maxy = 1.
+    minx = 0.0
+    maxx = 1.0
+    miny = 0.0
+    maxy = 1.0
 
     title = ""
 
@@ -112,8 +112,7 @@ class Agrizer(ParamParser):
         g1 = PyGrace.GraceDocument()
         for inname in pattern:
             for i in self.var:
-                inname = inname.replace(
-                    "{%s}" % i, "%s-%s" % (i, str(self.act_val(i))))
+                inname = inname.replace("{%s}" % i, "%s-%s" % (i, str(self.act_val(i))))
 
             if os.path.isfile(inname):
                 if not outname:
@@ -122,7 +121,8 @@ class Agrizer(ParamParser):
                 else:
                     for i in self.var:
                         outname = outname.replace(
-                            "{%s}" % i, "%s-%s" % (i, str(self.act_val(i))))
+                            "{%s}" % i, "%s-%s" % (i, str(self.act_val(i)))
+                        )
 
                 ls = Load.loadXY(inname, self.xcol, self.ycol)
                 ls2 = Load.transformXY(ls, self.xformula, self.yformula)
@@ -137,8 +137,7 @@ class Agrizer(ParamParser):
                 g1.dump()
 
             else:
-                sys.stderr.write(
-                    "skipping " + inname + "... file does not exist\n")
+                sys.stderr.write("skipping " + inname + "... file does not exist\n")
 
         os.chdir(cwd)
 
@@ -171,25 +170,20 @@ class Agrizer(ParamParser):
         if not outname:
             outname = pattern[0]
         for i in self.var:
-            outname = outname.replace(
-                "{%s}" % i, "%s-%s" % (i, str(self.act_val(i))))
+            outname = outname.replace("{%s}" % i, "%s-%s" % (i, str(self.act_val(i))))
 
         for inname in pattern:
             for i in self.var:
-                inname = inname.replace(
-                    "{%s}" % i, "%s-%s" % (i, str(self.act_val(i))))
+                inname = inname.replace("{%s}" % i, "%s-%s" % (i, str(self.act_val(i))))
 
-#      sys.stderr.write(os.path.abspath(inname)+"... %d \n"%os.path.isfile(inname))
+            #      sys.stderr.write(os.path.abspath(inname)+"... %d \n"%os.path.isfile(inname))
             if os.path.isfile(inname):
                 isSomething = 1  # true the document is NOT void
 
                 ls = Load.loadY(inname, 0)
                 if mustCalculateDif:
 
-                    ls = [
-                        ls[i + 1] - ls[i]
-                        for i in range(len(ls) - 1)
-                    ]
+                    ls = [ls[i + 1] - ls[i] for i in range(len(ls) - 1)]
                 from . import histogram
 
                 hist = histogram.SPGHistogram(self.box_size)
@@ -201,8 +195,7 @@ class Agrizer(ParamParser):
 
                 g1.set_data(ls2, legend, "bar")
             else:
-                sys.stderr.write(
-                    "skipping " + inname + "... file does not exist\n")
+                sys.stderr.write("skipping " + inname + "... file does not exist\n")
         if isSomething:
             sys.stdout = open(outname, "w")
             g1.set_labels(self.xlabel, self.ylabel)
@@ -213,7 +206,14 @@ class Agrizer(ParamParser):
             g1.dump()
         os.chdir(cwd)
 
-    def doit(self, outname="out.agr", inname="out.dat", pattern=None, patternname=None, autoscale="xy"):
+    def doit(
+        self,
+        outname="out.agr",
+        inname="out.dat",
+        pattern=None,
+        patternname=None,
+        autoscale="xy",
+    ):
         flag = 1
 
         while flag:

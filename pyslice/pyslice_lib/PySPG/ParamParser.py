@@ -40,10 +40,10 @@ class ParamParser(object):
 
     """
 
-#:::~ This variable specifies the list separator used while parsing "param.dat"
+    #:::~ This variable specifies the list separator used while parsing "param.dat"
     separator = " "
 
-#:::~ A dictionary with all the possible iterators
+    #:::~ A dictionary with all the possible iterators
     iterator_types_dict = {
         "+": ParamIterators.ItOperatorPlus,
         "-": ParamIterators.ItOperatorMinus,
@@ -52,14 +52,14 @@ class ParamParser(object):
         "**": ParamIterators.ItOperatorPower,
         ":": ParamIterators.ItConstant,
         ".": ParamIterators.ItPunctual,
-        "#": ParamIterators.ItRepetition
+        "#": ParamIterators.ItRepetition,
     }
 
-#:::~ a list with an alternative order if your binary does not read a free-style input file
-#  alternative_order = []
-#:::~ a list with all the varying entities (i.e. those not CONSTANT)
-# isvariable = []
-# 1
+    #:::~ a list with an alternative order if your binary does not read a free-style input file
+    #  alternative_order = []
+    #:::~ a list with all the varying entities (i.e. those not CONSTANT)
+    # isvariable = []
+    # 1
     def __init__(self, lsLines):
         """
           lsLines is a list of commands understood by this class.
@@ -75,11 +75,12 @@ class ParamParser(object):
 
         self.__parse(lsLines)
         import copy
+
         self.reversed = copy.copy(self.iterator_list)
         self.reversed.reverse()
         self.reset()
 
-# 1
+    # 1
     def __get_iteration_and_command(self, cadena):
         """
           returns the iteration type of a command. The iteration type is defined as the set of non alphanumeric characters
@@ -90,7 +91,7 @@ class ParamParser(object):
             last_char += 1
         return cadena[:last_char], cadena[last_char:]
 
-# 1
+    # 1
     def __parse(self, ls):
         """
           internal function that parses the input
@@ -109,9 +110,9 @@ class ParamParser(object):
             self.iterator_list.append(new_iterator)
 
         self.variables_list = [
-            i_iter for i_iter in self.iterator_list if i_iter.is_variable()]
-        self.entities = [i_iter.get_varname()
-                         for i_iter in self.iterator_list]
+            i_iter for i_iter in self.iterator_list if i_iter.is_variable()
+        ]
+        self.entities = [i_iter.get_varname() for i_iter in self.iterator_list]
 
     def __next__(self):
         """
@@ -137,7 +138,7 @@ class ParamParser(object):
 
         return self.actual_values
 
-# 1
+    # 1
     def reset(self):
         """
           This function resets the iterator to its starting point
@@ -150,28 +151,33 @@ class ParamParser(object):
     def __iter__(self):
         return self
 
-# 1
+    # 1
     def __str__(self):
         """
           defines how the actual value of the parameter set is printed out.
           A good candidate to be overwritten in inheriting classes.
         """
-        thisstr = "\n".join([
-                            "%s%s%s" % (
-                                k, self.separator, self.actual_values[k])
-                            for k in self.entities if k
-                            ]) + "\n"
+        thisstr = (
+            "\n".join(
+                [
+                    "%s%s%s" % (k, self.separator, self.actual_values[k])
+                    for k in self.entities
+                    if k
+                ]
+            )
+            + "\n"
+        )
         #:::~ replaces structures of the kind {var} by var-value, very useful for
         #     generation of multiple output files.
         for i_iter in self.iterator_list:
             varname = i_iter.get_varname()
             thisstr = thisstr.replace(
-                "{%s}" % varname,
-                "%s-%s" % (varname, self.actual_values[varname])
+                "{%s}" % varname, "%s-%s" % (varname, self.actual_values[varname])
             )
 
         return thisstr
-# 1
+
+    # 1
 
     def value_of(self, varn):
         """
@@ -181,10 +187,11 @@ class ParamParser(object):
             return self.actual_values[varn]
         except ValueError:
             import sys
+
             sys.stderr.write("'%s' not found among entities\n" % varn)
             sys.exit()
 
-# 1
+    # 1
     def set_order(self, new_order):
         """
           sets a new order for the output.
@@ -196,12 +203,13 @@ class ParamParser(object):
                 [k.get_varname() for k in self.iterator_list].index(i)
         except ValueError:
             import sys
+
             sys.stderr.write("error! %s not found among entities\n" % i)
             sys.stderr.write("entities = %s\n" % self.entities)
             sys.exit()
         self.entities = new_order
 
-# 1
+    # 1
     def directory_tree(self, limit=-1):
         """
         returns the directory path conducting to the actual values of the
@@ -215,17 +223,19 @@ class ParamParser(object):
         """
 
         import os.path
+
         thepath = os.path.curdir + os.path.sep
 
         for i_iter in self.variables_list[:limit]:
             thepath += "%s-%s%s" % (
                 i_iter.get_varname(),
                 self.actual_values[i_iter.get_varname()],
-                os.path.sep)
+                os.path.sep,
+            )
 
         return thepath
 
-# 1
+    # 1
     def output_tree(self, limit=-1):
         """
           returns the output from limit given the actual values of the parameter set.
@@ -235,20 +245,21 @@ class ParamParser(object):
         """
         theoutput = ""
         for i_iter in self.variables_list[limit:]:
-            theoutput += "%s" % self.actual_values[
-                i_iter.get_varname()] + self.separator
+            theoutput += (
+                "%s" % self.actual_values[i_iter.get_varname()] + self.separator
+            )
         return theoutput
 
 
 #
 #
 if __name__ == "__main__":
-# command=[":a 0","*c 2 6 3",":filename {c}.dat","+d 5 9 4","#2",":end"]
-#  command=["*c 2 18 3"]
+    # command=[":a 0","*c 2 6 3",":filename {c}.dat","+d 5 9 4","#2",":end"]
+    #  command=["*c 2 18 3"]
     command = [":a 0", "*c 2 6 3", ":filename {c}.dat", "+d 5 9 4", ":end"]
-#
+    #
     print(command)
     pp = ParamParser(command)
-   # pp.set_order(["c","a","d"])
+    # pp.set_order(["c","a","d"])
     for i in pp:
         print(pp)

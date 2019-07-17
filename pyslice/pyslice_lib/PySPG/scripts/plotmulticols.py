@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from builtins import str
 from builtins import range
+
 #! /usr/bin/python
 
 #
@@ -31,15 +32,12 @@ size = 3
 #
 col_contents_snr = [([i + 1 for i in range(size)], "\\f{Times-Italic}SNR")]
 # the second __size__ columns give SAF
-col_contents_saf = [
-    ([i + 1 + size for i in range(size)], "\\f{Times-Italic}SAF")]
+col_contents_saf = [([i + 1 + size for i in range(size)], "\\f{Times-Italic}SAF")]
 # the third __size__ columns give the jitter
-col_contents_ns = [
-    ([i + 1 + 2 * size for i in range(size)], "\\f{Times-Italic}J")]
+col_contents_ns = [([i + 1 + 2 * size for i in range(size)], "\\f{Times-Italic}J")]
 
 # the fourth __size__ columns give the number of spikes
-col_contents_ns = [
-    ([i + 1 + 3 * size for i in range(size)], "\\f{Times-Italic}N\\sS")]
+col_contents_ns = [([i + 1 + 3 * size for i in range(size)], "\\f{Times-Italic}N\\sS")]
 
 #  let's put all the contents together
 col_contents = col_contents_snr + col_contents_saf + col_contents_ns
@@ -53,6 +51,7 @@ PySPGPATH = "~/devel/"
 
 import os.path
 import sys
+
 try:
     os.path.isdir(PySPGPATH)
     sys.path.append(os.path.expanduser(PySPGPATH))
@@ -63,8 +62,7 @@ except:
 try:
     from PySPG import *
 except:
-    sys.stderr.write(
-        "couldn't import PySPG package, check PySPGPATH variable\n")
+    sys.stderr.write("couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("and verify that PySPG lives there\n")
     sys.stderr.write("actual value: '%s'\n" % PySPGPATH)
 
@@ -72,10 +70,7 @@ except:
 
 
 for kcol, colname in col_contents:
-    p2 = MultiAgrizer(
-        open(inputFile, "r").readlines(),
-        lastvar
-    )
+    p2 = MultiAgrizer(open(inputFile, "r").readlines(), lastvar)
     p2.xlabel = xlabel
     p2.ylabel = colname
 

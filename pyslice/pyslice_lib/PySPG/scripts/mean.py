@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from builtins import range
+
 #!/usr/bin/python
 
 #
@@ -15,6 +16,7 @@ columnX = 12
 
 import sys
 import os.path
+
 #
 # WARNING YOU MUST SPECIFY THE DIRECTORY WHERE PySPG LIVES
 PySPGPATH = "~/devel/"
@@ -27,14 +29,21 @@ paramFile = "param.dat"
 def usage():
     print("usage is: %s [options] executable" % sys.argv[0])
     print()
-    print(' -f param-file.dat : Reads parameters from param-file.dat \n\t\t (by default, "param.dat") ')
-    print(' -i in-file.dat : The name of the file read by the executable \n\t\t(by default, "in.dat") ')
-    print(' - : Reads parameters from standard input ')
-    print('')
-    print('Repetedly executes "executable". ', end=' ')
-    print('If you do not plan to change the name \nof the executable, you can directly modify the "execFile" variable \ninside this script')
+    print(
+        ' -f param-file.dat : Reads parameters from param-file.dat \n\t\t (by default, "param.dat") '
+    )
+    print(
+        ' -i in-file.dat : The name of the file read by the executable \n\t\t(by default, "in.dat") '
+    )
+    print(" - : Reads parameters from standard input ")
+    print("")
+    print('Repetedly executes "executable". ', end=" ")
+    print(
+        'If you do not plan to change the name \nof the executable, you can directly modify the "execFile" variable \ninside this script'
+    )
     print()
     print()
+
 
 try:
     os.path.isdir(PySPGPATH)
@@ -46,8 +55,7 @@ except:
 try:
     from PySPG import *
 except:
-    sys.stderr.write(
-        "Couldn't import PySPG package, check PySPGPATH variable\n")
+    sys.stderr.write("Couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("And verify that PySPG lives there\n")
     sys.stderr.write("actual value: '%s'\n" % PySPGPATH)
 

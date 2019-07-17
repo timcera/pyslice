@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 #! /usr/bin/python
 #
 #:::~ Author: Claudio J. Tessone <tessonec@imedea.uib.es>
@@ -8,6 +9,7 @@ from __future__ import absolute_import
 
 import os.path
 import sys
+
 #
 # WARNING YOU MUST SPECIFY THE DIRECTORY WHERE PySPG LIVES
 PySPGPATH = "~/devel/"
@@ -34,8 +36,7 @@ except:
 try:
     from PySPG import *
 except:
-    sys.stderr.write(
-        "Couldn't import PySPG package, check PySPGPATH variable\n")
+    sys.stderr.write("Couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("And verify that PySPG lives there\n")
     sys.stderr.write("actual value: '%s'\n" % PySPGPATH)
 

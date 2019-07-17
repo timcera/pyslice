@@ -11,5 +11,8 @@
     :target: https://pypi.python.org/pypi/pyslice
 
 .. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
-    :alt: pyslice license
+    :alt: BSD-3 clause license
+    :target: https://pypi.python.org/pypi/pyslice/
+.. image:: http://img.shields.io/pypi/dd/pyslice.svg
+    :alt: pyslice downloads
     :target: https://pypi.python.org/pypi/pyslice/

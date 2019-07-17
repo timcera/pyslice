@@ -32,20 +32,12 @@ class MeanCalculation(object):
     """
 
     def __init__(self, lsLines):
-        ls2 = [
-            i for i in lsLines
-            if i.strip()[0] != "#"
-        ]
+        ls2 = [i for i in lsLines if i.strip()[0] != "#"]
 
         self.pp_varying = ParamParser(ls2)
 
     def searchinfile(self, fname, st):
-        return [
-            i.split()
-            for i in open(fname, "r").readlines()
-            if i.split()[0] == st
-
-        ]
+        return [i.split() for i in open(fname, "r").readlines() if i.split()[0] == st]
 
     def mean(self, fin_name="out.dat", fout_name="out.mean"):
 
@@ -57,7 +49,9 @@ class MeanCalculation(object):
         try:
             all_data = loadData(fsearch)
         except:
-            print("Error! '%s' file doesn't exist or not enough permissions..." % fsearch)
+            print(
+                "Error! '%s' file doesn't exist or not enough permissions..." % fsearch
+            )
             sys.exit()
 
         try:
@@ -78,15 +72,16 @@ class MeanCalculation(object):
         nPoints = {}
 
         import copy
+
         zeros = [0 for i in columnas]
 
         for i in valuesX:
             xDict[i] = copy.copy(zeros)
-            nPoints[i] = 0.
+            nPoints[i] = 0.0
 
         for row in all_data:
             if len(row) == len(all_data[0]):
-                nPoints[row[0]] += 1.
+                nPoints[row[0]] += 1.0
                 vec = xDict[row[0]]
                 for j in columnas:
                     vec[j] += row[j]
@@ -95,12 +90,7 @@ class MeanCalculation(object):
 
         for x in valuesX:
             if nPoints[x] != 0:
-                dataOut.append(
-                    [
-                        old_div(xDict[x][j], nPoints[x])
-                        for j in columnas
-                    ]
-                )
+                dataOut.append([old_div(xDict[x][j], nPoints[x]) for j in columnas])
 
         try:
             dumpData(fout, dataOut)

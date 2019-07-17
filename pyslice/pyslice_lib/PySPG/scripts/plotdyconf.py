@@ -11,10 +11,7 @@ lastvar = "m"
 # Specifies the columns to be plotted
 # and its label (in grace format)
 #
-col_contents = [
-    (1, 2, "\\f{Symbol}\\l{.15}r"),
-    (3, 4, "\\f{Times-Italic}T")
-]
+col_contents = [(1, 2, "\\f{Symbol}\\l{.15}r"), (3, 4, "\\f{Times-Italic}T")]
 
 
 #

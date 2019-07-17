@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from builtins import range
+
 #! /usr/bin/python
 
 #
@@ -19,10 +20,7 @@ xlabel = "\\f{Times-Italic}t"
 extension = "psd"
 size = 3
 
-histvec = [
-    "%d{gama}.%s" % (i, extension)
-    for i in range(size)
-]
+histvec = ["%d{gama}.%s" % (i, extension) for i in range(size)]
 
 # configuration File
 inputFile = "param.dat"
@@ -34,6 +32,7 @@ PySPGPATH = "/t/users1/tessonec/devel/"
 
 import os.path
 import sys
+
 try:
     os.path.isdir(PySPGPATH)
     sys.path.append(os.path.expanduser(PySPGPATH))
@@ -44,17 +43,14 @@ except:
 try:
     from PySPG import *
 except:
-    sys.stderr.write(
-        "couldn't import PySPG package, check PySPGPATH variable\n")
+    sys.stderr.write("couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("and verify that PySPG lives there\n")
     sys.stderr.write("actual value: '%s'\n" % PySPGPATH)
 
     sys.exit(2)
 
 
-p2 = Agrizer(
-    open(inputFile, "r").readlines()
-)
+p2 = Agrizer(open(inputFile, "r").readlines())
 
 p2.xlabel = xlabel
 p2.ylabel = "\\f{Times-Italic}P\\f{}(%s\\f{})" % xlabel

@@ -12,6 +12,7 @@ from __future__ import absolute_import
 #
 
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import filter
 from builtins import str
@@ -38,8 +39,9 @@ class MatrixPlotter(object):
         self.zmax = None
         self.nz = 50
 
-        commands = [i.strip()
-                    for i in comm if (i.strip()[0] != "#" and i.strip() != "")]
+        commands = [
+            i.strip() for i in comm if (i.strip()[0] != "#" and i.strip() != "")
+        ]
         try:
             pTmp = ParamParser(commands)
             var_name = pTmp.variables_list[-2].get_varname()
@@ -56,8 +58,7 @@ class MatrixPlotter(object):
         self.parser_original = ParamParser(commands[:lastvar_idx])
 
         lastvarpos = commands.index(
-            filter(
-                lambda x: x.strip()[0] in "+*/-.", commands).pop()
+            filter(lambda x: x.strip()[0] in "+*/-.", commands).pop()
         )
 
         self.parser_last = ParamParser(commands[lastvar_idx:lastvarpos])
@@ -86,8 +87,9 @@ class MatrixPlotter(object):
         for i_state in self.parser_last:
             fname = self.parser_last.directory_tree(None) + inname
             ls = Load.loadXY(fname, self.xcol, self.ycol)
-            ls2 = [str(i[1])
-                   for i in Load.transformXY(ls, self.xformula, self.yformula)]
+            ls2 = [
+                str(i[1]) for i in Load.transformXY(ls, self.xformula, self.yformula)
+            ]
             outputStr += "\t".join(ls2) + "\n"
         #
         #
@@ -97,9 +99,17 @@ class MatrixPlotter(object):
         if self.save_mtv:
             mtvStr = "$ DATA=CONTOUR\n"
             mtvStr += "%" + " NX=%d    XMIN=%f   XMAX=%f XLABEL=%s \n" % (
-                len(self.iter1.data), self.iter1.data[0], self.iter1.data[-1], self.iter1.get_varname())
+                len(self.iter1.data),
+                self.iter1.data[0],
+                self.iter1.data[-1],
+                self.iter1.get_varname(),
+            )
             mtvStr += "%" + " NY=%d    YMIN=%f   YMAX=%f YLABEL=%s \n" % (
-                len(self.iter2.data), self.iter2.data[0], self.iter2.data[-1], self.iter2.get_varname())
+                len(self.iter2.data),
+                self.iter2.data[0],
+                self.iter2.data[-1],
+                self.iter2.get_varname(),
+            )
             mtvStr += "%" + " NSTEPS=%d    \n" % (self.nz)
             if self.zmin != None:
                 mtvStr += "%" + " ZMIN=%f    \n" % (self.cmin)
@@ -117,7 +127,7 @@ class MatrixPlotter(object):
 
             fOut.write(mtvStr)
         fOut.close()
-#     print outputStr
+        #     print outputStr
         os.chdir(cwd)
 
     def doit(self, outname="out.mtrx", inname="mean.dat", ycol=1):
@@ -126,7 +136,7 @@ class MatrixPlotter(object):
         """
         self.ycol = ycol
         for i in self.parser_original:
-    #    print self.parser_original
+            #    print self.parser_original
             self.__matrix(outname, inname)
 
 

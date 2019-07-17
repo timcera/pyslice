@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from builtins import str
 from builtins import range
+
 #! /usr/bin/python
 
 #
@@ -29,30 +30,23 @@ size = 3
 # The output of ct-sr-linfhn is special:
 # the first __size__ columns give SNR
 #
-col_contents_snr = [
-    (i + 1, "\\f{Times-Italic}SNR\\f{}\\s%d" % i)
-    for i in range(size)
-]
+col_contents_snr = [(i + 1, "\\f{Times-Italic}SNR\\f{}\\s%d" % i) for i in range(size)]
 # the second __size__ columns give SAF
 col_contents_saf = [
-    (i + 1 + size, "\\f{Times-Italic}SAF\\f{}\\s%d" % i)
-    for i in range(size)
+    (i + 1 + size, "\\f{Times-Italic}SAF\\f{}\\s%d" % i) for i in range(size)
 ]
 # the third __size__ columns give the jitter
 col_contents_j = [
-    (i + 1 + 2 * size, "\\f{Times-Italic}N\\sS\\f{}%d" % i)
-    for i in range(size)
+    (i + 1 + 2 * size, "\\f{Times-Italic}N\\sS\\f{}%d" % i) for i in range(size)
 ]
 
 # the fourth __size__ columns give the number of spikes
 col_contents_ns = [
-    (i + 1 + 3 * size, "\\f{Times-Italic}N\\sS\\f{}%d" % i)
-    for i in range(size)
+    (i + 1 + 3 * size, "\\f{Times-Italic}N\\sS\\f{}%d" % i) for i in range(size)
 ]
 
 #  let's put all the contents together
-col_contents = col_contents_snr + \
-    col_contents_saf + col_contents_j + col_contents_ns
+col_contents = col_contents_snr + col_contents_saf + col_contents_j + col_contents_ns
 
 # configuration File
 inputFile = "param.dat"
@@ -63,6 +57,7 @@ PySPGPATH = "~/devel/"
 
 import os.path
 import sys
+
 try:
     os.path.isdir(PySPGPATH)
     sys.path.append(os.path.expanduser(PySPGPATH))
@@ -73,8 +68,7 @@ except:
 try:
     from PySPG import *
 except:
-    sys.stderr.write(
-        "couldn't import PySPG package, check PySPGPATH variable\n")
+    sys.stderr.write("couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("and verify that PySPG lives there\n")
     sys.stderr.write("actual value: '%s'\n" % PySPGPATH)
 
@@ -82,10 +76,7 @@ except:
 
 
 for kcol, colname in col_contents:
-    p2 = MultiAgrizer(
-        open(inputFile, "r").readlines(),
-        lastvar
-    )
+    p2 = MultiAgrizer(open(inputFile, "r").readlines(), lastvar)
     p2.xlabel = xlabel
     p2.ylabel = colname
 

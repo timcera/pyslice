@@ -4,6 +4,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import filter
 import sys
@@ -16,10 +17,10 @@ from .ParamParser import *
 class TeXParser(ParamParser):
     replacing_rules = {
         "\s": "_",
-              "\S": "^",
-              "\f{Symbol}": " ",
-              "\\f{}": " ",
-              "\\N": "   "
+        "\S": "^",
+        "\f{Symbol}": " ",
+        "\\f{}": " ",
+        "\\N": "   ",
     }
 
     def __agr2tex(agr_str):
@@ -31,8 +32,9 @@ class TeXParser(ParamParser):
 
     def __init__(self, comm, var_name):
 
-        commands = [i.strip()
-                    for i in comm if (i.strip()[0] != "#" and i.strip() != "")]
+        commands = [
+            i.strip() for i in comm if (i.strip()[0] != "#" and i.strip() != "")
+        ]
         # print commands
 
         pTmp = ParamParser(commands)
@@ -49,8 +51,7 @@ class TeXParser(ParamParser):
         self.parser_original = ParamParser(commands[:lastvar_idx])
 
         lastvarpos = commands.index(
-            filter(
-                lambda x: x.strip()[0] in "+*/-.", commands).pop()
+            filter(lambda x: x.strip()[0] in "+*/-.", commands).pop()
         )
 
     def __tex(self, outname="plots.tex", plotnames=[]):
@@ -83,18 +84,18 @@ class TeXParser(ParamParser):
         print("\\begin{itemize}")
         actual_values = self.parser_original.actual_values
         for i in actual_values:
-            print("\\item    { \\tt",)
-            if actual_values[i] == '':
+            print("\\item    { \\tt")
+            if actual_values[i] == "":
                 posunder = i.find("_")
                 if posunder > 0:
                     posblank = i.find("0")
                     print("\\begin{verbatim}")
-                    print(i,)
+                    print(i)
                     print("\\end{verbatim}")
                 else:
-                    print(i,)
+                    print(i)
             else:
-                print(" $ %s = %s $" % (i, actual_values[i]),)
+                print(" $ %s = %s $" % (i, actual_values[i]))
             print(""" }   """)
         print("\\end{itemize}")
         print()
@@ -115,7 +116,9 @@ class TeXParser(ParamParser):
         sys.stdout = cout
         os.system("latex %s" % outname)
         comandoexec = "dvips -o %s.ps  %s" % (
-            os.path.splitext(outname)[0], os.path.splitext(outname)[0] + ".dvi")
+            os.path.splitext(outname)[0],
+            os.path.splitext(outname)[0] + ".dvi",
+        )
         print(comandoexec)
         os.system(comandoexec)
 

@@ -40,6 +40,7 @@ import shlex
 import shutil
 import filecmp
 import math
+
 # To support montecarlo...
 import random
 
@@ -51,6 +52,7 @@ except ImportError:
 import configparser as configparser
 
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import chr
 from builtins import map
@@ -61,6 +63,7 @@ from builtins import range
 from builtins import object
 
 from pyslice.pyslice_lib import PySPG as pyspg
+
 """
 NAME:
     pyslice.py
@@ -91,7 +94,7 @@ EXAMPLES:
 # ===globals======================
 modname = "pyslice"
 __version__ = "1.6.5"
-LINEENDS = '\r\n'
+LINEENDS = "\r\n"
 
 
 # --option args--
@@ -118,13 +121,13 @@ def msg(txt):
 
 def debug(ftn, txt):
     if debug_p:
-        tmp = "".join([modname, '.', ftn, ':', txt, '\n'])
+        tmp = "".join([modname, ".", ftn, ":", txt, "\n"])
         sys.stdout.write(tmp)
         sys.stdout.flush()
 
 
 def fatal(ftn, txt):
-    tmp = "".join([modname, '.', ftn, ':FATAL:', txt, '\n'])
+    tmp = "".join([modname, ".", ftn, ":FATAL:", txt, "\n"])
     raise SystemExit(tmp)
 
 
@@ -147,8 +150,7 @@ def mask(charlist):
     return maskvar
 
 
-ascii7bit = "".join(
-    list(map(chr, list(range(32, 127))))) + "\r\n\t\b"
+ascii7bit = "".join(list(map(chr, list(range(32, 127))))) + "\r\n\t\b"
 ascii7bit_mask = mask(ascii7bit)
 
 
@@ -157,7 +159,7 @@ def istext(filename, check=1024, mask=ascii7bit_mask):
     Returns true if the first check characters in file
     are within mask, false otherwise.
     """
-    with open(filename, 'r') as filep:
+    with open(filename, "r") as filep:
         s = filep.read(check)
     s = s.translate(mask)
     if s.find("b") != -1:
@@ -170,6 +172,7 @@ def assignment(var1, var2):
         return var1
     except:
         return var2
+
 
 # User-defined Exceptions
 
@@ -193,6 +196,7 @@ class NotValidTypeError(Exception):
 class TemplatePathNotFoundError(Exception):
     pass
 
+
 # ====================================
 
 
@@ -214,7 +218,8 @@ class Pyslice(object):
         pyslice_ini = os.path.join(os.getcwd(), input_file)
         if not os.access(pyslice_ini, os.F_OK | os.R_OK):
             raise ConfigFileNotFoundError(
-                "%s was not found or not readable ***" % (input_file,))
+                "%s was not found or not readable ***" % (input_file,)
+            )
         # Read it in.
         config_dict = configparser.ConfigParser()
         config_dict.read(pyslice_ini)
@@ -223,12 +228,14 @@ class Pyslice(object):
         num_sections = len(config_dict.sections())
         if num_sections < min_sections or num_sections > max_sections:
             raise NumberConfigSectionsError(
-                "pyslice.ini must have between %d and %d sections." %
-                (min_sections, max_sections))
+                "pyslice.ini must have between %d and %d sections."
+                % (min_sections, max_sections)
+            )
         for sec in req_sections_list:
             if not config_dict.has_section(sec):
                 raise RequiredSectionNotFoundError(
-                    "pyslice.ini requires the [%s] section." % sec)
+                    "pyslice.ini requires the [%s] section." % sec
+                )
 
         # Return pyslice.ini as dictionary.
         return config_dict
@@ -238,8 +245,8 @@ class Pyslice(object):
             This corrects a mistake that I would commonly make.
 
         """
-        in_str = in_str.replace('\'', '')
-        in_str = in_str.replace('\"', '')
+        in_str = in_str.replace("'", "")
+        in_str = in_str.replace('"', "")
         return in_str
 
     def path_correction(self, path):
@@ -258,7 +265,7 @@ class Pyslice(object):
     def create_output(self, var_set, dirname, dirs, fnames):
         var_dict = {}
         for variables in var_set[1:]:
-            exec('%s = %s' % (variables[0], variables[1]))
+            exec("%s = %s" % (variables[0], variables[1]))
             var_dict[variables[0]] = variables[1]
 
         try:
@@ -267,7 +274,7 @@ class Pyslice(object):
             pass
         for dirn in dirs:
             infilepath = os.path.join(dirname, dirn)
-            rel_dir = infilepath.replace(_template_path + os.sep, '')
+            rel_dir = infilepath.replace(_template_path + os.sep, "")
             try:
                 os.makedirs(os.path.join(_output_path, _strtag, rel_dir))
             except OSError:
@@ -280,13 +287,13 @@ class Pyslice(object):
             if excludeflag:
                 continue
             infilepath = os.path.join(dirname, files)
-            rel_dir = infilepath.replace(_template_path + os.sep, '')
+            rel_dir = infilepath.replace(_template_path + os.sep, "")
             outfilepath = os.path.join(_output_path, _strtag, rel_dir)
 
             # Is this a text file?  If so, just open as a template
             if istext(infilepath):
-                with open(infilepath, 'r') as inputf:
-                    with open(outfilepath, 'w') as output:
+                with open(infilepath, "r") as inputf:
+                    with open(outfilepath, "w") as output:
                         shutil.copystat(infilepath, outfilepath)
 
                         filetotalizer = []
@@ -295,14 +302,15 @@ class Pyslice(object):
                         escaped_keyword = re.escape(_keyword)
                         keyword_search = re.compile(escaped_keyword)
                         search_for = re.compile(
-                            escaped_keyword + '(.*?)' + escaped_keyword)
+                            escaped_keyword + "(.*?)" + escaped_keyword
+                        )
 
                         for lineraw in inputf:
                             line = lineraw
                             # Active comments first...
-                            if CODE == line[:len(CODE)]:
+                            if CODE == line[: len(CODE)]:
                                 filetotalizer.append(line)
-                                words = line.split('|')
+                                words = line.split("|")
                                 # There is the possibility that a datafile
                                 # would WANT to use | So fix words up to have
                                 # 1 or two items...
@@ -315,7 +323,7 @@ class Pyslice(object):
                                 # if template includes | ... too hot
                                 # right now MUST include block length
                                 if len(words) > numargs:
-                                    linetemplate = words[:-2].join('|')
+                                    linetemplate = words[:-2].join("|")
                                     blocklen = int(words[-1])
 
                                 # ... just right
@@ -323,34 +331,37 @@ class Pyslice(object):
                                     linetemplate = words[0]
                                     blocklen = int(words[1])
 
-                                linetemplate = linetemplate[len(CODE):]
+                                linetemplate = linetemplate[len(CODE) :]
 
                                 # Process special directives
-                                if '~' == linetemplate[1]:
+                                if "~" == linetemplate[1]:
                                     # Only want to open file once by checking
                                     # dictionary
                                     lookupno, filename = words[0].split()[1:3]
-                                    lookupno = lookupno.split('~')[1]
+                                    lookupno = lookupno.split("~")[1]
                                     try:
                                         speciallines[filename]
                                     except KeyError:
                                         speciallines.setdefault(filename, {})
-                                        with open(filename, 'r') as lout:
+                                        with open(filename, "r") as lout:
                                             for line in lout:
                                                 # Handle comments and blank lines
-                                                if '#' == line[0]:
+                                                if "#" == line[0]:
                                                     continue
-                                                (recno,
-                                                 sep,
-                                                 stemplate) = line.partition('|')
+                                                (
+                                                    recno,
+                                                    sep,
+                                                    stemplate,
+                                                ) = line.partition("|")
                                                 if not stemplate:
                                                     continue
-                                                stemplate = stemplate.rstrip(
-                                                    LINEENDS)
-                                                speciallines[filename][recno] = (
-                                                    stemplate)
-                                    line_sub = speciallines[filename][
-                                        lookupno].format(**var_dict)
+                                                stemplate = stemplate.rstrip(LINEENDS)
+                                                speciallines[filename][
+                                                    recno
+                                                ] = stemplate
+                                    line_sub = speciallines[filename][lookupno].format(
+                                        **var_dict
+                                    )
 
                                 else:
                                     line_sub = linetemplate.format(**var_dict)
@@ -359,11 +370,11 @@ class Pyslice(object):
                                     linein = next(inputf)
                                     nline = []
                                     for index, char in enumerate(line_sub):
-                                        if char == '*':
+                                        if char == "*":
                                             nline.append(linein[index])
                                         else:
                                             nline.append(line_sub[index])
-                                    filetotalizer.append(''.join(nline))
+                                    filetotalizer.append("".join(nline))
                             elif keyword_search.search(line):
                                 matchline = line
                                 for matches in search_for.findall(matchline):
@@ -371,23 +382,26 @@ class Pyslice(object):
                                         if var_name in matches:
                                             # replace variable name with number
                                             match = matches.replace(
-                                                var_name, str(
-                                                    var_dict[var_name]))
+                                                var_name, str(var_dict[var_name])
+                                            )
                                             # evaluate Python statement with
                                             # eval
                                             match = eval(match)
                                             # replace variable with calculated
                                             # value
                                             matchwhat = re.escape(
-                                                _keyword + matches + _keyword)
-                                            matchline = re.sub(matchwhat,
-                                                               str(match),
-                                                               matchline,
-                                                               count=1)
+                                                _keyword + matches + _keyword
+                                            )
+                                            matchline = re.sub(
+                                                matchwhat,
+                                                str(match),
+                                                matchline,
+                                                count=1,
+                                            )
                                 filetotalizer.append(matchline)
                             else:
                                 filetotalizer.append(line)
-                        output.write(''.join(filetotalizer))
+                        output.write("".join(filetotalizer))
             else:
                 try:
                     if filecmp.cmp(infilepath, outfilepath) is False:
@@ -398,28 +412,32 @@ class Pyslice(object):
 
     # Runs the command *com in a new thread.
     def start_thread_process(self, *com):
-        com = ' '.join(com)
+        com = " ".join(com)
         com = shlex.split(com)
         # PYSLICE can be used in subprocess to do different things if script
         # is run outside of Pyslice.
-        os.environ['PYSLICE'] = '1'
-        if os.name != 'nt':
-            p = subprocess.Popen(com,
-                                 stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.STDOUT,
-                                 close_fds=True)
+        os.environ["PYSLICE"] = "1"
+        if os.name != "nt":
+            p = subprocess.Popen(
+                com,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                close_fds=True,
+            )
         else:
             # close_fds is not supported on Windows
-            p = subprocess.Popen(com,
-                                 stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE,
-                                 stderr=subprocess.STDOUT)
+            p = subprocess.Popen(
+                com,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+            )
 
         chstdouterr = p.communicate()[0]
 
         if _keep_log is True:
-            with open('pyslice.log', 'w') as fo:
+            with open("pyslice.log", "w") as fo:
                 fo.write(str(chstdouterr))
 
     def run(self):
@@ -449,24 +467,22 @@ class Pyslice(object):
 
         # Read the configuration file and set appropriate variables.
         configuration = self.read_config(4, 100, ["paths", "flags", "program"])
-        _template_path = self.dequote(configuration.get("paths",
-                                                        "template_path"))
+        _template_path = self.dequote(configuration.get("paths", "template_path"))
         _output_path = self.dequote(configuration.get("paths", "output_path"))
         _keyword = self.dequote(configuration.get("flags", "keyword"))
         max_threads = configuration.getint("flags", "max_threads")
         try:
-            COMMENT_CODE = configuration.get('flags', 'comment')
+            COMMENT_CODE = configuration.get("flags", "comment")
         except:
-            COMMENT_CODE = 'qwerty'
+            COMMENT_CODE = "qwerty"
         try:
-            DT_CODE = assignment(
-                configuration.get('flags', 'active_comment'), '')
+            DT_CODE = assignment(configuration.get("flags", "active_comment"), "")
         except:
-            DT_CODE = 'qwerty'
+            DT_CODE = "qwerty"
         CODE = COMMENT_CODE + DT_CODE
         _exclude_list = []
-        if configuration.has_option('flags', 'exclude_copy'):
-            _exclude_list = eval(configuration.get('flags', 'exclude_copy'))
+        if configuration.has_option("flags", "exclude_copy"):
+            _exclude_list = eval(configuration.get("flags", "exclude_copy"))
         if max_threads <= 0:
             max_threads = total_processes
         flat_dirs = configuration.getboolean("flags", "flat_dirs")
@@ -490,7 +506,8 @@ class Pyslice(object):
 
         if not os.path.exists(_template_path):
             raise TemplatePathNotFoundError(
-                "The template path doesn't exists at '%s'" % (_template_path))
+                "The template path doesn't exists at '%s'" % (_template_path)
+            )
 
         # Put all variable names from configuration file into key_list.
         # Create list (from each variable) of lists (from start, stop, incr).
@@ -504,8 +521,7 @@ class Pyslice(object):
                 # Cheat by using list type
                 var_list.append(".%s" % (variable,))
                 # Find out distribution
-                distribution = 'random.' + configuration.get(variable,
-                                                             "distribution")
+                distribution = "random." + configuration.get(variable, "distribution")
                 samples = configuration.getint(variable, "samples")
                 for _ in range(samples):
                     var_list.append(eval(distribution))
@@ -524,7 +540,8 @@ class Pyslice(object):
                 raise NotValidTypeError(
                     "'%s' is not a valid type - "
                     "['arithmetic', 'geometric', 'list', "
-                    "or 'montecarlo']" % (var_type,))
+                    "or 'montecarlo']" % (var_type,)
+                )
 
             # Arithmetic and Geometric types have the same variables
             if var_type == "arithmetic" or var_type == "geometric":
@@ -541,7 +558,7 @@ class Pyslice(object):
             var_list = [str(i) for i in var_list]
             list_list.append(var_list)
 
-        list_list = [' '.join(i) for i in list_list]
+        list_list = [" ".join(i) for i in list_list]
 
         # This does the cartesian of all of the parameter values.
         pyspg_obj = pyspg.ParamParser(list_list)
@@ -572,27 +589,28 @@ class Pyslice(object):
                     except ValueError:
                         pass
                 if isinstance(nval, int):
-                    if nmax.setdefault(vname, float('-inf')) < nval:
+                    if nmax.setdefault(vname, float("-inf")) < nval:
                         nmax[vname] = nval
                 tmp.append([vname, nval])
             nset.append(tmp)
 
         while 1:
             try:
-                if sys.argv[1] == 'y':
+                if sys.argv[1] == "y":
                     break
             except IndexError:
                 pass
 
-            toss = ('Configuration results in %s permutations. '
-                    'Continue? (y/n) > ') % (len(nset),)
+            toss = (
+                "Configuration results in %s permutations. " "Continue? (y/n) > "
+            ) % (len(nset),)
             inp = input(toss)
             if not inp:
                 continue
             inp = inp[0]
-            if inp == 'y' or inp == 'Y':
+            if inp == "y" or inp == "Y":
                 break
-            if inp == 'n' or inp == 'N':
+            if inp == "n" or inp == "N":
                 return
             continue
 
@@ -607,10 +625,12 @@ class Pyslice(object):
                     if ivar[0] in allints:
                         fstr = "{0}-{1}{2}"
                     else:
-                        fstr = "{0}-{1:0" + str(math.ceil(math.log10(nmax[ivar[0]] + 1))) + "d}{2}"
-                    _strtag = _strtag + fstr.format(ivar[0],
-                                                    ivar[1],
-                                                    os.path.sep)
+                        fstr = (
+                            "{0}-{1:0"
+                            + str(math.ceil(math.log10(nmax[ivar[0]] + 1)))
+                            + "d}{2}"
+                        )
+                    _strtag = _strtag + fstr.format(ivar[0], ivar[1], os.path.sep)
 
             # Create the files and directories from the template
             # Walks the _template_path directory structure
@@ -626,14 +646,12 @@ class Pyslice(object):
 
             os.chdir(abs_path)
 
-            a = _threading.Thread(target=self.start_thread_process,
-                                  args=(program,))
+            a = _threading.Thread(target=self.start_thread_process, args=(program,))
             a.start()
 
 
 # =============================
 class Usage(Exception):
-
     def __init__(self, msg):
         self.msg = msg
 
@@ -642,30 +660,27 @@ def main(argv=None):
     if argv is None:
         argv = sys.argv
 
-    option_dict = {
-        'debug': 0,
-        'file': '',
-        }
+    option_dict = {"debug": 0, "file": ""}
     try:
-        opts, _ = getopt.getopt(argv[1:],
-                                'hvdf:',
-                                ['help', 'version', 'debug', 'file='])
+        opts, _ = getopt.getopt(
+            argv[1:], "hvdf:", ["help", "version", "debug", "file="]
+        )
     except getopt.error as msg:
         raise Usage(msg)
 
     for opt in opts:
-        if opt[0] == '-h' or opt[0] == '--help':
+        if opt[0] == "-h" or opt[0] == "--help":
             print(modname + ": version=" + __version__)
             usage()
             sys.exit(0)
-        elif opt[0] == '-v' or opt[0] == '--version':
+        elif opt[0] == "-v" or opt[0] == "--version":
             print(modname + ": version=" + __version__)
             sys.exit(0)
-        elif opt[0] == '-d' or opt[0] == '--debug':
-            option_dict['debug'] = 1
+        elif opt[0] == "-d" or opt[0] == "--debug":
+            option_dict["debug"] = 1
             sys.argv.remove(opt[0])
-        elif opt[0] == '-f' or opt[0] == '--file':
-            option_dict['file'] = opt[1]
+        elif opt[0] == "-f" or opt[0] == "--file":
+            option_dict["file"] = opt[1]
             argv.remove(opt[0])
             argv.remove(opt[1])
 
@@ -674,5 +689,5 @@ def main(argv=None):
     main_x.run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

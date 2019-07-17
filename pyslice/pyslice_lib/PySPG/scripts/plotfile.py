@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from builtins import range
+
 #! /usr/bin/python
 
 #
@@ -19,10 +20,7 @@ xlabel = "\\f{Times-Italic}t"
 extension = "psd"
 size = 3
 
-histvec = [
-    "%d{gama}.%s" % (i, extension)
-    for i in range(size)
-]
+histvec = ["%d{gama}.%s" % (i, extension) for i in range(size)]
 
 # configuration File
 inputFile = "param.dat"
@@ -34,9 +32,7 @@ PySPGPATH = "/t/users1/tessonec/devel/"
 
 for histvar in histvec:
 
-    p2 = Agrizer(
-        open(inputFile, "r").readlines()
-    )
+    p2 = Agrizer(open(inputFile, "r").readlines())
 
     p2.xlabel = xlabel
     p2.ylabel = "\\f{Times-Italic}P\\f{}(%s\\f{})" % xlabel
