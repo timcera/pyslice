@@ -10,6 +10,7 @@ before_install:
   - env
 
 install:
+  - pip install --upgrade pip
   - pip install coverage
   - python setup.py install
   - pip install coveralls
