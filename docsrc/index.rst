@@ -5,7 +5,8 @@
 pyslice
 =======
 
-This is the documentation for pyslice, a templating tool focused on building data sets for simulations.
+This is the documentation for pyslice, a templating tool focused on building
+data sets for simulations.
 
 Table of Contents
 -----------------
