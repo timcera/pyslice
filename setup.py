@@ -28,6 +28,7 @@ install_requires = [
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
     "future",
     "configparser",
+    "binaryornot",
 ]
 
 setup(

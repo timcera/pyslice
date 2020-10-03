@@ -44,6 +44,8 @@ import math
 # To support montecarlo...
 import random
 
+from binaryornot.check import is_binary
+
 try:
     import threading as _threading
 except ImportError:
@@ -122,38 +124,6 @@ def fatal(ftn, txt):
 
 def usage():
     print(__doc__)
-
-
-def mask(charlist):
-    """
-    Construct a mask suitable for s.translate,
-    which marks letters in charlist as "t" and ones not as "b".
-    Used by 'istext' function to identify text files.
-    """
-    maskvar = ""
-    for i in range(256):
-        if chr(i) in charlist:
-            maskvar = maskvar + "t"
-        else:
-            maskvar = maskvar + "b"
-    return maskvar
-
-
-ascii7bit = "".join(list(map(chr, list(range(32, 127))))) + "\r\n\t\b"
-ascii7bit_mask = mask(ascii7bit)
-
-
-def istext(filename, check=1024, mask=ascii7bit_mask):
-    """
-    Returns true if the first check characters in file
-    are within mask, false otherwise.
-    """
-    with open(filename, "r") as filep:
-        s = filep.read(check)
-    s = s.translate(mask)
-    if s.find("b") != -1:
-        return 0
-    return 1
 
 
 def assignment(var1, var2):
@@ -280,7 +250,7 @@ class Pyslice(object):
             outfilepath = os.path.join(_output_path, _strtag, rel_dir)
 
             # Is this a text file?  If so, just open as a template
-            if istext(infilepath):
+            if not is_binary(infilepath):
                 with open(infilepath, "r") as inputf:
                     with open(outfilepath, "w") as output:
                         shutil.copystat(infilepath, outfilepath)
