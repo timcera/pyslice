@@ -409,7 +409,7 @@ class GraceDocument(object):
         int1 = eval(("%e" % aa1)[0]) + 1
         int2 = eval(("%e" % aa2)[0]) - 1
 
-        if scale is "Normal":
+        if scale == "Normal":
             propose1 = sign1 * int1 * 10 ** scale1
             propose2 = sign2 * int2 * 10 ** scale2
             skip = abs(old_div((int1 * 10 ** scale1 - int2 * 10 ** scale2), 4))

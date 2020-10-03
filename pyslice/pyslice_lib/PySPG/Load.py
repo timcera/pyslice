@@ -196,7 +196,7 @@ else:
                         [
                             "%s = %s" % (str(k), str(locals()[k]))
                             for k in list(locals().keys())
-                            if k is not "data"
+                            if k != "data"
                         ]
                     )
                     + "\n"
