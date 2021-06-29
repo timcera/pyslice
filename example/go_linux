@@ -1,3 +1,2 @@
 
 python -c 'import sys;sys.path.insert(0, "../pyslice");sys.path.insert(0, "..");import pyslice;mainx=pyslice.Pyslice();mainx.run()'
-

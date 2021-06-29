@@ -1,13 +1,13 @@
-from __future__ import absolute_import
-from __future__ import division
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, division
+
+from builtins import map, range, str
+
+from past.utils import old_div
+
+from . import PyGrace
 
 #! /usr/bin/python
-
-from builtins import map
-from builtins import str
-from builtins import range
-from past.utils import old_div
-from . import PyGrace
 
 
 def loadData(s):

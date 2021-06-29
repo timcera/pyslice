@@ -1,7 +1,6 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
 version_number = "1.9.9"
 release_date = "Thu Jan 07 01:24:18 CEST 2005"
@@ -13,12 +12,12 @@ release_date = "Thu Jan 07 01:24:18 CEST 2005"
 # Please visit http://www.gnu.org
 #
 
-from builtins import object
-from builtins import next
-from . import ParamIterators
+from builtins import next, object
 
 #:::~ Important: for constants and functions already defined
 from math import *
+
+from . import ParamIterators
 
 #
 #
@@ -29,14 +28,14 @@ from math import *
 class ParamParser(object):
 
     """
-      Initialized with a list of strings, each one containing commands.
-      Each line will have a syntax as follows
-      (iterator_type) (variable_name) [bounds]
-      (iterator_type) can be one of the following characters
-      '+' '-' '*' '/'  => all of them expect bounds given by [min_value] [max_value] [step]
-      '.'              => punctual iterator, (bounds) is in fact a (BLANK separated) list with all the possible values
-      ':'              => defines a CONSTANT (i.e. not iterable object)
-      '#'              => repetition operator
+    Initialized with a list of strings, each one containing commands.
+    Each line will have a syntax as follows
+    (iterator_type) (variable_name) [bounds]
+    (iterator_type) can be one of the following characters
+    '+' '-' '*' '/'  => all of them expect bounds given by [min_value] [max_value] [step]
+    '.'              => punctual iterator, (bounds) is in fact a (BLANK separated) list with all the possible values
+    ':'              => defines a CONSTANT (i.e. not iterable object)
+    '#'              => repetition operator
 
     """
 
@@ -62,7 +61,7 @@ class ParamParser(object):
     # 1
     def __init__(self, lsLines):
         """
-          lsLines is a list of commands understood by this class.
+        lsLines is a list of commands understood by this class.
         """
 
         self.entities = []
@@ -83,8 +82,8 @@ class ParamParser(object):
     # 1
     def __get_iteration_and_command(self, cadena):
         """
-          returns the iteration type of a command. The iteration type is defined as the set of non alphanumeric characters
-          at the beginning of the line
+        returns the iteration type of a command. The iteration type is defined as the set of non alphanumeric characters
+        at the beginning of the line
         """
         last_char = 0
         while not cadena[last_char].isalnum():
@@ -94,7 +93,7 @@ class ParamParser(object):
     # 1
     def __parse(self, ls):
         """
-          internal function that parses the input
+        internal function that parses the input
         """
         for sit in ls:
             # strips trailing and leading blanks
@@ -116,8 +115,8 @@ class ParamParser(object):
 
     def __next__(self):
         """
-         next() iterates over the possible values raising a StopIteration when the possible values
-          are exhausted
+        next() iterates over the possible values raising a StopIteration when the possible values
+         are exhausted
         """
         if self.is_reset:
             self.is_reset = False
@@ -141,7 +140,7 @@ class ParamParser(object):
     # 1
     def reset(self):
         """
-          This function resets the iterator to its starting point
+        This function resets the iterator to its starting point
         """
         for i_iter in self.iterator_list:
             i_iter.reset()
@@ -154,8 +153,8 @@ class ParamParser(object):
     # 1
     def __str__(self):
         """
-          defines how the actual value of the parameter set is printed out.
-          A good candidate to be overwritten in inheriting classes.
+        defines how the actual value of the parameter set is printed out.
+        A good candidate to be overwritten in inheriting classes.
         """
         thisstr = (
             "\n".join(
@@ -181,7 +180,7 @@ class ParamParser(object):
 
     def value_of(self, varn):
         """
-          returns the actual value of the variable 'varn'
+        returns the actual value of the variable 'varn'
         """
         try:
             return self.actual_values[varn]
@@ -194,9 +193,9 @@ class ParamParser(object):
     # 1
     def set_order(self, new_order):
         """
-          sets a new order for the output.
-          May be a subset of the variables, but it can not be a superset
-          useful if your program only reads a fixed input file
+        sets a new order for the output.
+        May be a subset of the variables, but it can not be a superset
+        useful if your program only reads a fixed input file
         """
         try:
             for i in new_order:
@@ -238,10 +237,10 @@ class ParamParser(object):
     # 1
     def output_tree(self, limit=-1):
         """
-          returns the output from limit given the actual values of the parameter set.
-          by default (limit=-1) the output will only print the last variable value.
-          By setting limit to something else, you change the amount of variables printed
-          (i.e. limit=-2, will print the value of the last two variables)
+        returns the output from limit given the actual values of the parameter set.
+        by default (limit=-1) the output will only print the last variable value.
+        By setting limit to something else, you change the amount of variables printed
+        (i.e. limit=-2, will print the value of the last two variables)
         """
         theoutput = ""
         for i_iter in self.variables_list[limit:]:

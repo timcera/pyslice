@@ -1,7 +1,15 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
+
+import os
+import os.path
+import sys
+from builtins import next, range, str
+from math import *
+
+from . import Load, PyGrace
+from .ParamParser import *
 
 #
 #
@@ -18,18 +26,6 @@ from __future__ import absolute_import
 # BROKEN
 #
 #
-
-from builtins import next
-from builtins import str
-from builtins import range
-import sys
-import os.path
-import os
-
-from .ParamParser import *
-from . import Load
-from math import *
-from . import PyGrace
 
 
 class Agrizer(ParamParser):

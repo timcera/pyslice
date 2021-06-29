@@ -1,17 +1,14 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
+from __future__ import absolute_import, division, print_function
+
+from builtins import map, object, str
+
+from past.utils import old_div
 
 #
 # IMPLEMENTS A GRACE DATASET         ###########
 #
-
-from builtins import str
-from builtins import map
-from past.utils import old_div
-from builtins import object
 
 
 class GraceDataSet(object):

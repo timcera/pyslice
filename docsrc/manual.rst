@@ -19,7 +19,7 @@ easily be setup to create thousands of data sets.
 See the example directory under the pyslice install directory for an example
 pyslice.ini, template_path (equal to 'input_template), and output_path (equal
 to 'output') directories.  To run the example, type 'python ../pyslice.py' (or
-'./go' which does the same thing) from within the 'example' directory.  
+'./go' which does the same thing) from within the 'example' directory.
 
 ::
 
@@ -57,7 +57,7 @@ not included the stop value.
     #               own sub-directories will be created.
     template_path=/path/to/directory/holding/the/template/datasets
     output_path=/path/to/where/output/directories/will/be/made
-    
+
     # [flags] identify global options
     # 'keyword' can be changed if '$$' means something in your datasets
     #           'keyword' is used to bracket the Python code to have
@@ -74,20 +74,20 @@ not included the stop value.
     keyword="$$"
     max_threads=8
     flat_dirs="N"
-    
-    # [program] is the command you want run in each of the output 
+
+    # [program] is the command you want run in each of the output
     #           directories.
     [program]
     program="model -f "
-    
+
     # [flow] is set to 90, 92, 94, 96, 98
-    # 'arithmetic' is (increment + previous_value) 
+    # 'arithmetic' is (increment + previous_value)
     [flow]
     type=arithmetic
     start=90
     stop=100
     increment=2
-    
+
     # [function] is set to 5, 10, 20, 40
     # 'geometric' is (increment * previous_value)
     [function]
@@ -95,7 +95,7 @@ not included the stop value.
     start=5
     stop=41
     increment=2
-    
+
     # [pressure] is set to 1, 20, 24, 5, 8
     # 'list' takes the values in turn
     # 'value_type' can be int, float, or str
@@ -104,46 +104,46 @@ not included the stop value.
     type=list
     value_type=int
     values_list=[1,20,24,5,8]
-    
+
     # [rstage] is set to 'samples' values taken from distribution
-    # 'distribution' is the statistical distribution from the random 
+    # 'distribution' is the statistical distribution from the random
     # module
     #     uniform(a, b) - Get a random number in the range [a, b).
-    #     randint(a, b) - Return random integer in range [a, b], 
+    #     randint(a, b) - Return random integer in range [a, b],
     #         including both end points.
-    #     betavariate(alpha, beta) - Beta distribution.  Conditions 
-    #         on the parameters are alpha > -1 and beta} > -1.  
+    #     betavariate(alpha, beta) - Beta distribution.  Conditions
+    #         on the parameters are alpha > -1 and beta} > -1.
     #         Returned values range between 0 and 1.
-    #     choice(seq) -  Choose a random element from a non-empty 
+    #     choice(seq) -  Choose a random element from a non-empty
     #         sequence.
-    #     expovariate(lambd) - Exponential distribution.  lambd is 
-    #         1.0 divided by the desired mean.  (The parameter would 
-    #         be called "lambda", but that is a reserved word in 
-    #         Python.)  Returned values range from 0 to positive 
+    #     expovariate(lambd) - Exponential distribution.  lambd is
+    #         1.0 divided by the desired mean.  (The parameter would
+    #         be called "lambda", but that is a reserved word in
+    #         Python.)  Returned values range from 0 to positive
     #         infinity.
-    #     gammavariate(alpha, beta) - Gamma distribution.  Not the 
-    #         gamma function!  Conditions on the parameters are 
+    #     gammavariate(alpha, beta) - Gamma distribution.  Not the
+    #         gamma function!  Conditions on the parameters are
     #         alpha > 0 and beta > 0.
-    #     gauss(mu, sigma) - Gaussian distribution.  mu is the mean, 
-    #         and sigma is the standard deviation.  This is slightly 
+    #     gauss(mu, sigma) - Gaussian distribution.  mu is the mean,
+    #         and sigma is the standard deviation.  This is slightly
     #         faster than the normalvariate() function.
-    #     lognormvariate(mu, sigma) - Log normal distribution.  If 
-    #         you take the natural logarithm of this distribution, 
-    #         you'll get a normal distribution with mean mu and 
-    #         standard deviation sigma.  mu can have any value, and 
+    #     lognormvariate(mu, sigma) - Log normal distribution.  If
+    #         you take the natural logarithm of this distribution,
+    #         you'll get a normal distribution with mean mu and
+    #         standard deviation sigma.  mu can have any value, and
     #         sigma must be greater than zero.
-    #     normalvariate(mu, sigma) - Normal distribution.  mu is the 
+    #     normalvariate(mu, sigma) - Normal distribution.  mu is the
     #         mean, and sigma is the standard deviation.
-    #     paretovariate(alpha) - Pareto distribution.  alpha is the 
+    #     paretovariate(alpha) - Pareto distribution.  alpha is the
     #         shape parameter.
     #     random(...) random() -> x in the interval [0, 1).
-    #     vonmisesvariate(mu, kappa) - Circular data distribution.  
-    #         mu is the mean angle, expressed in radians between 0 
-    #         and 2*pi, and kappa is the concentration parameter, 
-    #         which must be greater than or equal to zero.  If kappa 
-    #         is equal to zero, this distribution reduces to a 
+    #     vonmisesvariate(mu, kappa) - Circular data distribution.
+    #         mu is the mean angle, expressed in radians between 0
+    #         and 2*pi, and kappa is the concentration parameter,
+    #         which must be greater than or equal to zero.  If kappa
+    #         is equal to zero, this distribution reduces to a
     #         uniform random angle over the range 0 to 2*pi.
-    #     weibullvariate(alpha, beta) - Weibull distribution.  alpha 
+    #     weibullvariate(alpha, beta) - Weibull distribution.  alpha
     #         is the scale parameter and beta is the shape parameter.
     # 'samples' is the number of samples taken from the distribution
     [rstage]

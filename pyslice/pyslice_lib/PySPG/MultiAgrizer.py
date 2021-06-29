@@ -1,7 +1,12 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
+
+import os.path
+import sys
+
+from . import Load, PyGrace
+from .ParamParser import *
 
 #
 #
@@ -10,12 +15,6 @@ from __future__ import absolute_import
 # Distributed According to GNU Generic Purpose License (GPL)
 # Please visit www.gnu.org
 #
-
-from . import PyGrace
-from . import Load
-from .ParamParser import *
-import sys
-import os.path
 
 
 class MultiAgrizer(object):
@@ -71,7 +70,7 @@ class MultiAgrizer(object):
 
     def set_world(self, xmin, xmax, ymin, ymax, xticks=None, yticks=None):
         """
-          sets the bounds for the
+        sets the bounds for the
         """
         self.xmin = xmin
         self.xmax = xmax

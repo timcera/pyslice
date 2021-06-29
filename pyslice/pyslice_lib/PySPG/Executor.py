@@ -1,7 +1,14 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
+
+import os
+import os.path
+import sys
+from builtins import object, str
+from math import *  # nopycln: import
+
+from .ParamParser import *  # nopycln: import
 
 #
 #
@@ -10,15 +17,6 @@ from __future__ import absolute_import
 # Distributed According to GNU Generic Purpose License (GPL)
 # Please visit www.gnu.org
 #
-
-from builtins import str
-from builtins import object
-import sys
-import os.path
-import os
-
-from .ParamParser import *
-from math import *
 
 
 class Executor(object):
@@ -67,9 +65,9 @@ class Executor(object):
 
     def doit(self, command, inname="in.dat", outfile="out.dat"):
         """
-          runs systematically command (which is a OS command or executable). In the correspondig directory
-          inname is the input file for the command
-          while outfile is the output file name
+        runs systematically command (which is a OS command or executable). In the correspondig directory
+        inname is the input file for the command
+        while outfile is the output file name
         """
         for i in self.parser:
             self.run(command, outfile, inname)

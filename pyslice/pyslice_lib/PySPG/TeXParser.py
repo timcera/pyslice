@@ -1,11 +1,10 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
 
-import sys
-import os.path
 import os
+import os.path
+import sys
 
 from .ParamParser import *
 
@@ -122,7 +121,7 @@ class TeXParser(ParamParser):
 
     def doit(self, outname="plots.tex", plotnames=[]):
         """
-         Suquencially dumps all the plotnames (a list of .agr files)
+        Suquencially dumps all the plotnames (a list of .agr files)
         """
         for i in self.parser_original:
             self.__tex(outname, plotnames)

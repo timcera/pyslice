@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
+import sys
 
 #
 # :::~ Copyright (C) 2005 by Claudio J. Tessone <tessonec@imedea.uib.es>
@@ -9,10 +12,7 @@ from __future__ import absolute_import
 #            (see http://www.gnu.org)
 #
 #
-from builtins import map
-from builtins import range
-from builtins import object
-import sys
+from builtins import map, object, range
 from math import *
 
 
@@ -144,8 +144,7 @@ class ItOperatorPower(ItOperator):
 
 
 class ItConstant(SPGIterator):
-    """This subclass generates a constant "iteration" type.
-    """
+    """This subclass generates a constant "iteration" type."""
 
     def __init__(self):
         SPGIterator.__init__(self)
@@ -175,7 +174,7 @@ class ItPunctual(SPGIterator):
 
 
 class ItRepetition(SPGIterator):
-    """ This subclass generates a list of null with length defined useful when
+    """This subclass generates a list of null with length defined useful when
     trying to repit the run of the program with the same parameters.
     """
 

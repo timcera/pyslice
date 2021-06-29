@@ -1,8 +1,15 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
+from __future__ import absolute_import, division, print_function
+
+import sys
+from builtins import object, range, str
+from math import *
+
+from past.utils import old_div
+
+from .Load import *
+from .ParamParser import *
 
 #
 #
@@ -13,22 +20,12 @@ from __future__ import division
 #
 #
 
-from builtins import str
-from builtins import range
-from builtins import object
-from past.utils import old_div
-import sys
-from math import *
-
-from .Load import *
-from .ParamParser import *
-
 
 class MeanCalculation(object):
 
     """
-      When a simulation is run with a given number of repetitions what is needed is a
-      tool for calculating the mean values. This is that tool
+    When a simulation is run with a given number of repetitions what is needed is a
+    tool for calculating the mean values. This is that tool
     """
 
     def __init__(self, lsLines):

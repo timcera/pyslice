@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
+import os.path
+from builtins import str
 
 #! /usr/bin/python
 
-from builtins import str
-import os.path
 
 BASEDIR = os.path.expanduser("~/devel/")
 

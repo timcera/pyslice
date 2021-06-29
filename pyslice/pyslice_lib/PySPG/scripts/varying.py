@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
+import os.path
+import sys
 
 #! /usr/bin/python
 #
@@ -7,8 +11,6 @@ from __future__ import absolute_import
 #:::~ Distributed under GNU/GPL License
 #
 
-import os.path
-import sys
 
 #
 # WARNING YOU MUST SPECIFY THE DIRECTORY WHERE PySPG LIVES

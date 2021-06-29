@@ -2,7 +2,7 @@
 # Keyword Functionality
 ##
 $$water_level$$ 10 20 45 60
-30 20 47 20 $$flow$$ 
+30 20 47 20 $$flow$$
 10 24 $$'%10.6f' % (phosphorus * 45)$$ 14 15 16 $$phosphorus + 100$$
 
 
@@ -16,7 +16,7 @@ $$water_level$$ 10 20 45 60
 #
 
 # Then the following template string will replace the block of 3 lines after with:
-#  1.20000000 **** is equal to 120.400000 
+#  1.20000000 **** is equal to 120.400000
 
 #$ {water_level:10.8f} **** is equal to {flow:10f}|3
  1.40000000 notc is equal to 220.400000
@@ -36,7 +36,5 @@ $$water_level$$ 10 20 45 60
 This line is replaced with the 1st record template in 'template_strings.txt'
 This line is replaced with the 1st record template in 'template_strings.txt'
 
-#$ ~4 template_strings.txt 
+#$ ~4 template_strings.txt
 This line is replaced with the 4th record template in 'template_strings.txt'
-
-

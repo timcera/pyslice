@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-from __future__ import print_function
-from __future__ import absolute_import
-
+# -*- coding: utf-8 -*-
 # pyslice.py
 #    Copyright (C) 2001  Tim Cera tim@cerazone.net
 #
@@ -28,21 +24,21 @@ from __future__ import absolute_import
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# ===imports======================
-import sys
+from __future__ import absolute_import, print_function
+
+import filecmp
+import getopt
+import math
 import os
 import os.path
-import getopt
-import time
-import subprocess
 import re
 import shlex
 import shutil
-import filecmp
-import math
+import subprocess
 
-# To support montecarlo...
-import random
+# ===imports======================
+import sys
+import time
 
 from binaryornot.check import is_binary
 
@@ -169,9 +165,7 @@ class Pyslice(object):
 
     # --------------------------
     def read_config(self, min_sections, max_sections, req_sections_list):
-        """ Reads the pyslice.ini file.
-
-        """
+        """Reads the pyslice.ini file."""
 
         # Can we find pyslice.ini?
         pyslice_ini = os.path.join(os.getcwd(), input_file)
@@ -200,8 +194,8 @@ class Pyslice(object):
         return config_dict
 
     def dequote(self, in_str):
-        """ Removes quotes around strings in the configuration file.
-            This corrects a mistake that I would commonly make.
+        """Removes quotes around strings in the configuration file.
+        This corrects a mistake that I would commonly make.
 
         """
         in_str = in_str.replace("'", "")
@@ -209,7 +203,7 @@ class Pyslice(object):
         return in_str
 
     def path_correction(self, path):
-        """ Corrects path separators and removes trailing path separators.
+        """Corrects path separators and removes trailing path separators.
 
         Needed so that path separators of any OS are corrected to the
         platform running the script.

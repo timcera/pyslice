@@ -1,6 +1,6 @@
 .. include:: ../BADGES.rst
 
-.. _pyslice_documentation:  
+.. _pyslice_documentation:
 
 pyslice
 =======

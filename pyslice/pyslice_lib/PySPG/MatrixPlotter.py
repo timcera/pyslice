@@ -1,7 +1,12 @@
-#! /usr/bin/python
+# -*- coding: utf-8 -*-
 
-from __future__ import print_function
-from __future__ import absolute_import
+from __future__ import absolute_import, print_function
+
+import os.path
+import sys
+
+from . import Load, PyGrace
+from .ParamParser import *
 
 #
 #
@@ -10,13 +15,6 @@ from __future__ import absolute_import
 # Distributed According to GNU Generic Purpose License (GPL)
 # Please visit www.gnu.org
 #
-
-import sys
-import os.path
-
-from . import PyGrace
-from . import Load
-from .ParamParser import *
 
 
 class MatrixPlotter(object):

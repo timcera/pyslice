@@ -8,14 +8,14 @@
 
 TODO LIST
 
-**  Document and cleanup PyGrace, 
+**  Document and cleanup PyGrace,
 
 **  cleanup of python code (too messy) to make it easily extendable
 
 *** add arbitrary formula support
 
-*** solve string defficiencies 
-           i.e. +s 'a' 'aaaa' 'a' do not solve to 'a' 'aa' ... (not 
+*** solve string defficiencies
+           i.e. +s 'a' 'aaaa' 'a' do not solve to 'a' 'aa' ... (not
 
 
 ################################################################################
