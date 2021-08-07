@@ -159,7 +159,7 @@ class ParamParser(object):
         thisstr = (
             "\n".join(
                 [
-                    "%s%s%s" % (k, self.separator, self.actual_values[k])
+                    "{}{}{}".format(k, self.separator, self.actual_values[k])
                     for k in self.entities
                     if k
                 ]
@@ -171,7 +171,7 @@ class ParamParser(object):
         for i_iter in self.iterator_list:
             varname = i_iter.get_varname()
             thisstr = thisstr.replace(
-                "{%s}" % varname, "%s-%s" % (varname, self.actual_values[varname])
+                "{%s}" % varname, "{}-{}".format(varname, self.actual_values[varname])
             )
 
         return thisstr
@@ -226,7 +226,7 @@ class ParamParser(object):
         thepath = os.path.curdir + os.path.sep
 
         for i_iter in self.variables_list[:limit]:
-            thepath += "%s-%s%s" % (
+            thepath += "{}-{}{}".format(
                 i_iter.get_varname(),
                 self.actual_values[i_iter.get_varname()],
                 os.path.sep,

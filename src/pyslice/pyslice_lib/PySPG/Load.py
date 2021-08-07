@@ -194,7 +194,7 @@ else:
                 sys.stderr.write(
                     "\n".join(
                         [
-                            "%s = %s" % (str(k), str(locals()[k]))
+                            "{} = {}".format(str(k), str(locals()[k]))
                             for k in list(locals().keys())
                             if k != "data"
                         ]

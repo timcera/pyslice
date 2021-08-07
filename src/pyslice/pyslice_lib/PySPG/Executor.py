@@ -59,7 +59,7 @@ class Executor(object):
 
         open(outname, "a").write(self.parser.output_tree(self.limit) + "\t")
 
-        os.system("%s >> %s " % (exename, outname))
+        os.system("{} >> {} ".format(exename, outname))
 
         os.chdir(cwd)
 

@@ -81,7 +81,7 @@ class ItOperator(SPGIterator):
             [xmin, xmax, xstep] = list(map(eval, str_rest[1:]))
         except:
             raise ValueError(
-                "Line: '{0}' incorrect number of parameters (found {1}) for iterator       '{2}' over '{3}'".format(
+                "Line: '{}' incorrect number of parameters (found {}) for iterator       '{}' over '{}'".format(
                     command, len(str_rest) - 1, self.it_type, self.varname
                 )
             )
@@ -91,17 +91,17 @@ class ItOperator(SPGIterator):
 
         try:
             if (xmin < xmax) and (
-                xmin >= eval("%s %s %s" % (xmin, self.it_type, xstep))
+                xmin >= eval("{} {} {}".format(xmin, self.it_type, xstep))
             ):
                 raise AssertError("")
 
             if (xmin > xmax) and (
-                xmin <= eval("%s %s %s" % (xmin, self.it_type, xstep))
+                xmin <= eval("{} {} {}".format(xmin, self.it_type, xstep))
             ):
                 raise AssertError("")
         except:
             raise ValueError(
-                "Line: '{0}' Variable '{1}': Error! {2}{3}{4} do not seem to tend to {5}".format(
+                "Line: '{}' Variable '{}': Error! {}{}{} do not seem to tend to {}".format(
                     command, self.varname, xmin, self.it_type, xstep, xmax
                 )
             )
@@ -113,7 +113,7 @@ class ItOperator(SPGIterator):
 
         while (xmin > xmax) ^ (xact <= xmax):  # ^ is xor in python !
             lsTmp.append(xact)
-            xact = eval("%s%s%s" % (xact, self.it_type, xstep))
+            xact = eval("{}{}{}".format(xact, self.it_type, xstep))
 
         self.data = lsTmp
 
@@ -186,9 +186,7 @@ class ItRepetition(SPGIterator):
             self.varname = False
             self.data = list(range(eval(command)))
         except:
-            raise ValueError(
-                "Line: '{0}' iterator '#' could not eval()".format(command)
-            )
+            raise ValueError("Line: '{}' iterator '#' could not eval()".format(command))
             sys.exit()
 
     def is_variable(self):

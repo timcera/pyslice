@@ -1,4 +1,30 @@
 # -*- coding: utf-8 -*-
+"""
+NAME:
+    pyslice.py
+
+SYNOPSIS:
+    pyslice.py [options]
+
+DESCRIPTION:
+    Pyslice creates input data sets from information in pyslice.ini
+    and files in the template directory.  Pyslice then runs a command
+    within each directory, controlling the processes so that at any
+    one time there are less than a certain number of processes.
+
+OPTIONS:
+    -h,--help        this message
+    -v,--version     version
+    -d,--debug       turn on debug messages
+
+EXAMPLES:
+    1. As standalone
+        pyslice.py
+    2. As library
+        import pyslice
+        ...
+"""
+
 # pyslice.py
 #    Copyright (C) 2001  Tim Cera tim@cerazone.net
 #
@@ -31,6 +57,7 @@ import getopt
 import math
 import os
 import os.path
+import random
 import re
 import shlex
 import shutil
@@ -50,33 +77,6 @@ except ImportError:
 import configparser as configparser
 
 from pyslice.pyslice_lib import PySPG as pyspg
-
-"""
-NAME:
-    pyslice.py
-
-SYNOPSIS:
-    pyslice.py [options]
-
-DESCRIPTION:
-    Pyslice creates input data sets from information in pyslice.ini
-    and files in the template directory.  Pyslice then runs a command
-    within each directory, controlling the processes so that at any
-    one time there are less than a certain number of processes.
-
-OPTIONS:
-    -h,--help        this message
-    -v,--version     version
-    -d,--debug       turn on debug messages
-
-EXAMPLES:
-    1. As standalone
-        pyslice.py
-    2. As library
-        import pyslice
-        ...
-"""
-
 
 # ===globals======================
 modname = "pyslice"
@@ -171,7 +171,7 @@ class Pyslice(object):
         pyslice_ini = os.path.join(os.getcwd(), input_file)
         if not os.access(pyslice_ini, os.F_OK | os.R_OK):
             raise ConfigFileNotFoundError(
-                "%s was not found or not readable ***" % (input_file,)
+                "{} was not found or not readable ***".format(input_file)
             )
         # Read it in.
         config_dict = configparser.ConfigParser()
@@ -218,7 +218,7 @@ class Pyslice(object):
     def create_output(self, var_set, dirname, dirs, fnames):
         var_dict = {}
         for variables in var_set[1:]:
-            exec("%s = %s" % (variables[0], variables[1]))
+            exec("{} = {}".format(variables[0], variables[1]))
             var_dict[variables[0]] = variables[1]
 
         try:
@@ -472,7 +472,7 @@ class Pyslice(object):
             # Monte Carlo
             if var_type == "montecarlo":
                 # Cheat by using list type
-                var_list.append(".%s" % (variable,))
+                var_list.append(".{}".format(variable))
                 # Find out distribution
                 distribution = "random." + configuration.get(variable, "distribution")
                 samples = configuration.getint(variable, "samples")
@@ -480,13 +480,13 @@ class Pyslice(object):
                     var_list.append(eval(distribution))
             # Arithmetic
             elif var_type == "arithmetic":
-                var_list.append("+%s" % (variable,))
+                var_list.append("+{}".format(variable))
             # Geometric
             elif var_type == "geometric":
-                var_list.append("*%s" % (variable,))
+                var_list.append("*{}".format(variable))
             # List
             elif var_type == "list":
-                var_list.append(".%s" % (variable,))
+                var_list.append(".{}".format(variable))
                 for i in eval(configuration.get(variable, "values_list")):
                     var_list.append(i)
             else:

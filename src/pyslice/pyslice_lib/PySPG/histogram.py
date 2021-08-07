@@ -43,7 +43,10 @@ class SPGHistogram(object):
         keys = list(self.__dict.keys())
         keys.sort()
         return "\n".join(
-            ["%f\t%f" % (k, (old_div(self.__dict[k], self.__elements))) for k in keys]
+            [
+                "{:f}\t{:f}".format(k, (old_div(self.__dict[k], self.__elements)))
+                for k in keys
+            ]
         )
 
     def __get_nearest(self, value):

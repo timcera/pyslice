@@ -11,8 +11,8 @@ from .ParamParser import *
 
 class TeXParser(ParamParser):
     replacing_rules = {
-        "\s": "_",
-        "\S": "^",
+        r"\s": "_",
+        r"\S": "^",
         "\f{Symbol}": " ",
         "\\f{}": " ",
         "\\N": "   ",
@@ -90,7 +90,7 @@ class TeXParser(ParamParser):
                 else:
                     print(i)
             else:
-                print(" $ %s = %s $" % (i, actual_values[i]))
+                print(" $ {} = {} $".format(i, actual_values[i]))
             print(""" }   """)
         print("\\end{itemize}")
         print()
@@ -110,7 +110,7 @@ class TeXParser(ParamParser):
         fOut.close()
         sys.stdout = cout
         os.system("latex %s" % outname)
-        comandoexec = "dvips -o %s.ps  %s" % (
+        comandoexec = "dvips -o {}.ps  {}".format(
             os.path.splitext(outname)[0],
             os.path.splitext(outname)[0] + ".dvi",
         )

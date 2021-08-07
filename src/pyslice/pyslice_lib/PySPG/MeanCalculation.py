@@ -40,8 +40,8 @@ class MeanCalculation(object):
 
         dirname = self.pp_varying.directory_tree()
 
-        fsearch = "%s%s" % (dirname, fin_name)
-        fout = "%s%s" % (dirname, fout_name)
+        fsearch = "{}{}".format(dirname, fin_name)
+        fout = "{}{}".format(dirname, fout_name)
 
         try:
             all_data = loadData(fsearch)
