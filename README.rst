@@ -31,7 +31,7 @@ establishing the sensitivity of a model to changing parameters.
 
 Documentation
 =============
-Reference documentation is at https://timcera.bitbucket.io/pyslice/docsrc/index.html
+Reference documentation is at https://timcera.bitbucket.io/pyslice/docs/index.html
 
 Installation
 ============
