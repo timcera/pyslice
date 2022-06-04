@@ -48,7 +48,7 @@ class Executor(object):
             if not os.path.isdir(way2):
                 os.makedirs(way2)
         except:
-            print("Error!! creating directory: '%s'" % way2)
+            print(f"Error!! creating directory: '{way2}'")
             sys.exit(1)
 
         os.chdir(way2)
@@ -57,9 +57,9 @@ class Executor(object):
         fparam.write(str(self.parser))
         fparam.close()
 
-        open(outname, "a").write(self.parser.output_tree(self.limit) + "\t")
+        open(outname, "a").write(f"{self.parser.output_tree(self.limit)}	")
 
-        os.system("{} >> {} ".format(exename, outname))
+        os.system(f"{exename} >> {outname} ")
 
         os.chdir(cwd)
 

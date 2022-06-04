@@ -28,7 +28,7 @@ paramFile = "param.dat"
 
 
 def usage():
-    print("usage is: %s [options] executable" % sys.argv[0])
+    print(f"usage is: {sys.argv[0]} [options] executable")
     print()
     print(
         ' -f param-file.dat : Reads parameters from param-file.dat \n\t\t (by default, "param.dat") '
@@ -50,7 +50,7 @@ try:
     os.path.isdir(PySPGPATH)
     sys.path.append(os.path.expanduser(PySPGPATH))
 except:
-    sys.stderr.write("Error! '%s' directory NOT FOUND\n" % PySPGPATH)
+    sys.stderr.write(f"Error! '{PySPGPATH}' directory NOT FOUND\n")
     sys.exit(2)
 
 try:
@@ -58,14 +58,14 @@ try:
 except:
     sys.stderr.write("Couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("And verify that PySPG lives there\n")
-    sys.stderr.write("actual value: '%s'\n" % PySPGPATH)
+    sys.stderr.write(f"actual value: '{PySPGPATH}'\n")
 
     sys.exit(2)
 
 try:
     lsLines = open(paramFile, "r").readlines()
 except:
-    sys.stderr.write("Error! Couldn't open '%s' file\n" % paramFile)
+    sys.stderr.write(f"Error! Couldn't open '{paramFile}' file\n")
     sys.exit(2)
 
 

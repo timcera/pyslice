@@ -27,4 +27,4 @@ for kcol, kerr, colname in col_contents:
     p2.ycol = kcol
     p2.zcol = kerr
 
-    p2.doit(str(kcol) + "err.agr", "out.dat")
+    p2.doit(f"{str(kcol)}err.agr", "out.dat")

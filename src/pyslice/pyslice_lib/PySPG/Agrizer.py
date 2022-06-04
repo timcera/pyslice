@@ -62,7 +62,7 @@ class Agrizer(ParamParser):
             if not os.path.exists(elpath):
                 raise AssertError("")
         except:
-            print("Error accesing path: '%s'." % elpath)
+            print(f"Error accesing path: '{elpath}'.")
             sys.exit()
         cwd = os.getcwd()
         os.chdir(elpath)
@@ -99,7 +99,7 @@ class Agrizer(ParamParser):
             if not os.path.exists(elpath):
                 raise AssertError("")
         except:
-            print("Error accesing path: '%s'." % elpath)
+            print(f"Error accesing path: '{elpath}'.")
             sys.exit()
         cwd = os.getcwd()
         os.chdir(elpath)
@@ -109,17 +109,17 @@ class Agrizer(ParamParser):
         for inname in pattern:
             for i in self.var:
                 inname = inname.replace(
-                    "{%s}" % i, "{}-{}".format(i, str(self.act_val(i)))
+                    "{%s}" % i, f"{i}-{str(self.act_val(i))}"
                 )
 
             if os.path.isfile(inname):
                 if not outname:
-                    outname = inname + ".agr"
+                    outname = f"{inname}.agr"
 
                 else:
                     for i in self.var:
                         outname = outname.replace(
-                            "{%s}" % i, "{}-{}".format(i, str(self.act_val(i)))
+                            "{%s}" % i, f"{i}-{str(self.act_val(i))}"
                         )
 
                 ls = Load.loadXY(inname, self.xcol, self.ycol)
@@ -135,7 +135,7 @@ class Agrizer(ParamParser):
                 g1.dump()
 
             else:
-                sys.stderr.write("skipping " + inname + "... file does not exist\n")
+                sys.stderr.write(f"skipping {inname}... file does not exist\n")
 
         os.chdir(cwd)
 
@@ -157,7 +157,7 @@ class Agrizer(ParamParser):
             if not os.path.exists(elpath):
                 raise AssertError("")
         except:
-            print("Error accesing path: '%s'." % elpath)
+            print(f"Error accesing path: '{elpath}'.")
             sys.exit()
 
         os.chdir(elpath)
@@ -169,13 +169,13 @@ class Agrizer(ParamParser):
             outname = pattern[0]
         for i in self.var:
             outname = outname.replace(
-                "{%s}" % i, "{}-{}".format(i, str(self.act_val(i)))
+                "{%s}" % i, f"{i}-{str(self.act_val(i))}"
             )
 
         for inname in pattern:
             for i in self.var:
                 inname = inname.replace(
-                    "{%s}" % i, "{}-{}".format(i, str(self.act_val(i)))
+                    "{%s}" % i, f"{i}-{str(self.act_val(i))}"
                 )
 
             #      sys.stderr.write(os.path.abspath(inname)+"... %d \n"%os.path.isfile(inname))
@@ -197,7 +197,7 @@ class Agrizer(ParamParser):
 
                 g1.set_data(ls2, legend, "bar")
             else:
-                sys.stderr.write("skipping " + inname + "... file does not exist\n")
+                sys.stderr.write(f"skipping {inname}... file does not exist\n")
         if isSomething:
             sys.stdout = open(outname, "w")
             g1.set_labels(self.xlabel, self.ylabel)

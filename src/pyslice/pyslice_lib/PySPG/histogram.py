@@ -44,7 +44,7 @@ class SPGHistogram(object):
         keys.sort()
         return "\n".join(
             [
-                "{:f}\t{:f}".format(k, (old_div(self.__dict[k], self.__elements)))
+                f"{k:f}\t{old_div(self.__dict[k], self.__elements):f}"
                 for k in keys
             ]
         )
@@ -72,4 +72,4 @@ if __name__ == "__main__":
     time2 = time.time()
 
     print(a)
-    sys.stderr.write("ellapsed time: %lf\n" % (time2 - time1))
+    sys.stderr.write(f"ellapsed time: {time2 - time1:f}\n")

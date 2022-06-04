@@ -171,7 +171,7 @@ class Pyslice(object):
         pyslice_ini = os.path.join(os.getcwd(), input_file)
         if not os.access(pyslice_ini, os.F_OK | os.R_OK):
             raise ConfigFileNotFoundError(
-                "{} was not found or not readable ***".format(input_file)
+                f"{input_file} was not found or not readable ***"
             )
         # Read it in.
         config_dict = configparser.ConfigParser()
@@ -181,13 +181,12 @@ class Pyslice(object):
         num_sections = len(config_dict.sections())
         if num_sections < min_sections or num_sections > max_sections:
             raise NumberConfigSectionsError(
-                "pyslice.ini must have between %d and %d sections."
-                % (min_sections, max_sections)
+                "pyslice.ini must have between {min_sections} and {max_sections} sections."
             )
         for sec in req_sections_list:
             if not config_dict.has_section(sec):
                 raise RequiredSectionNotFoundError(
-                    "pyslice.ini requires the [%s] section." % sec
+                    f"pyslice.ini requires the [{sec}] section."
                 )
 
         # Return pyslice.ini as dictionary.
@@ -218,7 +217,7 @@ class Pyslice(object):
     def create_output(self, var_set, dirname, dirs, fnames):
         var_dict = {}
         for variables in var_set[1:]:
-            exec("{} = {}".format(variables[0], variables[1]))
+            exec(f"{variables[0]} = {variables[1]}")
             var_dict[variables[0]] = variables[1]
 
         try:
@@ -255,7 +254,7 @@ class Pyslice(object):
                         escaped_keyword = re.escape(_keyword)
                         keyword_search = re.compile(escaped_keyword)
                         search_for = re.compile(
-                            escaped_keyword + "(.*?)" + escaped_keyword
+                            f"{escaped_keyword}(.*?){escaped_keyword}"
                         )
 
                         for lineraw in inputf:
@@ -459,7 +458,7 @@ class Pyslice(object):
 
         if not os.path.exists(_template_path):
             raise TemplatePathNotFoundError(
-                "The template path doesn't exists at '%s'" % (_template_path)
+                f"The template path doesn't exists at '{_template_path}'"
             )
 
         # Put all variable names from configuration file into key_list.
@@ -472,28 +471,26 @@ class Pyslice(object):
             # Monte Carlo
             if var_type == "montecarlo":
                 # Cheat by using list type
-                var_list.append(".{}".format(variable))
+                var_list.append(f".{variable}")
                 # Find out distribution
-                distribution = "random." + configuration.get(variable, "distribution")
+                distribution = f"random.{configuration.get(variable, 'distribution')}"
                 samples = configuration.getint(variable, "samples")
                 for _ in range(samples):
                     var_list.append(eval(distribution))
             # Arithmetic
             elif var_type == "arithmetic":
-                var_list.append("+{}".format(variable))
+                var_list.append(f"+{variable}")
             # Geometric
             elif var_type == "geometric":
-                var_list.append("*{}".format(variable))
+                var_list.append(f"*{variable}")
             # List
             elif var_type == "list":
-                var_list.append(".{}".format(variable))
+                var_list.append(f".{variable}")
                 for i in eval(configuration.get(variable, "values_list")):
                     var_list.append(i)
             else:
                 raise NotValidTypeError(
-                    "'%s' is not a valid type - "
-                    "['arithmetic', 'geometric', 'list', "
-                    "or 'montecarlo']" % (var_type,)
+                    f"'{var_type}' is not a valid type - ['arithmetic', 'geometric', 'list', or 'montecarlo']"
                 )
 
             # Arithmetic and Geometric types have the same variables
@@ -555,8 +552,7 @@ class Pyslice(object):
                 pass
 
             toss = (
-                "Configuration results in %s permutations. " "Continue? (y/n) > "
-            ) % (len(nset),)
+                f"Configuration results in {len(nset)} permutations.  Continue? (y/n) > ")
             inp = input(toss)
             if not inp:
                 continue
@@ -579,9 +575,7 @@ class Pyslice(object):
                         fstr = "{0}-{1}{2}"
                     else:
                         fstr = (
-                            "{0}-{1:0"
-                            + str(math.ceil(math.log10(nmax[ivar[0]] + 1)))
-                            + "d}{2}"
+                            f"{{0}}-{{1:0{str(math.ceil(math.log10(nmax[ivar[0]] + 1)))}d}}{{2}}"
                         )
                     _strtag = _strtag + fstr.format(ivar[0], ivar[1], os.path.sep)
 
@@ -623,11 +617,11 @@ def main(argv=None):
 
     for opt in opts:
         if opt[0] == "-h" or opt[0] == "--help":
-            print(modname + ": version=" + __version__)
+            print(f"{modname}: version={__version__}")
             usage()
             sys.exit(0)
         elif opt[0] == "-v" or opt[0] == "--version":
-            print(modname + ": version=" + __version__)
+            print(f"{modname}: version={__version__}")
             sys.exit(0)
         elif opt[0] == "-d" or opt[0] == "--debug":
             option_dict["debug"] = 1

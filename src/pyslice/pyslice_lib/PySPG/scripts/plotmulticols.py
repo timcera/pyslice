@@ -57,7 +57,7 @@ try:
     os.path.isdir(PySPGPATH)
     sys.path.append(os.path.expanduser(PySPGPATH))
 except:
-    sys.stderr.write("error! '%s' directory NOT FOUND\n" % PySPGPATH)
+    sys.stderr.write(f"error! '{PySPGPATH}' directory NOT FOUND\n")
     sys.exit(2)
 
 try:
@@ -65,7 +65,7 @@ try:
 except:
     sys.stderr.write("couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("and verify that PySPG lives there\n")
-    sys.stderr.write("actual value: '%s'\n" % PySPGPATH)
+    sys.stderr.write(f"actual value: '{PySPGPATH}'\n")
 
     sys.exit(2)
 
@@ -78,5 +78,5 @@ for kcol, colname in col_contents:
     p2.plottype = "xy"
     p2.ycol = kcol
     p2.xscale = "Logarithmic"
-    outname = "-".join([str(i) for i in kcol]) + ".agr"
+    outname = f"{'-'.join([str(i) for i in kcol])}.agr"
     p2.doit(outname, "out.dat")

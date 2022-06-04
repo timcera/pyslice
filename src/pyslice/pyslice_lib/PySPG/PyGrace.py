@@ -363,8 +363,8 @@ class GraceDocument(object):
         newds.line["color"] = len(self.datasets) + 1
         newds.symbol["color"] = len(self.datasets) + 1
         if legend == "":
-            legend = "y" + str(len(self.datasets))
-        legend = '"' + legend + '"'
+            legend = f"y{str(len(self.datasets))}"
+        legend = f"\"{legend}\""
         newds.default["legend"] = legend
         self.datasets[len(self.datasets)] = newds
 
@@ -403,8 +403,8 @@ class GraceDocument(object):
         scale1 = math.floor(math.log10(max(1e-10, aa1)))
         scale2 = math.floor(math.log10(max(1e-10, aa2)))
 
-        int1 = eval(("%e" % aa1)[0]) + 1
-        int2 = eval(("%e" % aa2)[0]) - 1
+        int1 = eval(f"{aa1:e}"[0]) + 1
+        int2 = eval(f"{aa2:e}"[0]) - 1
 
         if scale == "Normal":
             propose1 = sign1 * int1 * 10 ** scale1
@@ -447,11 +447,11 @@ class GraceDocument(object):
             self.graph.yaxis["tick major"] = ticky
 
     def set_labels(self, stx, sty):
-        self.graph.xaxis["label"] = '"' + stx + '"'
-        self.graph.yaxis["label"] = '"' + sty + '"'
+        self.graph.xaxis["label"] = f"\"{stx}\""
+        self.graph.yaxis["label"] = f"\"{sty}\""
 
     def set_title(self, st):
-        self.graph.subtitle[" "] = '"' + st + '"'
+        self.graph.subtitle[" "] = f"\"{st}\""
 
     def dump(self, outStream=None):
         import sys
@@ -465,8 +465,8 @@ class GraceDocument(object):
         for i in list(self.datasets.keys()):
             print(self.datasets[i])
         for i in list(self.datasets.keys()):
-            print("@target G" + str(self.graph.name) + ".S" + str(i))
-            print("@type " + str(self.datasets[i].default["type"]))
+            print(f"@target G{str(self.graph.name)}.S{str(i)}")
+            print(f"@type {str(self.datasets[i].default['type'])}")
             print("\n".join(["\t".join(map(str, a)) for a in self.datasets[i].data]))
             print("\n&")
 

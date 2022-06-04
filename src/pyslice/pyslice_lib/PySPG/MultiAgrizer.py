@@ -101,7 +101,7 @@ class MultiAgrizer(object):
         self.parser_last.reset()
         for i_state in self.parser_last:
             fname = self.parser_last.directory_tree(None) + inname
-            legend = " ".join(["{}={}".format(key, i_state[key]) for key in i_state])
+            legend = " ".join([f"{key}={i_state[key]}" for key in i_state])
             #       print i_state
 
             if self.plottype == "xy":

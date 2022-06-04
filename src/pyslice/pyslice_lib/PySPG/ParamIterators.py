@@ -81,9 +81,7 @@ class ItOperator(SPGIterator):
             [xmin, xmax, xstep] = list(map(eval, str_rest[1:]))
         except:
             raise ValueError(
-                "Line: '{}' incorrect number of parameters (found {}) for iterator       '{}' over '{}'".format(
-                    command, len(str_rest) - 1, self.it_type, self.varname
-                )
+                f"Line: '{command}' incorrect number of parameters (found {len(str_rest) - 1}) for iterator       '{self.it_type}' over '{self.varname}'"
             )
             #
             #   Block that raises exception in the case that iteration requested
@@ -91,19 +89,17 @@ class ItOperator(SPGIterator):
 
         try:
             if (xmin < xmax) and (
-                xmin >= eval("{} {} {}".format(xmin, self.it_type, xstep))
+                xmin >= eval(f"{xmin} {self.it_type} {xstep}")
             ):
                 raise AssertError("")
 
             if (xmin > xmax) and (
-                xmin <= eval("{} {} {}".format(xmin, self.it_type, xstep))
+                xmin <= eval(f"{xmin} {self.it_type} {xstep}")
             ):
                 raise AssertError("")
         except:
             raise ValueError(
-                "Line: '{}' Variable '{}': Error! {}{}{} do not seem to tend to {}".format(
-                    command, self.varname, xmin, self.it_type, xstep, xmax
-                )
+                f"Line: '{command}' Variable '{self.varname}': Error! {xmin}{self.it_type}{xstep} do not seem to tend to {xmax}"
             )
         #
         #
@@ -113,7 +109,7 @@ class ItOperator(SPGIterator):
 
         while (xmin > xmax) ^ (xact <= xmax):  # ^ is xor in python !
             lsTmp.append(xact)
-            xact = eval("{}{}{}".format(xact, self.it_type, xstep))
+            xact = eval(f"{xact}{self.it_type}{xstep}")
 
         self.data = lsTmp
 
@@ -186,7 +182,7 @@ class ItRepetition(SPGIterator):
             self.varname = False
             self.data = list(range(eval(command)))
         except:
-            raise ValueError("Line: '{}' iterator '#' could not eval()".format(command))
+            raise ValueError(f"Line: '{command}' iterator '#' could not eval()")
             sys.exit()
 
     def is_variable(self):

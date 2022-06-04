@@ -187,7 +187,8 @@ class ParamParser(object):
         except ValueError:
             import sys
 
-            sys.stderr.write("'%s' not found among entities\n" % varn)
+            sys.stderr.write(f"""'{varn}' not found among entities
+""")
             sys.exit()
 
     # 1
@@ -203,8 +204,8 @@ class ParamParser(object):
         except ValueError:
             import sys
 
-            sys.stderr.write("error! %s not found among entities\n" % i)
-            sys.stderr.write("entities = %s\n" % self.entities)
+            sys.stderr.write(f"""error! {i} not found among entities
+entities = {self.entities}""")
             sys.exit()
         self.entities = new_order
 

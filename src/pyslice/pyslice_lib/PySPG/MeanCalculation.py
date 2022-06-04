@@ -40,14 +40,14 @@ class MeanCalculation(object):
 
         dirname = self.pp_varying.directory_tree()
 
-        fsearch = "{}{}".format(dirname, fin_name)
-        fout = "{}{}".format(dirname, fout_name)
+        fsearch = f"{dirname}{fin_name}"
+        fout = f"{dirname}{fout_name}"
 
         try:
             all_data = loadData(fsearch)
         except:
             print(
-                "Error! '%s' file doesn't exist or not enough permissions..." % fsearch
+                f"Error! '{fsearch}' file doesn't exist or not enough permissions..."
             )
             sys.exit()
 
@@ -55,8 +55,8 @@ class MeanCalculation(object):
             columnas = list(range(len(all_data[0])))
         except:
 
-            sys.stderr.write("mean-> error! in directory '%s'\n" % dirname)
-            sys.stderr.write("all_data = %s\n" % str(all_data))
+            sys.stderr.write(f"mean-> error! in directory '{dirname}'\n")
+            sys.stderr.write(f"all_data = {str(all_data)}\n")
 
         tmpDict = {}
 
@@ -92,7 +92,7 @@ class MeanCalculation(object):
         try:
             dumpData(fout, dataOut)
         except:
-            print("Error! Couldn't create output file '%s' ..." % fsearch)
+            print(f"Error! Couldn't create output file '{fsearch}' ...")
             sys.exit()
 
     def doit(self, fin_name="out.dat", fout_name="mean.dat"):

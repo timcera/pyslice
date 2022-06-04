@@ -24,4 +24,4 @@ for kcol, colname in col_contents:
     p2.ycol = kcol
     p2.ylabel = colname
 
-    p2.doit(str(kcol) + ".agr", "out.dat")
+    p2.doit(f"{str(kcol)}.agr", "out.dat")

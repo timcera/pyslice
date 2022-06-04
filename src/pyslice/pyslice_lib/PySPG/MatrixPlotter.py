@@ -89,27 +89,21 @@ class MatrixPlotter(object):
 
         fOut = open(outname, "w")
         if self.save_mtv:
-            mtvStr = "$ DATA=CONTOUR\n"
-            mtvStr += "%" + " NX=%d    XMIN=%f   XMAX=%f XLABEL=%s \n" % (
-                len(self.iter1.data),
-                self.iter1.data[0],
-                self.iter1.data[-1],
-                self.iter1.get_varname(),
-            )
-            mtvStr += "%" + " NY=%d    YMIN=%f   YMAX=%f YLABEL=%s \n" % (
-                len(self.iter2.data),
-                self.iter2.data[0],
-                self.iter2.data[-1],
-                self.iter2.get_varname(),
-            )
-            mtvStr += "%" + " NSTEPS=%d    \n" % (self.nz)
-            if self.zmin != None:
-                mtvStr += "%" + " ZMIN=%f    \n" % (self.cmin)
-            if self.zmax != None:
-                mtvStr += "%" + " ZMAX=%f    \n" % (self.cmax)
-            mtvStr += "%" + "contstyle=4\n"
-            mtvStr += "%" + "interpolate=2\n"
-            mtvStr += "%" + "contfill=True\n"
+            mtvStr = f"""$ DATA=CONTOUR
+% NX={len(self.iter1.data)}    XMIN={self.iter1.data[0]}   XMAX={self.iter1.data[-1]} XLABEL={self.iter1.get_varname()}
+% NY={len(self.iter2.data)}    YMIN={self.iter2.data[0]}   YMAX={self.iter2.data[-1]} YLABEL={self.iter2.get_varname()}
+% NSTEPS={self.nz}
+"""
+            if self.zmin is not None:
+                mtvStr += f"""% ZMIN={self.cmin}
+"""
+            if self.zmax is not None:
+                mtvStr += f"""% ZMAX={self.cmax}
+"""
+            mtvStr += """%contstyle=4
+%interpolate=2
+%contfill=True
+"""
 
             fOut.write(mtvStr)
 
