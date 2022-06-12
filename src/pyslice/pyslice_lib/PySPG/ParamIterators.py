@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
 
 import sys
 
@@ -88,14 +87,10 @@ class ItOperator(SPGIterator):
             #   do not reaches xmax
 
         try:
-            if (xmin < xmax) and (
-                xmin >= eval(f"{xmin} {self.it_type} {xstep}")
-            ):
+            if (xmin < xmax) and (xmin >= eval(f"{xmin} {self.it_type} {xstep}")):
                 raise AssertError("")
 
-            if (xmin > xmax) and (
-                xmin <= eval(f"{xmin} {self.it_type} {xstep}")
-            ):
+            if (xmin > xmax) and (xmin <= eval(f"{xmin} {self.it_type} {xstep}")):
                 raise AssertError("")
         except:
             raise ValueError(

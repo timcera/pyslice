@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, division, print_function
 
 import sys
 from builtins import object, range, str
@@ -46,9 +45,7 @@ class MeanCalculation(object):
         try:
             all_data = loadData(fsearch)
         except:
-            print(
-                f"Error! '{fsearch}' file doesn't exist or not enough permissions..."
-            )
+            print(f"Error! '{fsearch}' file doesn't exist or not enough permissions...")
             sys.exit()
 
         try:

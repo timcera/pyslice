@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, division, print_function
 
 from builtins import map, object, str
 
@@ -364,7 +363,7 @@ class GraceDocument(object):
         newds.symbol["color"] = len(self.datasets) + 1
         if legend == "":
             legend = f"y{str(len(self.datasets))}"
-        legend = f"\"{legend}\""
+        legend = f'"{legend}"'
         newds.default["legend"] = legend
         self.datasets[len(self.datasets)] = newds
 
@@ -407,9 +406,9 @@ class GraceDocument(object):
         int2 = eval(f"{aa2:e}"[0]) - 1
 
         if scale == "Normal":
-            propose1 = sign1 * int1 * 10 ** scale1
-            propose2 = sign2 * int2 * 10 ** scale2
-            skip = abs(old_div((int1 * 10 ** scale1 - int2 * 10 ** scale2), 4))
+            propose1 = sign1 * int1 * 10**scale1
+            propose2 = sign2 * int2 * 10**scale2
+            skip = abs(old_div((int1 * 10**scale1 - int2 * 10**scale2), 4))
             return propose2, propose1, old_div(propose1, 4)
         else:
             propose1 = 10 ** (scale1 + 1)
@@ -447,11 +446,11 @@ class GraceDocument(object):
             self.graph.yaxis["tick major"] = ticky
 
     def set_labels(self, stx, sty):
-        self.graph.xaxis["label"] = f"\"{stx}\""
-        self.graph.yaxis["label"] = f"\"{sty}\""
+        self.graph.xaxis["label"] = f'"{stx}"'
+        self.graph.yaxis["label"] = f'"{sty}"'
 
     def set_title(self, st):
-        self.graph.subtitle[" "] = f"\"{st}\""
+        self.graph.subtitle[" "] = f'"{st}"'
 
     def dump(self, outStream=None):
         import sys

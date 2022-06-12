@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function
 
 version_number = "1.9.9"
 release_date = "Thu Jan 07 01:24:18 CEST 2005"
@@ -187,8 +186,10 @@ class ParamParser(object):
         except ValueError:
             import sys
 
-            sys.stderr.write(f"""'{varn}' not found among entities
-""")
+            sys.stderr.write(
+                f"""'{varn}' not found among entities
+"""
+            )
             sys.exit()
 
     # 1
@@ -204,8 +205,10 @@ class ParamParser(object):
         except ValueError:
             import sys
 
-            sys.stderr.write(f"""error! {i} not found among entities
-entities = {self.entities}""")
+            sys.stderr.write(
+                f"""error! {i} not found among entities
+entities = {self.entities}"""
+            )
             sys.exit()
         self.entities = new_order
 

@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/timcera/pyslice.svg?branch=master
-    :target: https://travis-ci.org/timcera/pyslice
+.. image:: https://github.com/timcera/pyslice/actions/workflows/python-package.yml/badge.svg
+    :target: https://github.com/timcera/pyslice/actions/workflows/python-package.yml
     :height: 20
 
 .. image:: https://coveralls.io/repos/timcera/pyslice/badge.png?branch=master
@@ -11,7 +11,10 @@
     :target: https://pypi.python.org/pypi/pyslice
 
 .. image:: http://img.shields.io/badge/license-BSD-lightgrey.svg
-    :alt: pyslice license
+    :alt: BSD-3 clause license
+    :target: https://pypi.python.org/pypi/pyslice/
+.. image:: http://img.shields.io/pypi/dd/pyslice.svg
+    :alt: pyslice downloads
     :target: https://pypi.python.org/pypi/pyslice/
 
 Welcome to pyslice - dataset template engine's documentation!

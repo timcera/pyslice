@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, print_function
 
 import os
 import os.path
@@ -108,9 +107,7 @@ class Agrizer(ParamParser):
         g1 = PyGrace.GraceDocument()
         for inname in pattern:
             for i in self.var:
-                inname = inname.replace(
-                    "{%s}" % i, f"{i}-{str(self.act_val(i))}"
-                )
+                inname = inname.replace("{%s}" % i, f"{i}-{str(self.act_val(i))}")
 
             if os.path.isfile(inname):
                 if not outname:
@@ -168,15 +165,11 @@ class Agrizer(ParamParser):
         if not outname:
             outname = pattern[0]
         for i in self.var:
-            outname = outname.replace(
-                "{%s}" % i, f"{i}-{str(self.act_val(i))}"
-            )
+            outname = outname.replace("{%s}" % i, f"{i}-{str(self.act_val(i))}")
 
         for inname in pattern:
             for i in self.var:
-                inname = inname.replace(
-                    "{%s}" % i, f"{i}-{str(self.act_val(i))}"
-                )
+                inname = inname.replace("{%s}" % i, f"{i}-{str(self.act_val(i))}")
 
             #      sys.stderr.write(os.path.abspath(inname)+"... %d \n"%os.path.isfile(inname))
             if os.path.isfile(inname):

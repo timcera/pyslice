@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, division, print_function
 
 import math
 from builtins import object, range
@@ -43,10 +42,7 @@ class SPGHistogram(object):
         keys = list(self.__dict.keys())
         keys.sort()
         return "\n".join(
-            [
-                f"{k:f}\t{old_div(self.__dict[k], self.__elements):f}"
-                for k in keys
-            ]
+            [f"{k:f}\t{old_div(self.__dict[k], self.__elements):f}" for k in keys]
         )
 
     def __get_nearest(self, value):

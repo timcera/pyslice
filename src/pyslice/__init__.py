@@ -50,7 +50,6 @@ EXAMPLES:
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, print_function
 
 import filecmp
 import getopt
@@ -551,8 +550,7 @@ class Pyslice(object):
             except IndexError:
                 pass
 
-            toss = (
-                f"Configuration results in {len(nset)} permutations.  Continue? (y/n) > ")
+            toss = f"Configuration results in {len(nset)} permutations.  Continue? (y/n) > "
             inp = input(toss)
             if not inp:
                 continue
@@ -574,9 +572,7 @@ class Pyslice(object):
                     if ivar[0] in allints:
                         fstr = "{0}-{1}{2}"
                     else:
-                        fstr = (
-                            f"{{0}}-{{1:0{str(math.ceil(math.log10(nmax[ivar[0]] + 1)))}d}}{{2}}"
-                        )
+                        fstr = f"{{0}}-{{1:0{str(math.ceil(math.log10(nmax[ivar[0]] + 1)))}d}}{{2}}"
                     _strtag = _strtag + fstr.format(ivar[0], ivar[1], os.path.sep)
 
             # Create the files and directories from the template
