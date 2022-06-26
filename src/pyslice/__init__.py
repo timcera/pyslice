@@ -209,7 +209,7 @@ class Pyslice(object):
         """
         path = path.replace("/", os.sep)
         path = path.replace("\\", os.sep)
-        if path[-1] == "/" or path[-1] == "\\":
+        if path[-1] in ["/", "\\"]:
             path = path[:-1]
         return path
 
@@ -231,10 +231,7 @@ class Pyslice(object):
             except OSError:
                 pass
         for files in fnames:
-            excludeflag = False
-            for extensions in _exclude_list:
-                if extensions in files:
-                    excludeflag = True
+            excludeflag = any(extensions in files for extensions in _exclude_list)
             if excludeflag:
                 continue
             infilepath = os.path.join(dirname, files)
@@ -285,7 +282,7 @@ class Pyslice(object):
                                 linetemplate = linetemplate[len(CODE) :]
 
                                 # Process special directives
-                                if "~" == linetemplate[1]:
+                                if linetemplate[1] == "~":
                                     # Only want to open file once by checking
                                     # dictionary
                                     lookupno, filename = words[0].split()[1:3]
@@ -297,7 +294,7 @@ class Pyslice(object):
                                         with open(filename, "r") as lout:
                                             for line in lout:
                                                 # Handle comments and blank lines
-                                                if "#" == line[0]:
+                                                if line[0] == "#":
                                                     continue
                                                 (
                                                     recno,
@@ -317,7 +314,7 @@ class Pyslice(object):
                                 else:
                                     line_sub = linetemplate.format(**var_dict)
 
-                                for blockline in range(blocklen):
+                                for _ in range(blocklen):
                                     linein = next(inputf)
                                     nline = []
                                     for index, char in enumerate(line_sub):
@@ -368,26 +365,26 @@ class Pyslice(object):
         # PYSLICE can be used in subprocess to do different things if script
         # is run outside of Pyslice.
         os.environ["PYSLICE"] = "1"
-        if os.name != "nt":
-            p = subprocess.Popen(
-                com,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                close_fds=True,
-            )
-        else:
-            # close_fds is not supported on Windows
-            p = subprocess.Popen(
-                com,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            )
-
-        chstdouterr = p.communicate()[0]
-
         if _keep_log is True:
+            p = (
+                subprocess.Popen(
+                    com,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    close_fds=True,
+                )
+                if os.name != "nt"
+                else subprocess.Popen(
+                    com,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                )
+            )
+
+            chstdouterr = p.communicate()[0]
+
             with open("pyslice.log", "w") as fo:
                 fo.write(str(chstdouterr))
 

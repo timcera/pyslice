@@ -55,19 +55,15 @@ class MeanCalculation(object):
             sys.stderr.write(f"mean-> error! in directory '{dirname}'\n")
             sys.stderr.write(f"all_data = {str(all_data)}\n")
 
-        tmpDict = {}
+        tmpDict = {i[0]: 0 for i in all_data}
 
-        for i in all_data:
-            tmpDict[i[0]] = 0
-        valuesX = list(tmpDict.keys())
-        valuesX.sort()
-
+        valuesX = sorted(tmpDict.keys())
         xDict = {}
         nPoints = {}
 
         import copy
 
-        zeros = [0 for i in columnas]
+        zeros = [0 for _ in columnas]
 
         for i in valuesX:
             xDict[i] = copy.copy(zeros)
@@ -80,11 +76,12 @@ class MeanCalculation(object):
                 for j in columnas:
                     vec[j] += row[j]
 
-        dataOut = []
+        dataOut = [
+            [old_div(xDict[x][j], nPoints[x]) for j in columnas]
+            for x in valuesX
+            if nPoints[x] != 0
+        ]
 
-        for x in valuesX:
-            if nPoints[x] != 0:
-                dataOut.append([old_div(xDict[x][j], nPoints[x]) for j in columnas])
 
         try:
             dumpData(fout, dataOut)

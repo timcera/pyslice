@@ -39,8 +39,7 @@ class SPGHistogram(object):
     def __str__(self):
         if self.__elements == 0:
             return " "
-        keys = list(self.__dict.keys())
-        keys.sort()
+        keys = sorted(self.__dict.keys())
         return "\n".join(
             [f"{k:f}\t{old_div(self.__dict[k], self.__elements):f}" for k in keys]
         )
@@ -51,8 +50,7 @@ class SPGHistogram(object):
     def get_dataset(self):
         if self.__elements == 0:
             return [[0, 0]]
-        keys = list(self.__dict.keys())
-        keys.sort()
+        keys = sorted(self.__dict.keys())
         return [[k, (old_div(self.__dict[k], self.__elements))] for k in keys]
 
 
@@ -63,7 +61,7 @@ if __name__ == "__main__":
     import time
 
     time1 = time.time()
-    for i in range(100000):
+    for _ in range(100000):
         a.add_value(random.gauss(0.1, 0.5))
     time2 = time.time()
 

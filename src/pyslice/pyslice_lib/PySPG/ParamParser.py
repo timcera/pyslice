@@ -158,20 +158,22 @@ class ParamParser(object):
         thisstr = (
             "\n".join(
                 [
-                    "{}{}{}".format(k, self.separator, self.actual_values[k])
+                    f"{k}{self.separator}{self.actual_values[k]}"
                     for k in self.entities
                     if k
                 ]
             )
             + "\n"
         )
+
         #:::~ replaces structures of the kind {var} by var-value, very useful for
         #     generation of multiple output files.
         for i_iter in self.iterator_list:
             varname = i_iter.get_varname()
             thisstr = thisstr.replace(
-                "{%s}" % varname, "{}-{}".format(varname, self.actual_values[varname])
+                "{%s}" % varname, f"{varname}-{self.actual_values[varname]}"
             )
+
 
         return thisstr
 
@@ -230,11 +232,8 @@ entities = {self.entities}"""
         thepath = os.path.curdir + os.path.sep
 
         for i_iter in self.variables_list[:limit]:
-            thepath += "{}-{}{}".format(
-                i_iter.get_varname(),
-                self.actual_values[i_iter.get_varname()],
-                os.path.sep,
-            )
+            thepath += f"{i_iter.get_varname()}-{self.actual_values[i_iter.get_varname()]}{os.path.sep}"
+
 
         return thepath
 
@@ -246,12 +245,10 @@ entities = {self.entities}"""
         By setting limit to something else, you change the amount of variables printed
         (i.e. limit=-2, will print the value of the last two variables)
         """
-        theoutput = ""
-        for i_iter in self.variables_list[limit:]:
-            theoutput += (
-                "%s" % self.actual_values[i_iter.get_varname()] + self.separator
-            )
-        return theoutput
+        return "".join(
+            (f"{self.actual_values[i_iter.get_varname()]}" + self.separator)
+            for i_iter in self.variables_list[limit:]
+        )
 
 
 #

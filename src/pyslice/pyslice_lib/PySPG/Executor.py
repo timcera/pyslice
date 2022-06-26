@@ -52,10 +52,8 @@ class Executor(object):
 
         os.chdir(way2)
 
-        fparam = open(inname, "w")
-        fparam.write(str(self.parser))
-        fparam.close()
-
+        with open(inname, "w") as fparam:
+            fparam.write(str(self.parser))
         open(outname, "a").write(f"{self.parser.output_tree(self.limit)}	")
 
         os.system(f"{exename} >> {outname} ")

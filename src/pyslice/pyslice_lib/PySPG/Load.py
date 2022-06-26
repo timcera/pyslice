@@ -98,10 +98,8 @@ def loadY(s, yCol=1):
 
     try:
         lines = fIn.readlines()
-        #    sys.stderr.write("%d   ,"%len(lines) )
-        ls = [float(line.strip().split()[yCol]) for line in lines if len(line) > 1]
         #    print len(ls)
-        return ls
+        return [float(line.strip().split()[yCol]) for line in lines if len(line) > 1]
     except:
         import os.path
 
@@ -136,7 +134,7 @@ def transformXY(ls, xFormula="x", yFormula="y"):
         except:
             import sys
 
-            sys.stderr.write("skipping line: " + str(line) + "\n")
+            sys.stderr.write(f"skipping line: {str(line)}" + "\n")
     return lsOut
 
 
@@ -191,22 +189,24 @@ else:
 
                 sys.stderr.write("histogram error!!! len(data) = %d \n" % len(out))
                 sys.stderr.write(
-                    "\n".join(
-                        [
-                            "{} = {}".format(str(k), str(locals()[k]))
-                            for k in list(locals().keys())
-                            if k != "data"
-                        ]
+                    (
+                        "\n".join(
+                            [
+                                f"{str(k)} = {str(locals()[k])}"
+                                for k in list(locals().keys())
+                                if k != "data"
+                            ]
+                        )
+                        + "\n"
                     )
-                    + "\n"
                 )
+
 
                 sys.exit()
         suma = Numeric.sum(out)
 
         out3 = [old_div(x, suma) for x in out]
-        out2 = []
-
-        for i in range(nbins):
-            out2.append([float(i) / float(nbins) * (maxa - mina) + mina, out3[i]])
-        return out2
+        return [
+            [float(i) / float(nbins) * (maxa - mina) + mina, out3[i]]
+            for i in range(nbins)
+        ]

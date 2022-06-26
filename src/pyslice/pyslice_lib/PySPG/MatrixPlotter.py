@@ -82,36 +82,31 @@ class MatrixPlotter(object):
                 str(i[1]) for i in Load.transformXY(ls, self.xformula, self.yformula)
             ]
             outputStr += "\t".join(ls2) + "\n"
-        #
-        #
-        #
-
-        fOut = open(outname, "w")
-        if self.save_mtv:
-            mtvStr = f"""$ DATA=CONTOUR
+        with open(outname, "w") as fOut:
+            if self.save_mtv:
+                mtvStr = f"""$ DATA=CONTOUR
 % NX={len(self.iter1.data)}    XMIN={self.iter1.data[0]}   XMAX={self.iter1.data[-1]} XLABEL={self.iter1.get_varname()}
 % NY={len(self.iter2.data)}    YMIN={self.iter2.data[0]}   YMAX={self.iter2.data[-1]} YLABEL={self.iter2.get_varname()}
 % NSTEPS={self.nz}
 """
-            if self.zmin is not None:
-                mtvStr += f"""% ZMIN={self.cmin}
+                if self.zmin is not None:
+                    mtvStr += f"""% ZMIN={self.cmin}
 """
-            if self.zmax is not None:
-                mtvStr += f"""% ZMAX={self.cmax}
+                if self.zmax is not None:
+                    mtvStr += f"""% ZMAX={self.cmax}
 """
-            mtvStr += """%contstyle=4
+                mtvStr += """%contstyle=4
 %interpolate=2
 %contfill=True
 """
 
-            fOut.write(mtvStr)
+                fOut.write(mtvStr)
 
-        fOut.write(outputStr)
-        if self.save_mtv:
-            mtvStr = "$ END"
+            fOut.write(outputStr)
+            if self.save_mtv:
+                mtvStr = "$ END"
 
-            fOut.write(mtvStr)
-        fOut.close()
+                fOut.write(mtvStr)
         #     print outputStr
         os.chdir(cwd)
 

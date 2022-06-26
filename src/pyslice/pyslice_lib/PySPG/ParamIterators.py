@@ -102,7 +102,7 @@ class ItOperator(SPGIterator):
         lsTmp = []
         xact = xmin
 
-        while (xmin > xmax) ^ (xact <= xmax):  # ^ is xor in python !
+        while (xact > xmax) ^ (xact <= xmax):  # ^ is xor in python !
             lsTmp.append(xact)
             xact = eval(f"{xact}{self.it_type}{xstep}")
 
@@ -178,7 +178,6 @@ class ItRepetition(SPGIterator):
             self.data = list(range(eval(command)))
         except:
             raise ValueError(f"Line: '{command}' iterator '#' could not eval()")
-            sys.exit()
 
     def is_variable(self):
         return False
