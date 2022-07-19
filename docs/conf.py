@@ -45,8 +45,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Pyslice - dataset template engine"
-copyright = u"2011, Tim Cera, P.E."
+project = "Pyslice - dataset template engine"
+copyright = "2011, Tim Cera, P.E."
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -186,8 +186,8 @@ latex_documents = [
     (
         "index",
         "Pyslice-datasettemplateengine.tex",
-        u"Pyslice - dataset template engine Documentation",
-        u"Tim Cera, P.E.",
+        "Pyslice - dataset template engine Documentation",
+        "Tim Cera, P.E.",
         "manual",
     )
 ]
@@ -224,8 +224,8 @@ man_pages = [
     (
         "index",
         "pyslice-datasettemplateengine",
-        u"Pyslice - dataset template engine Documentation",
-        [u"Tim Cera, P.E."],
+        "Pyslice - dataset template engine Documentation",
+        ["Tim Cera, P.E."],
         1,
     )
 ]
