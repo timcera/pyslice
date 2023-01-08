@@ -1,15 +1,9 @@
-# -*- coding: utf-8 -*-
+"""
+:::~ Author: Claudio Juan Tessone <tessonec@imedea.uib.es> (c) 2002-2003
 
-version_number = "1.9.2"
-release_date = "Wed Sep 30 2003"
-#
-#
-# :::~ Author: Claudio Juan Tessone <tessonec@imedea.uib.es> (c) 2002-2003
-#
-# Distributed According to GNU Generic Purpose License (GPL)
-# Please visit www.gnu.org
-#
-
+Distributed According to GNU Generic Purpose License (GPL)
+Please visit www.gnu.org
+"""
 
 from .Agrizer import *
 from .Executor import *

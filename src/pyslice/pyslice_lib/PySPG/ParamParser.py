@@ -1,47 +1,37 @@
-# -*- coding: utf-8 -*-
+"""
+:::~ Author: Claudio Juan Tessone <tessonec@imedea.uib.es> (c) 2002-2005
 
+Distributed According to GNU Generic Purpose License (GPL)
+Please visit http://www.gnu.org
+"""
 
-version_number = "1.9.9"
-release_date = "Thu Jan 07 01:24:18 CEST 2005"
-#
-#
-# :::~ Author: Claudio Juan Tessone <tessonec@imedea.uib.es> (c) 2002-2005
-#
-# Distributed According to GNU Generic Purpose License (GPL)
-# Please visit http://www.gnu.org
-#
-
-from builtins import next, object
-
-#:::~ Important: for constants and functions already defined
+# :::~ Important: for constants and functions already defined
+import copy
+import sys
 from math import *
 
 from . import ParamIterators
 
-#
-#
-#
-#
 
-
-class ParamParser(object):
-
+class ParamParser:
     """
     Initialized with a list of strings, each one containing commands.
     Each line will have a syntax as follows
     (iterator_type) (variable_name) [bounds]
     (iterator_type) can be one of the following characters
-    '+' '-' '*' '/'  => all of them expect bounds given by [min_value] [max_value] [step]
-    '.'              => punctual iterator, (bounds) is in fact a (BLANK separated) list with all the possible values
+    '+' '-' '*' '/'  => all of them expect bounds given by [min_value]
+                        [max_value] [step]
+    '.'              => punctual iterator, (bounds) is in fact a (BLANK
+                        separated) list with all the possible values
     ':'              => defines a CONSTANT (i.e. not iterable object)
     '#'              => repetition operator
-
     """
 
-    #:::~ This variable specifies the list separator used while parsing "param.dat"
+    # :::~ This variable specifies the list separator used while parsing
+    # "param.dat"
     separator = " "
 
-    #:::~ A dictionary with all the possible iterators
+    # :::~ A dictionary with all the possible iterators
     iterator_types_dict = {
         "+": ParamIterators.ItOperatorPlus,
         "-": ParamIterators.ItOperatorMinus,
@@ -53,58 +43,44 @@ class ParamParser(object):
         "#": ParamIterators.ItRepetition,
     }
 
-    #:::~ a list with an alternative order if your binary does not read a free-style input file
-    #  alternative_order = []
-    #:::~ a list with all the varying entities (i.e. those not CONSTANT)
+    # :::~ a list with an alternative order if your binary does not read
+    # a free-style input file alternative_order = []
+    # :::~ a list with all the varying entities (i.e. those not CONSTANT)
     # isvariable = []
-    # 1
     def __init__(self, lsLines):
         """
         lsLines is a list of commands understood by this class.
         """
-
         self.entities = []
-
         self.iterator_list = []
-
         self.variables_list = []
-
         self.actual_values = {}
-
         self.__parse(lsLines)
-        import copy
 
         self.reversed = copy.copy(self.iterator_list)
         self.reversed.reverse()
         self.reset()
 
-    # 1
     def __get_iteration_and_command(self, cadena):
         """
-        returns the iteration type of a command. The iteration type is defined as the set of non alphanumeric characters
-        at the beginning of the line
+        returns the iteration type of a command. The iteration type is defined
+        as the set of non alphanumeric characters at the beginning of the line
         """
         last_char = 0
         while not cadena[last_char].isalnum():
             last_char += 1
         return cadena[:last_char], cadena[last_char:]
 
-    # 1
     def __parse(self, ls):
         """
         internal function that parses the input
         """
         for sit in ls:
             # strips trailing and leading blanks
-
             # iteration type
-
             it_type, str_rest = self.__get_iteration_and_command(sit.strip())
-
             new_iterator = self.iterator_types_dict[it_type]()
-
             new_iterator.set_command(str_rest, self.separator)
-
             self.iterator_list.append(new_iterator)
 
         self.variables_list = [
@@ -114,8 +90,8 @@ class ParamParser(object):
 
     def __next__(self):
         """
-        next() iterates over the possible values raising a StopIteration when the possible values
-         are exhausted
+        next() iterates over the possible values raising a StopIteration when
+        the possible values are exhausted
         """
         if self.is_reset:
             self.is_reset = False
@@ -149,7 +125,6 @@ class ParamParser(object):
     def __iter__(self):
         return self
 
-    # 1
     def __str__(self):
         """
         defines how the actual value of the parameter set is printed out.
@@ -158,24 +133,22 @@ class ParamParser(object):
         thisstr = (
             "\n".join(
                 [
-                    "{}{}{}".format(k, self.separator, self.actual_values[k])
+                    f"{k}{self.separator}{self.actual_values[k]}"
                     for k in self.entities
                     if k
                 ]
             )
             + "\n"
         )
-        #:::~ replaces structures of the kind {var} by var-value, very useful for
-        #     generation of multiple output files.
+        # :::~ replaces structures of the kind {var} by var-value, very useful
+        # for generation of multiple output files.
         for i_iter in self.iterator_list:
             varname = i_iter.get_varname()
             thisstr = thisstr.replace(
-                "{%s}" % varname, "{}-{}".format(varname, self.actual_values[varname])
+                f"{varname}", f"{varname}-{self.actual_values[varname]}"
             )
 
         return thisstr
-
-    # 1
 
     def value_of(self, varn):
         """
@@ -184,7 +157,6 @@ class ParamParser(object):
         try:
             return self.actual_values[varn]
         except ValueError:
-            import sys
 
             sys.stderr.write(
                 f"""'{varn}' not found among entities
@@ -192,7 +164,6 @@ class ParamParser(object):
             )
             sys.exit()
 
-    # 1
     def set_order(self, new_order):
         """
         sets a new order for the output.
@@ -203,8 +174,6 @@ class ParamParser(object):
             for i in new_order:
                 [k.get_varname() for k in self.iterator_list].index(i)
         except ValueError:
-            import sys
-
             sys.stderr.write(
                 f"""error! {i} not found among entities
 entities = {self.entities}"""
@@ -248,9 +217,7 @@ entities = {self.entities}"""
         """
         theoutput = ""
         for i_iter in self.variables_list[limit:]:
-            theoutput += (
-                "%s" % self.actual_values[i_iter.get_varname()] + self.separator
-            )
+            theoutput += f"{self.actual_values[i_iter.get_varname()]}" + self.separator
         return theoutput
 
 

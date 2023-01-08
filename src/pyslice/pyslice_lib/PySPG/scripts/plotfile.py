@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from builtins import range
-
-#! /usr/bin/python
-
 #
 #  This script plots all the specified files
 #  outputed by a {}-something directive in a recoursive-directory
@@ -33,7 +27,7 @@ PySPGPATH = "/t/users1/tessonec/devel/"
 
 for histvar in histvec:
 
-    p2 = Agrizer(open(inputFile, "r").readlines())
+    p2 = Agrizer(open(inputFile).readlines())
 
     p2.xlabel = xlabel
     p2.ylabel = "\\f{Times-Italic}P\\f{}(%s\\f{})" % xlabel

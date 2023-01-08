@@ -1,21 +1,17 @@
-# -*- coding: utf-8 -*-
+"""
+:::~ Copyright (C) 2005 by Claudio J. Tessone <tessonec@imedea.uib.es>
+
+Created on: 09 Jan 2005
+
+Copyright: Distributed according to GNU/GPL Version 2
+           (see http://www.gnu.org)
+"""
 
 import sys
-
-#
-# :::~ Copyright (C) 2005 by Claudio J. Tessone <tessonec@imedea.uib.es>
-#
-# Created on: 09 Jan 2005
-#
-# Copyright: Distributed according to GNU/GPL Version 2
-#            (see http://www.gnu.org)
-#
-#
-from builtins import map, object, range
 from math import *
 
 
-class SPGIterator(object):
+class SPGIterator:
     """This is a subsidiary abstract class for the ParamParser one.  It defines
     the iteration type in the constructor. Must be subclassed (it's abstract)
     In principle there is no need to touch anything here (well, you can always
@@ -41,7 +37,6 @@ class SPGIterator(object):
         separator is the character delimiting fields (if separator = None, any
         space is considered a separator)
         """
-        pass
 
     def __next__(self):
         self.index += 1
@@ -83,8 +78,8 @@ class ItOperator(SPGIterator):
                 f"Line: '{command}' incorrect number of parameters (found {len(str_rest) - 1}) for iterator       '{self.it_type}' over '{self.varname}'"
             )
             #
-            #   Block that raises exception in the case that iteration requested
-            #   do not reaches xmax
+            #   Block that raises exception in the case that iteration
+            #   requested do not reaches xmax
 
         try:
             if (xmin < xmax) and (xmin >= eval(f"{xmin} {self.it_type} {xstep}")):
@@ -96,8 +91,6 @@ class ItOperator(SPGIterator):
             raise ValueError(
                 f"Line: '{command}' Variable '{self.varname}': Error! {xmin}{self.it_type}{xstep} do not seem to tend to {xmax}"
             )
-        #
-        #
 
         lsTmp = []
         xact = xmin
@@ -178,7 +171,6 @@ class ItRepetition(SPGIterator):
             self.data = list(range(eval(command)))
         except:
             raise ValueError(f"Line: '{command}' iterator '#' could not eval()")
-            sys.exit()
 
     def is_variable(self):
         return False

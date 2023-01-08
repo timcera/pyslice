@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from builtins import range, str
-
-#! /usr/bin/python
-
 #
 #  This script plots from a recursive-directory all the requested columns
 #  plotting ONE COLUMN IN ONE FILE
@@ -76,7 +70,7 @@ except:
 
 
 for kcol, colname in col_contents:
-    p2 = MultiAgrizer(open(inputFile, "r").readlines(), lastvar)
+    p2 = MultiAgrizer(open(inputFile).readlines(), lastvar)
     p2.xlabel = xlabel
     p2.ylabel = colname
 

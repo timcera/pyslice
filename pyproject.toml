@@ -1,9 +1,16 @@
+[build-system]
+requires = [
+    "setuptools",
+    "wheel",
+    "oldest-supported-numpy",
+]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "pyslice"
 dynamic = ["readme", "version"]
 description = "Specialized templating engine do develop a parameterized set of model data sets"
 dependencies = [
-    "configparser",
     "binaryornot",
     ]
 license = {text = "BSD-3-Clause"}
@@ -19,10 +26,11 @@ classifiers = [
     "License :: OSI Approved :: BSD License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -57,10 +65,19 @@ dev = [
 [project.scripts]
 pyslice = "pyslice.pyslice:main"
 
-[project_urls]
+[project.urls]
 documentation = "https://timcera.bitbucket.io/pyslice/docs/index.html#pyslice-documentation"
 github = "https://github.com/timcera/pyslice"
 bitbucket = "https://bitbucket.org/timcera/pyslice/src/main/"
+
+[tool]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "4.2.4"
+tag_format = "v$version"
+version_files = ["VERSION"]
+update_changelog_on_bump = true
 
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
@@ -74,17 +91,5 @@ version = {file = "VERSION"}
 where = ["src"]
 exclude = ["examples*", "tools*", "docs*", "pyslice.tests*"]
 
-[build-system]
-requires = [
-    "setuptools",
-    "wheel",
-    "oldest-supported-numpy",
-]
-build-backend = "setuptools.build_meta"
-
-[tool.commitizen]
-name = "cz_conventional_commits"
-version = "4.2.4"
-tag_format = "v$version"
-version_files = ["VERSION"]
-update_changelog_on_bump = true
+[tool.isort]
+profile = "black"

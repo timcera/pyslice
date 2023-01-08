@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import os
 import os.path
 import sys
@@ -89,7 +86,7 @@ class TeXParser(ParamParser):
                 else:
                     print(i)
             else:
-                print(" $ {} = {} $".format(i, actual_values[i]))
+                print(f" $ {i} = {actual_values[i]} $")
             print(""" }   """)
         print("\\end{itemize}")
         print()
@@ -108,7 +105,7 @@ class TeXParser(ParamParser):
         print("\\end{document}")
         fOut.close()
         sys.stdout = cout
-        os.system("latex %s" % outname)
+        os.system(f"latex {outname}")
         comandoexec = "dvips -o {}.ps  {}".format(
             os.path.splitext(outname)[0],
             os.path.splitext(outname)[0] + ".dvi",

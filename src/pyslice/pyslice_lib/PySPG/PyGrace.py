@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
-from builtins import map, object, str
-
 from past.utils import old_div
 
 #
@@ -10,7 +5,7 @@ from past.utils import old_div
 #
 
 
-class GraceDataSet(object):
+class GraceDataSet:
     basdefault = {
         "hidden": "false",
         "type": "xy",
@@ -83,7 +78,7 @@ class GraceDataSet(object):
 #
 # IMPLEMENTS A GRACE GRAPH           #########
 #
-class GraceGraph(object):
+class GraceGraph:
     bdefault = {
         " ": "on",
         "hidden": "false",
@@ -264,7 +259,7 @@ class GraceGraph(object):
 #
 # IMPLEMENTS A GRACE DOC        ################
 #
-class GraceDocument(object):
+class GraceDocument:
     #
     #:::~ Constants
     basdefault = {"version": 50100}

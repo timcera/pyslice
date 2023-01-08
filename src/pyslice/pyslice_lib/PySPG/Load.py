@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from builtins import map, range, str
-
 from past.utils import old_div
 
 from . import PyGrace
@@ -15,7 +11,7 @@ def loadData(s):
     except:
         import sys
 
-        sys.stderr.write("error!!! opening file: %s...\n" % s)
+        sys.stderr.write(f"error!!! opening file: {s}...\n")
         sys.stderr.write("gently quitting...\n")
         sys.exit()
     try:
@@ -29,7 +25,7 @@ def loadData(s):
     except:
         import sys
 
-        sys.stderr.write("error!!! in file: %s...\n" % s)
+        sys.stderr.write(f"error!!! in file: {s}...\n")
         sys.stderr.write("not correctly formatted, perhaps...\n")
         sys.stderr.write("gracefully quitting...\n")
         sys.exit()
@@ -41,7 +37,7 @@ def dumpData(s, data):
     except:
         import sys
 
-        sys.stderr.write("error!!! opening for write file: %s...\n" % s)
+        sys.stderr.write(f"error!!! opening for write file: {s}...\n")
         sys.stderr.write("gently quitting...\n")
         sys.exit()
 
@@ -189,11 +185,11 @@ else:
                 out[pos] += 1
             except:
 
-                sys.stderr.write("histogram error!!! len(data) = %d \n" % len(out))
+                sys.stderr.write(f"histogram error!!! len(data) = {len(out)} \n")
                 sys.stderr.write(
                     "\n".join(
                         [
-                            "{} = {}".format(str(k), str(locals()[k]))
+                            f"{str(k)} = {str(locals()[k])}"
                             for k in list(locals().keys())
                             if k != "data"
                         ]

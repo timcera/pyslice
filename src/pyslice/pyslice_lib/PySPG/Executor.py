@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-
-
 import os
 import os.path
 import sys
-from builtins import object, str
 from math import *  # nopycln: import
 
 from .ParamParser import *  # nopycln: import
@@ -18,7 +14,7 @@ from .ParamParser import *  # nopycln: import
 #
 
 
-class Executor(object):
+class Executor:
     #
     # :::~ This variable specifies how many VARIABLEs will be kept off
     #      the directory heirarchy (NOTE THAT MUST HAVE A MINUS SIGN)

@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
-
 import math
-from builtins import object, range
 
 from past.utils import old_div
 
 
-class SPGHistogram(object):
+class SPGHistogram:
     __boxsize = 1
     __dict = {}
     __elements = 0

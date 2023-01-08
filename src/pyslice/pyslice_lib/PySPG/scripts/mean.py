@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-
-from builtins import range
-
-#!/usr/bin/python
-
 #
 #:::~ Author: Claudio J. Tessone <tessonec@imedea.uib.es>
 #:::~ Release: Wed Oct  1 20:27:38 CEST 2003
@@ -62,7 +56,7 @@ except:
     sys.exit(2)
 
 try:
-    lsLines = open(paramFile, "r").readlines()
+    lsLines = open(paramFile).readlines()
 except:
     sys.stderr.write(f"Error! Couldn't open '{paramFile}' file\n")
     sys.exit(2)

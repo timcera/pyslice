@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Pyslice - dataset template engine documentation build configuration file, created by
 # sphinx-quickstart on Tue Mar  8 19:27:37 2011.

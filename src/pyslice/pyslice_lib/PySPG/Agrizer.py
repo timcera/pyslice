@@ -1,30 +1,18 @@
-# -*- coding: utf-8 -*-
-
-
-import os
-import os.path
-import sys
-from builtins import next, range, str
-from math import *
-
-from . import Load, PyGrace
-from .ParamParser import *
-
-#
+"""
 #
 # :::~ Author: Claudio Juan Tessone <tessonec@imedea.uib.es> (c) 2002-2003
 #
 # Distributed According to GNU Generic Purpose License (GPL)
 # Please visit www.gnu.org
-#
+"""
 
-# BROKEN
-# BROKEN
-# BROKEN
-# BROKEN
-# BROKEN
-#
-#
+import os
+import os.path
+import sys
+from math import *
+
+from . import Load, PyGrace
+from .ParamParser import *
 
 
 class Agrizer(ParamParser):
@@ -46,7 +34,6 @@ class Agrizer(ParamParser):
     title = ""
 
     def agr(self, outname, inname):
-
         title = self.title
         elpath = ""
         ac_values = self.actual_values()
@@ -59,9 +46,9 @@ class Agrizer(ParamParser):
 
         try:
             if not os.path.exists(elpath):
-                raise AssertError("")
+                raise AssertionError("")
         except:
-            print(f"Error accesing path: '{elpath}'.")
+            print(f"Error accessing path: '{elpath}'.")
             sys.exit()
         cwd = os.getcwd()
         os.chdir(elpath)
@@ -96,13 +83,13 @@ class Agrizer(ParamParser):
 
         try:
             if not os.path.exists(elpath):
-                raise AssertError("")
+                raise AssertionError("")
         except:
-            print(f"Error accesing path: '{elpath}'.")
+            print(f"Error accessing path: '{elpath}'.")
             sys.exit()
         cwd = os.getcwd()
         os.chdir(elpath)
-        if type(pattern) is type(""):
+        if isinstance(pattern, str):
             pattern = [pattern]
         g1 = PyGrace.GraceDocument()
         for inname in pattern:
@@ -115,9 +102,7 @@ class Agrizer(ParamParser):
 
                 else:
                     for i in self.var:
-                        outname = outname.replace(
-                            "{%s}" % i, f"{i}-{str(self.act_val(i))}"
-                        )
+                        outname = outname.replace(f"{i}", f"{i}-{str(self.act_val(i))}")
 
                 ls = Load.loadXY(inname, self.xcol, self.ycol)
                 ls2 = Load.transformXY(ls, self.xformula, self.yformula)
@@ -152,13 +137,13 @@ class Agrizer(ParamParser):
         cwd = os.getcwd()
         try:
             if not os.path.exists(elpath):
-                raise AssertError("")
+                raise AssertionError("")
         except:
-            print(f"Error accesing path: '{elpath}'.")
+            print(f"Error accessing path: '{elpath}'.")
             sys.exit()
 
         os.chdir(elpath)
-        if type(pattern) is type(""):
+        if isinstance(pattern, str):
             pattern = [pattern]
         g1 = PyGrace.GraceDocument()
         isSomething = 0  # false the document is void

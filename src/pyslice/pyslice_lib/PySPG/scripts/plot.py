@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
-
 import os.path
-from builtins import str
-
-#! /usr/bin/python
-
 
 BASEDIR = os.path.expanduser("~/devel/")
 
@@ -18,7 +12,7 @@ import PySPG
 from plotconf import *
 
 for kcol, colname in col_contents:
-    p2 = PySPG.MultiAgrizer(open("param.dat", "r").readlines(), lastvar)
+    p2 = PySPG.MultiAgrizer(open("param.dat").readlines(), lastvar)
     p2.xlabel = xlabel
     p2.ycol = kcol
     p2.ylabel = colname

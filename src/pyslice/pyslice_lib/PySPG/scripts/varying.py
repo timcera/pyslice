@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-
 import os.path
 import sys
 
-#! /usr/bin/python
 #
 #:::~ Author: Claudio J. Tessone <tessonec@imedea.uib.es>
 #:::~ Release: Jan 10 2005
@@ -45,7 +42,7 @@ except:
 
 # reads the PySPG parameter file
 try:
-    lsLines = open(paramFile, "r").readlines()
+    lsLines = open(paramFile).readlines()
 except:
     sys.stderr.write(f"Error! Couldn't open '{paramFile}' file\n")
     sys.exit(2)

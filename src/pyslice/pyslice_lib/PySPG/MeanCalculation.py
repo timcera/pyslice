@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-
-
 import sys
-from builtins import object, range, str
 from math import *
 
 from past.utils import old_div
@@ -20,7 +16,7 @@ from .ParamParser import *
 #
 
 
-class MeanCalculation(object):
+class MeanCalculation:
 
     """
     When a simulation is run with a given number of repetitions what is needed is a
@@ -33,7 +29,7 @@ class MeanCalculation(object):
         self.pp_varying = ParamParser(ls2)
 
     def searchinfile(self, fname, st):
-        return [i.split() for i in open(fname, "r").readlines() if i.split()[0] == st]
+        return [i.split() for i in open(fname).readlines() if i.split()[0] == st]
 
     def mean(self, fin_name="out.dat", fout_name="out.mean"):
 

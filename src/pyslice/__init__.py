@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 NAME:
     pyslice.py
@@ -50,7 +49,7 @@ EXAMPLES:
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+import configparser
 import filecmp
 import getopt
 import math
@@ -73,7 +72,6 @@ try:
 except ImportError:
     import dummy_threading as _threading
 
-import configparser as configparser
 
 from pyslice.pyslice_lib import PySPG as pyspg
 
@@ -154,7 +152,7 @@ class TemplatePathNotFoundError(Exception):
 # ====================================
 
 
-class Pyslice(object):
+class Pyslice:
     # ---class variables---
     # --------------------------
 
@@ -180,7 +178,7 @@ class Pyslice(object):
         num_sections = len(config_dict.sections())
         if num_sections < min_sections or num_sections > max_sections:
             raise NumberConfigSectionsError(
-                "pyslice.ini must have between {min_sections} and {max_sections} sections."
+                f"pyslice.ini must have between {min_sections} and {max_sections} sections."
             )
         for sec in req_sections_list:
             if not config_dict.has_section(sec):
@@ -243,7 +241,7 @@ class Pyslice(object):
 
             # Is this a text file?  If so, just open as a template
             if not is_binary(infilepath):
-                with open(infilepath, "r") as inputf:
+                with open(infilepath) as inputf:
                     with open(outfilepath, "w") as output:
                         shutil.copystat(infilepath, outfilepath)
 
@@ -294,7 +292,7 @@ class Pyslice(object):
                                         speciallines[filename]
                                     except KeyError:
                                         speciallines.setdefault(filename, {})
-                                        with open(filename, "r") as lout:
+                                        with open(filename) as lout:
                                             for line in lout:
                                                 # Handle comments and blank lines
                                                 if "#" == line[0]:
@@ -493,7 +491,7 @@ class Pyslice(object):
                 )
 
             # Arithmetic and Geometric types have the same variables
-            if var_type == "arithmetic" or var_type == "geometric":
+            if var_type in ("arithmetic", "geometric"):
                 start = configuration.getfloat(variable, "start")
                 stop = configuration.getfloat(variable, "stop")
                 increment = configuration.getfloat(variable, "increment")
@@ -555,9 +553,9 @@ class Pyslice(object):
             if not inp:
                 continue
             inp = inp[0]
-            if inp == "y" or inp == "Y":
+            if inp in ("y", "Y"):
                 break
-            if inp == "n" or inp == "N":
+            if inp in ("n", "N"):
                 return
             continue
 
@@ -595,8 +593,8 @@ class Pyslice(object):
 
 # =============================
 class Usage(Exception):
-    def __init__(self, msg):
-        self.msg = msg
+    def __init__(self, class_msg):
+        self.msg = class_msg
 
 
 def main(argv=None):
@@ -608,8 +606,8 @@ def main(argv=None):
         opts, _ = getopt.getopt(
             argv[1:], "hvdf:", ["help", "version", "debug", "file="]
         )
-    except getopt.error as msg:
-        raise Usage(msg)
+    except getopt.error as error_msg:
+        raise Usage(error_msg) from error_msg
 
     for opt in opts:
         if opt[0] == "-h" or opt[0] == "--help":

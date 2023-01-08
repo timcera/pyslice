@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 #
 # Specifies the name of the last variable considered
 # before plotting

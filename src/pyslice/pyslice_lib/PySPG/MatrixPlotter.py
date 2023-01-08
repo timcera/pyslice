@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import os.path
 import sys
 
@@ -16,7 +13,7 @@ from .ParamParser import *
 #
 
 
-class MatrixPlotter(object):
+class MatrixPlotter:
 
     save_mtv = False
 
