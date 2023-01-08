@@ -1,7 +1,6 @@
+import copy
 import sys
 from math import *
-
-from past.utils import old_div
 
 from .Load import *
 from .ParamParser import *
@@ -32,7 +31,6 @@ class MeanCalculation:
         return [i.split() for i in open(fname).readlines() if i.split()[0] == st]
 
     def mean(self, fin_name="out.dat", fout_name="out.mean"):
-
         dirname = self.pp_varying.directory_tree()
 
         fsearch = f"{dirname}{fin_name}"
@@ -61,8 +59,6 @@ class MeanCalculation:
         xDict = {}
         nPoints = {}
 
-        import copy
-
         zeros = [0 for i in columnas]
 
         for i in valuesX:
@@ -80,7 +76,7 @@ class MeanCalculation:
 
         for x in valuesX:
             if nPoints[x] != 0:
-                dataOut.append([old_div(xDict[x][j], nPoints[x]) for j in columnas])
+                dataOut.append([(xDict[x][j] // nPoints[x]) for j in columnas])
 
         try:
             dumpData(fout, dataOut)

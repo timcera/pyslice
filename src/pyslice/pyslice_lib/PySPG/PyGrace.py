@@ -1,4 +1,5 @@
-from past.utils import old_div
+import math
+import sys
 
 #
 # IMPLEMENTS A GRACE DATASET         ###########
@@ -372,9 +373,9 @@ class GraceDocument:
             miny -= 0.5
             maxy += 0.5
         if not tickx:
-            tickx = old_div((maxx - minx), 4.0)
+            tickx = (maxx - minx) // 4.0
         if not ticky:
-            ticky = old_div((maxy - miny), 4.0)
+            ticky = (maxy - miny) // 4.0
 
         self.graph.world["xmin"] = minx
         self.graph.world["xmax"] = maxx
@@ -385,7 +386,6 @@ class GraceDocument:
         self.graph.yaxis["tick major"] = ticky
 
     def getRoundedValues(self, scale, a2, a1):
-        import math
 
         sign1 = sign2 = 1
         if a1 < 0:
@@ -403,8 +403,8 @@ class GraceDocument:
         if scale == "Normal":
             propose1 = sign1 * int1 * 10**scale1
             propose2 = sign2 * int2 * 10**scale2
-            skip = abs(old_div((int1 * 10**scale1 - int2 * 10**scale2), 4))
-            return propose2, propose1, old_div(propose1, 4)
+            skip = abs((int1 * 10**scale1 - int2 * 10**scale2) // 4)
+            return propose2, propose1, propose1 // 4
         else:
             propose1 = 10 ** (scale1 + 1)
             propose2 = 10 ** (scale2 - 1)
@@ -448,7 +448,6 @@ class GraceDocument:
         self.graph.subtitle[" "] = f'"{st}"'
 
     def dump(self, outStream=None):
-        import sys
 
         old_stdout = sys.stdout
         if outStream:

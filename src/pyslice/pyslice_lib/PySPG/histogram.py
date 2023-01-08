@@ -1,7 +1,5 @@
 import math
 
-from past.utils import old_div
-
 
 class SPGHistogram:
     __boxsize = 1
@@ -20,9 +18,8 @@ class SPGHistogram:
         nearest = self.__get_nearest(value)
 
         if nearest in self.__dict:
-            return old_div(self.__dict[nearest], self.__elements)
-        else:
-            return 0.0
+            return self.__dict[nearest] // self.__elements
+        return 0.0
 
     def add_value(self, value):
         nearest = self.__get_nearest(value)
@@ -38,18 +35,18 @@ class SPGHistogram:
         keys = list(self.__dict.keys())
         keys.sort()
         return "\n".join(
-            [f"{k:f}\t{old_div(self.__dict[k], self.__elements):f}" for k in keys]
+            [f"{k:f}\t{(self.__dict[k] // self.__elements):f}" for k in keys]
         )
 
     def __get_nearest(self, value):
-        return self.__boxsize * math.floor(old_div(value, self.__boxsize))
+        return self.__boxsize * math.floor(value // self.__boxsize)
 
     def get_dataset(self):
         if self.__elements == 0:
             return [[0, 0]]
         keys = list(self.__dict.keys())
         keys.sort()
-        return [[k, (old_div(self.__dict[k], self.__elements))] for k in keys]
+        return [[k, (self.__dict[k] // self.__elements)] for k in keys]
 
 
 if __name__ == "__main__":
