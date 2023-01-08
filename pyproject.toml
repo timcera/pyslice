@@ -74,7 +74,7 @@ bitbucket = "https://bitbucket.org/timcera/pyslice/src/main/"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "4.2.5"
+version = "4.2.6"
 tag_format = "v$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
