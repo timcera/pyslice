@@ -1,6 +1,7 @@
 [build-system]
 requires = [
-    "setuptools",
+    "setuptools>=45",
+    "setuptools_scm[toml]>=6.2",
     "wheel",
     "oldest-supported-numpy",
 ]
@@ -12,6 +13,7 @@ dynamic = ["readme", "version"]
 description = "Specialized templating engine do develop a parameterized set of model data sets"
 dependencies = [
     "binaryornot",
+    "numpy",
     ]
 license = {text = "BSD-3-Clause"}
 authors = [
@@ -79,6 +81,9 @@ tag_format = "v$version"
 version_files = ["VERSION"]
 update_changelog_on_bump = true
 
+[tool.isort]
+profile = "black"
+
 [tool.setuptools]
 license-files = ["LICENSE.txt"]
 include-package-data = true
@@ -91,5 +96,4 @@ version = {file = "VERSION"}
 where = ["src"]
 exclude = ["examples*", "tools*", "docs*", "pyslice.tests*"]
 
-[tool.isort]
-profile = "black"
+[tool.setuptools_scm]
