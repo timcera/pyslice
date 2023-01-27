@@ -283,7 +283,7 @@ class Pyslice:
                                 linetemplate = linetemplate[len(CODE) :]
 
                                 # Process special directives
-                                if "~" == linetemplate[1]:
+                                if linetemplate[1] == "~":
                                     # Only want to open file once by checking
                                     # dictionary
                                     lookupno, filename = words[0].split()[1:3]
@@ -295,7 +295,7 @@ class Pyslice:
                                         with open(filename) as lout:
                                             for line in lout:
                                                 # Handle comments and blank lines
-                                                if "#" == line[0]:
+                                                if line[0] == "#":
                                                     continue
                                                 (
                                                     recno,
