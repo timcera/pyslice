@@ -1,0 +1,3 @@
+[submodule "src/pyslice/pyslice_lib/PySPG3"]
+	path = src/pyslice/pyslice_lib/PySPG3
+	url = git@github.com:timcera/PySPG3.git
