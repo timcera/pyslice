@@ -156,7 +156,6 @@ class Agrizer(ParamParser):
             for i in self.var:
                 inname = inname.replace("{%s}" % i, f"{i}-{str(self.act_val(i))}")
 
-            #      sys.stderr.write(os.path.abspath(inname)+"... %d \n"%os.path.isfile(inname))
             if os.path.isfile(inname):
                 isSomething = 1  # true the document is NOT void
 

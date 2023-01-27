@@ -124,8 +124,6 @@ def histogram(data, nbins, maxboxsize=10000, minx=-1e64, maxx=1e64):
 
     mina = max(min(data), minx)
     maxa = min(max(data), maxx)
-    #  mina=min(data)
-    #  maxa=max(data)
     boxsize = min(maxboxsize, ((maxa - mina) // nbins))
     out = [0] * int(math.ceil((maxa - mina) // boxsize))
 

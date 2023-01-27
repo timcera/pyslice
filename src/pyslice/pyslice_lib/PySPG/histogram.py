@@ -10,8 +10,6 @@ class SPGHistogram:
         self.__boxsize = boxsize
         self.__elements = 0.0
 
-    #    import sys
-    #    sys.stderr.write("histogram box size = %lf\n"%self.__boxsize)
 
     def __getitem__(self, value):
 
