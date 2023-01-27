@@ -33,7 +33,9 @@ class GraceDataSet:
 
     basfill = {"type": 0, "rule": 0, "color": 1, "pattern": 1}
 
-    def __init__(self, n=0, d=[], gT="xy"):
+    def __init__(self, n=0, d=None, gT="xy"):
+        if d is None:
+            d = []
         self.data = d
         self.name = n
 
