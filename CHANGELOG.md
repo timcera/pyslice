@@ -1,3 +1,13 @@
+## v5.0.0 (2023-01-27)
+
+### Feat
+
+- add PySPG3 git submodule
+
+### Fix
+
+- need the random library imported to use eval(...)
+
 ## v4.2.7 (2023-01-16)
 
 ## v4.2.6 (2023-01-08)
