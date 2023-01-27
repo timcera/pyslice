@@ -404,11 +404,10 @@ class GraceDocument:
             propose2 = sign2 * int2 * 10**scale2
             skip = abs((int1 * 10**scale1 - int2 * 10**scale2) // 4)
             return propose2, propose1, propose1 // 4
-        else:
-            propose1 = 10 ** (scale1 + 1)
-            propose2 = 10 ** (scale2 - 1)
+        propose1 = 10 ** (scale1 + 1)
+        propose2 = 10 ** (scale2 - 1)
 
-            return propose2, propose1, 10 ** int((scale1 - scale2) + 1)
+        return propose2, propose1, 10 ** int((scale1 - scale2) + 1)
 
     def autoscale(self, autoscaleaxis="xy"):
         minx = 1e10
