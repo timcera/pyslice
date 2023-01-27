@@ -14,13 +14,6 @@ class TeXParser(ParamParser):
         "\\N": "   ",
     }
 
-    def __agr2tex(agr_str):
-        ret = agr_str
-        for i in replacing_rules:
-            ret = ret.replace(i, replacing_rules[i])
-
-        return ret
-
     def __init__(self, comm, var_name):
 
         commands = [
