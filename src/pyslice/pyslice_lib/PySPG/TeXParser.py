@@ -45,10 +45,12 @@ class TeXParser(ParamParser):
             filter(lambda x: x.strip()[0] in "+*/-.", commands).pop()
         )
 
-    def __tex(self, outname="plots.tex", plotnames=[]):
+    def __tex(self, outname="plots.tex", plotnames=None):
         """
         for the actual values of the iterator self.parser_original, dumps a agr
         """
+        if plotnames is None:
+            plotnames = []
         cwd = os.path.abspath(os.path.curdir)
         #
         # Directory where the AGR will be located
@@ -115,9 +117,11 @@ class TeXParser(ParamParser):
 
         os.chdir(cwd)
 
-    def doit(self, outname="plots.tex", plotnames=[]):
+    def doit(self, outname="plots.tex", plotnames=None):
         """
         Suquencially dumps all the plotnames (a list of .agr files)
         """
+        if plotnames is None:
+            plotnames = []
         for i in self.parser_original:
             self.__tex(outname, plotnames)
