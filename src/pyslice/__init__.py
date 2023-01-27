@@ -55,7 +55,6 @@ import getopt
 import math
 import os
 import os.path
-import random
 import re
 import shlex
 import shutil

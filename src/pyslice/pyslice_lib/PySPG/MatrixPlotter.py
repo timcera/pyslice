@@ -1,7 +1,7 @@
 import os.path
 import sys
 
-from . import Load, PyGrace
+from . import Load
 from .ParamParser import *
 
 #
