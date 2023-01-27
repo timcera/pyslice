@@ -153,7 +153,6 @@ class ItPunctual(SPGIterator):
     def set_command(self, command, separator=" "):
         str_rest = command.split(separator)
         self.varname = str_rest[0].strip()
-        # 	 self.data = [eval (i.strip()) for i in str_rest[1:] ]
         self.data = [i.strip() for i in str_rest[1:]]
 
 

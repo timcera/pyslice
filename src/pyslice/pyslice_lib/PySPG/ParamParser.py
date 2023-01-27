@@ -230,6 +230,5 @@ if __name__ == "__main__":
     #
     print(command)
     pp = ParamParser(command)
-    # pp.set_order(["c","a","d"])
     for i in pp:
         print(pp)
