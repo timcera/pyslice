@@ -240,116 +240,115 @@ class Pyslice:
 
             # Is this a text file?  If so, just open as a template
             if not is_binary(infilepath):
-                with open(infilepath) as inputf:
-                    with open(outfilepath, "w") as output:
-                        shutil.copystat(infilepath, outfilepath)
+                with open(infilepath) as inputf, open(outfilepath, "w") as output:
+                    shutil.copystat(infilepath, outfilepath)
 
-                        filetotalizer = []
-                        # Search for _keywordvarname_keyword and replace with
-                        # appropriate value.
-                        escaped_keyword = re.escape(_keyword)
-                        keyword_search = re.compile(escaped_keyword)
-                        search_for = re.compile(
-                            f"{escaped_keyword}(.*?){escaped_keyword}"
-                        )
+                    filetotalizer = []
+                    # Search for _keywordvarname_keyword and replace with
+                    # appropriate value.
+                    escaped_keyword = re.escape(_keyword)
+                    keyword_search = re.compile(escaped_keyword)
+                    search_for = re.compile(
+                        f"{escaped_keyword}(.*?){escaped_keyword}"
+                    )
 
-                        for lineraw in inputf:
-                            line = lineraw
-                            # Active comments first...
-                            if CODE == line[: len(CODE)]:
-                                filetotalizer.append(line)
-                                words = line.split("|")
-                                # There is the possibility that a datafile
-                                # would WANT to use | So fix words up to have
-                                # 1 or two items...
+                    for lineraw in inputf:
+                        line = lineraw
+                        # Active comments first...
+                        if CODE == line[: len(CODE)]:
+                            filetotalizer.append(line)
+                            words = line.split("|")
+                            # There is the possibility that a datafile
+                            # would WANT to use | So fix words up to have
+                            # 1 or two items...
 
-                                # if block length is missing... too cold
-                                if len(words) == 1:
-                                    linetemplate = words[0]
-                                    blocklen = 1
+                            # if block length is missing... too cold
+                            if len(words) == 1:
+                                linetemplate = words[0]
+                                blocklen = 1
 
-                                # if template includes | ... too hot
-                                # right now MUST include block length
-                                if len(words) > numargs:
-                                    linetemplate = words[:-2].join("|")
-                                    blocklen = int(words[-1])
+                            # if template includes | ... too hot
+                            # right now MUST include block length
+                            if len(words) > numargs:
+                                linetemplate = words[:-2].join("|")
+                                blocklen = int(words[-1])
 
-                                # ... just right
-                                if len(words) == 2:
-                                    linetemplate = words[0]
-                                    blocklen = int(words[1])
+                            # ... just right
+                            if len(words) == 2:
+                                linetemplate = words[0]
+                                blocklen = int(words[1])
 
-                                linetemplate = linetemplate[len(CODE) :]
+                            linetemplate = linetemplate[len(CODE) :]
 
-                                # Process special directives
-                                if linetemplate[1] == "~":
-                                    # Only want to open file once by checking
-                                    # dictionary
-                                    lookupno, filename = words[0].split()[1:3]
-                                    lookupno = lookupno.split("~")[1]
-                                    try:
-                                        speciallines[filename]
-                                    except KeyError:
-                                        speciallines.setdefault(filename, {})
-                                        with open(filename) as lout:
-                                            for line in lout:
-                                                # Handle comments and blank lines
-                                                if line[0] == "#":
-                                                    continue
-                                                (
-                                                    recno,
-                                                    sep,
-                                                    stemplate,
-                                                ) = line.partition("|")
-                                                if not stemplate:
-                                                    continue
-                                                stemplate = stemplate.rstrip(LINEENDS)
-                                                speciallines[filename][
-                                                    recno
-                                                ] = stemplate
-                                    line_sub = speciallines[filename][lookupno].format(
-                                        **var_dict
-                                    )
+                            # Process special directives
+                            if linetemplate[1] == "~":
+                                # Only want to open file once by checking
+                                # dictionary
+                                lookupno, filename = words[0].split()[1:3]
+                                lookupno = lookupno.split("~")[1]
+                                try:
+                                    speciallines[filename]
+                                except KeyError:
+                                    speciallines.setdefault(filename, {})
+                                    with open(filename) as lout:
+                                        for line in lout:
+                                            # Handle comments and blank lines
+                                            if line[0] == "#":
+                                                continue
+                                            (
+                                                recno,
+                                                sep,
+                                                stemplate,
+                                            ) = line.partition("|")
+                                            if not stemplate:
+                                                continue
+                                            stemplate = stemplate.rstrip(LINEENDS)
+                                            speciallines[filename][
+                                                recno
+                                            ] = stemplate
+                                line_sub = speciallines[filename][lookupno].format(
+                                    **var_dict
+                                )
 
-                                else:
-                                    line_sub = linetemplate.format(**var_dict)
-
-                                for blockline in range(blocklen):
-                                    linein = next(inputf)
-                                    nline = []
-                                    for index, char in enumerate(line_sub):
-                                        if char == "*":
-                                            nline.append(linein[index])
-                                        else:
-                                            nline.append(line_sub[index])
-                                    filetotalizer.append("".join(nline))
-                            elif keyword_search.search(line):
-                                matchline = line
-                                for matches in search_for.findall(matchline):
-                                    for var_name in var_dict:
-                                        if var_name in matches:
-                                            # replace variable name with number
-                                            match = matches.replace(
-                                                var_name, str(var_dict[var_name])
-                                            )
-                                            # evaluate Python statement with
-                                            # eval
-                                            match = eval(match)
-                                            # replace variable with calculated
-                                            # value
-                                            matchwhat = re.escape(
-                                                _keyword + matches + _keyword
-                                            )
-                                            matchline = re.sub(
-                                                matchwhat,
-                                                str(match),
-                                                matchline,
-                                                count=1,
-                                            )
-                                filetotalizer.append(matchline)
                             else:
-                                filetotalizer.append(line)
-                        output.write("".join(filetotalizer))
+                                line_sub = linetemplate.format(**var_dict)
+
+                            for blockline in range(blocklen):
+                                linein = next(inputf)
+                                nline = []
+                                for index, char in enumerate(line_sub):
+                                    if char == "*":
+                                        nline.append(linein[index])
+                                    else:
+                                        nline.append(line_sub[index])
+                                filetotalizer.append("".join(nline))
+                        elif keyword_search.search(line):
+                            matchline = line
+                            for matches in search_for.findall(matchline):
+                                for var_name in var_dict:
+                                    if var_name in matches:
+                                        # replace variable name with number
+                                        match = matches.replace(
+                                            var_name, str(var_dict[var_name])
+                                        )
+                                        # evaluate Python statement with
+                                        # eval
+                                        match = eval(match)
+                                        # replace variable with calculated
+                                        # value
+                                        matchwhat = re.escape(
+                                            _keyword + matches + _keyword
+                                        )
+                                        matchline = re.sub(
+                                            matchwhat,
+                                            str(match),
+                                            matchline,
+                                            count=1,
+                                        )
+                            filetotalizer.append(matchline)
+                        else:
+                            filetotalizer.append(line)
+                    output.write("".join(filetotalizer))
             else:
                 try:
                     if filecmp.cmp(infilepath, outfilepath) is False:
