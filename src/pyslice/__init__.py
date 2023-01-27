@@ -55,6 +55,7 @@ import getopt
 import math
 import os
 import os.path
+import random  # has the appearance of not being use, but used in eval(...)
 import re
 import shlex
 import shutil
@@ -248,9 +249,7 @@ class Pyslice:
                     # appropriate value.
                     escaped_keyword = re.escape(_keyword)
                     keyword_search = re.compile(escaped_keyword)
-                    search_for = re.compile(
-                        f"{escaped_keyword}(.*?){escaped_keyword}"
-                    )
+                    search_for = re.compile(f"{escaped_keyword}(.*?){escaped_keyword}")
 
                     for lineraw in inputf:
                         line = lineraw
@@ -303,9 +302,7 @@ class Pyslice:
                                             if not stemplate:
                                                 continue
                                             stemplate = stemplate.rstrip(LINEENDS)
-                                            speciallines[filename][
-                                                recno
-                                            ] = stemplate
+                                            speciallines[filename][recno] = stemplate
                                 line_sub = speciallines[filename][lookupno].format(
                                     **var_dict
                                 )
