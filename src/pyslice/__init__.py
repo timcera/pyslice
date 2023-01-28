@@ -318,6 +318,7 @@ class Pyslice:
                                         nline.append(linein[index])
                                     else:
                                         nline.append(line_sub[index])
+                                nline.append(inputf.newlines)
                                 filetotalizer.append("".join(nline))
                         elif keyword_search.search(line):
                             matchline = line
