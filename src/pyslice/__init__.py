@@ -54,8 +54,7 @@ import filecmp
 import getopt
 import math
 import os
-import os.path
-import random  # has the appearance of not being use, but used in eval(...)
+import random  # has the appearance of not being used, but used in eval(...)
 import re
 import shlex
 import shutil
@@ -64,6 +63,8 @@ import subprocess
 # ===imports======================
 import sys
 import time
+from contextlib import suppress
+from pathlib import Path
 
 from binaryornot.check import is_binary
 
@@ -71,7 +72,6 @@ try:
     import threading as _threading
 except ImportError:
     import dummy_threading as _threading
-
 
 from pyslice.pyslice_lib import PySPG as pyspg
 
@@ -165,7 +165,7 @@ class Pyslice:
         """Reads the pyslice.ini file."""
 
         # Can we find pyslice.ini?
-        pyslice_ini = os.path.join(os.getcwd(), input_file)
+        pyslice_ini = Path.cwd() / input_file
         if not os.access(pyslice_ini, os.F_OK | os.R_OK):
             raise ConfigFileNotFoundError(
                 f"{input_file} was not found or not readable ***"
@@ -198,36 +198,19 @@ class Pyslice:
         in_str = in_str.replace('"', "")
         return in_str
 
-    def path_correction(self, path):
-        """Corrects path separators and removes trailing path separators.
-
-        Needed so that path separators of any OS are corrected to the
-        platform running the script.
-
-        """
-        path = path.replace("/", os.sep)
-        path = path.replace("\\", os.sep)
-        if path[-1] == "/" or path[-1] == "\\":
-            path = path[:-1]
-        return path
-
     def create_output(self, var_set, dirname, dirs, fnames):
         var_dict = {}
         for variables in var_set[1:]:
             exec(f"{variables[0]} = {variables[1]}")
             var_dict[variables[0]] = variables[1]
 
-        try:
-            os.makedirs(os.path.join(_output_path, _strtag))
-        except OSError:
-            pass
+        with suppress(OSError):
+            (Path(_output_path) / _strtag).mkdir(parents=True)
         for dirn in dirs:
-            infilepath = os.path.join(dirname, dirn)
-            rel_dir = infilepath.replace(_template_path + os.sep, "")
-            try:
-                os.makedirs(os.path.join(_output_path, _strtag, rel_dir))
-            except OSError:
-                pass
+            infilepath = Path(dirname) / dirn
+            rel_dir = infilepath.relative_to(_template_path)
+            with suppress(OSError):
+                (Path(_output_path) / _strtag / rel_dir).mkdir()
         for files in fnames:
             excludeflag = False
             for extensions in _exclude_list:
@@ -235,12 +218,12 @@ class Pyslice:
                     excludeflag = True
             if excludeflag:
                 continue
-            infilepath = os.path.join(dirname, files)
-            rel_dir = infilepath.replace(_template_path + os.sep, "")
-            outfilepath = os.path.join(_output_path, _strtag, rel_dir)
+            infilepath = Path(dirname) / files
+            rel_dir = infilepath.relative_to(_template_path)
+            outfilepath = Path(_output_path) / _strtag / rel_dir
 
             # Is this a text file?  If so, just open as a template
-            if not is_binary(infilepath):
+            if not is_binary(str(infilepath)):
                 with open(infilepath) as inputf, open(outfilepath, "w") as output:
                     shutil.copystat(infilepath, outfilepath)
 
@@ -296,7 +279,7 @@ class Pyslice:
                                                 continue
                                             (
                                                 recno,
-                                                sep,
+                                                _,
                                                 stemplate,
                                             ) = line.partition("|")
                                             if not stemplate:
@@ -310,7 +293,7 @@ class Pyslice:
                             else:
                                 line_sub = linetemplate.format(**var_dict)
 
-                            for blockline in range(blocklen):
+                            for _ in range(blocklen):
                                 linein = next(inputf)
                                 nline = []
                                 for index, char in enumerate(line_sub):
@@ -323,12 +306,10 @@ class Pyslice:
                         elif keyword_search.search(line):
                             matchline = line
                             for matches in search_for.findall(matchline):
-                                for var_name in var_dict:
-                                    if var_name in matches:
+                                for key, var in var_dict.items():
+                                    if key in matches:
                                         # replace variable name with number
-                                        match = matches.replace(
-                                            var_name, str(var_dict[var_name])
-                                        )
+                                        match = matches.replace(key, str(var))
                                         # evaluate Python statement with
                                         # eval
                                         match = eval(match)
@@ -363,7 +344,7 @@ class Pyslice:
         # is run outside of Pyslice.
         os.environ["PYSLICE"] = "1"
         if os.name != "nt":
-            p = subprocess.Popen(
+            pype = subprocess.Popen(
                 com,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
@@ -372,18 +353,18 @@ class Pyslice:
             )
         else:
             # close_fds is not supported on Windows
-            p = subprocess.Popen(
+            pype = subprocess.Popen(
                 com,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
             )
 
-        chstdouterr = p.communicate()[0]
+        chstdouterr = pype.communicate()[0]
 
         if _keep_log is True:
-            with open("pyslice.log", "w") as fo:
-                fo.write(str(chstdouterr))
+            with open("pyslice.log", "w", encoding="utf8") as fpo:
+                fpo.write(str(chstdouterr))
 
     def run(self):
         global _strtag
@@ -417,14 +398,14 @@ class Pyslice:
         _keyword = self.dequote(configuration.get("flags", "keyword"))
         max_threads = configuration.getint("flags", "max_threads")
         try:
-            COMMENT_CODE = configuration.get("flags", "comment")
+            comment_code = configuration.get("flags", "comment")
         except:
-            COMMENT_CODE = "qwerty"
+            comment_code = "qwerty"
         try:
-            DT_CODE = assignment(configuration.get("flags", "active_comment"), "")
+            dt_code = assignment(configuration.get("flags", "active_comment"), "")
         except:
-            DT_CODE = "qwerty"
-        CODE = COMMENT_CODE + DT_CODE
+            dt_code = "qwerty"
+        CODE = comment_code + dt_code
         _exclude_list = []
         if configuration.has_option("flags", "exclude_copy"):
             _exclude_list = eval(configuration.get("flags", "exclude_copy"))
@@ -446,10 +427,10 @@ class Pyslice:
         del section_list[section_list.index("program")]
 
         # Make sure to clean up the paths.
-        _template_path = os.path.abspath(self.path_correction(_template_path))
-        _output_path = os.path.abspath(self.path_correction(_output_path))
+        _template_path = Path.resolve(Path.cwd() / Path(_template_path))
+        _output_path = Path.resolve(Path.cwd() / Path(_output_path))
 
-        if not os.path.exists(_template_path):
+        if not _template_path.exists():
             raise TemplatePathNotFoundError(
                 f"The template path doesn't exists at '{_template_path}'"
             )
@@ -492,7 +473,7 @@ class Pyslice:
                 stop = configuration.getfloat(variable, "stop")
                 increment = configuration.getfloat(variable, "increment")
 
-                for i in [start, stop, increment]:
+                for i in (start, stop, increment):
                     tmpi = i
                     if i == math.floor(i):
                         tmpi = int(i)
@@ -527,10 +508,8 @@ class Pyslice:
                     nval = int(nval)
                 except ValueError:
                     allints[vname] = False
-                    try:
+                    with suppress(ValueError):
                         nval = float(nval)
-                    except ValueError:
-                        pass
                 if isinstance(nval, int):
                     if nmax.setdefault(vname, float("-inf")) < nval:
                         nmax[vname] = nval
@@ -538,11 +517,9 @@ class Pyslice:
             nset.append(tmp)
 
         while 1:
-            try:
+            with suppress(IndexError):
                 if sys.argv[1] == "y":
                     break
-            except IndexError:
-                pass
 
             toss = f"Configuration results in {len(nset)} permutations.  Continue? (y/n) > "
             inp = input(toss)
@@ -561,30 +538,31 @@ class Pyslice:
             if flat_dirs:
                 _strtag = str(var_index + 1).zfill(nlen)
             else:
-                _strtag = os.path.curdir + os.path.sep
+                _strtag = Path("")
                 for ivar in var_set[1:]:
                     if ivar[0] in allints:
-                        fstr = "{0}-{1}{2}"
+                        fstr = "{0}-{1}"
                     else:
-                        fstr = f"{{0}}-{{1:0{str(math.ceil(math.log10(nmax[ivar[0]] + 1)))}d}}{{2}}"
-                    _strtag = _strtag + fstr.format(ivar[0], ivar[1], os.path.sep)
+                        fstr = (
+                            f"{{0}}-{{1:0{math.ceil(math.log10(nmax[ivar[0]] + 1))}d}}"
+                        )
+                    _strtag = _strtag / Path(fstr.format(ivar[0], ivar[1]))
 
             # Create the files and directories from the template
             # Walks the _template_path directory structure
-            # os.path.walk(_template_path, self.create_output, var_set)
             for root, dirs, files in os.walk(_template_path):
                 self.create_output(var_set, root, dirs, files)
 
             # Wait until there are less than max_threads.
-            while _threading.activeCount() > max_threads:
+            while _threading.active_count() > max_threads:
                 time.sleep(0.1)
 
-            abs_path = os.path.join(_output_path, _strtag)
+            abs_path = Path(_output_path) / _strtag
 
             os.chdir(abs_path)
 
-            a = _threading.Thread(target=self.start_thread_process, args=(program,))
-            a.start()
+            thrd = _threading.Thread(target=self.start_thread_process, args=(program,))
+            thrd.start()
 
 
 # =============================
@@ -606,17 +584,17 @@ def main(argv=None):
         raise Usage(error_msg) from error_msg
 
     for opt in opts:
-        if opt[0] == "-h" or opt[0] == "--help":
+        if opt[0] in ("-h", "--help"):
             print(f"{modname}: version={__version__}")
             usage()
             sys.exit(0)
-        elif opt[0] == "-v" or opt[0] == "--version":
+        elif opt[0] in ("-v", "--version"):
             print(f"{modname}: version={__version__}")
             sys.exit(0)
-        elif opt[0] == "-d" or opt[0] == "--debug":
+        elif opt[0] in ("-d", "--debug"):
             option_dict["debug"] = 1
             sys.argv.remove(opt[0])
-        elif opt[0] == "-f" or opt[0] == "--file":
+        elif opt[0] in ("-f", "--file"):
             option_dict["file"] = opt[1]
             argv.remove(opt[0])
             argv.remove(opt[1])
