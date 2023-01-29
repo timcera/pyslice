@@ -10,7 +10,6 @@ class SPGHistogram:
         self.__boxsize = boxsize
         self.__elements = 0.0
 
-
     def __getitem__(self, value):
 
         nearest = self.__get_nearest(value)

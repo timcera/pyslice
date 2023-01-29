@@ -1,3 +1,13 @@
+## v5.0.1 (2023-01-29)
+
+### Fix
+
+- fixed missing new lines in template and database lines
+
+### Refactor
+
+- refactored to use pathlib instead of os.path
+
 ## v5.0.0 (2023-01-27)
 
 ### Feat
