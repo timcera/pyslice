@@ -14,7 +14,6 @@ from .ParamParser import *
 
 
 class MatrixPlotter:
-
     save_mtv = False
 
     def __init__(self, comm):

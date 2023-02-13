@@ -379,7 +379,6 @@ class Pyslice:
         debug(ftn, "hello, world")
 
         if len(sys.argv) == 1:
-
             toss = """
             Pyslice will replace all files in the output directories
             with the same name as files in the template directory.  If

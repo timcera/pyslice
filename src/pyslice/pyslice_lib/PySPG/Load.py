@@ -77,7 +77,6 @@ def loadY(s, yCol=1):
 
 
 def transformXY(ls, xFormula="x", yFormula="y"):
-
     xf = xFormula.replace("x", "(x)")
     xf = xf.replace("y", "(y)")
     yf = yFormula.replace("x", "(x)")
@@ -95,7 +94,6 @@ def transformXY(ls, xFormula="x", yFormula="y"):
             )
 
         except:
-
             sys.stderr.write("skipping line: " + str(line) + "\n")
     return lsOut
 
@@ -135,7 +133,6 @@ def histogram(data, nbins, maxboxsize=10000, minx=-1e64, maxx=1e64):
             sys.stderr.write("%d\n" % pos)
             out[pos] += 1
         except:
-
             sys.stderr.write(f"histogram error!!! len(data) = {len(out)} \n")
             sys.stderr.write(
                 "\n".join(

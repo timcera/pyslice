@@ -15,7 +15,6 @@ class TeXParser(ParamParser):
     }
 
     def __init__(self, comm, var_name):
-
         commands = [
             i.strip() for i in comm if (i.strip()[0] != "#" and i.strip() != "")
         ]
@@ -34,9 +33,7 @@ class TeXParser(ParamParser):
 
         self.parser_original = ParamParser(commands[:lastvar_idx])
 
-        lastvarpos = commands.index(
-            filter(lambda x: x.strip()[0] in "+*/-.", commands).pop()
-        )
+        commands.index(filter(lambda x: x.strip()[0] in "+*/-.", commands).pop())
 
     def __tex(self, outname="plots.tex", plotnames=None):
         """
@@ -74,7 +71,7 @@ class TeXParser(ParamParser):
             if actual_values[i] == "":
                 posunder = i.find("_")
                 if posunder > 0:
-                    posblank = i.find("0")
+                    i.find("0")
                     print("\\begin{verbatim}")
                     print(i)
                     print("\\end{verbatim}")

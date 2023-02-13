@@ -26,7 +26,6 @@ PySPGPATH = "/t/users1/tessonec/devel/"
 
 
 for histvar in histvec:
-
     p2 = Agrizer(open(inputFile).readlines())
 
     p2.xlabel = xlabel

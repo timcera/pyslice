@@ -70,12 +70,10 @@ class Agrizer(ParamParser):
         os.chdir(cwd)
 
     def agr(self, pattern, outname=None, autoscale="xy"):
-
         title = self.title
         elpath = ""
         ac_values = self.actual_values()
         for actual in ac_values:
-
             if actual[0] in self.isvariable[:-1]:
                 title += " %s=%s " % actual
                 legend = " %s = %s " % actual
@@ -122,13 +120,11 @@ class Agrizer(ParamParser):
         os.chdir(cwd)
 
     def hist(self, pattern, mustCalculateDif, outname=None, autoscale="xy"):
-
         title = self.title
         elpath = ""
         ac_values = self.actual_values()
 
         for actual in ac_values:
-
             if actual[0] in self.isvariable[:-1]:
                 elpath += "%s-%s/" % actual
                 title += " %s = %s " % actual
@@ -161,7 +157,6 @@ class Agrizer(ParamParser):
 
                 ls = Load.loadY(inname, 0)
                 if mustCalculateDif:
-
                     ls = [ls[i + 1] - ls[i] for i in range(len(ls) - 1)]
                 from . import histogram
 

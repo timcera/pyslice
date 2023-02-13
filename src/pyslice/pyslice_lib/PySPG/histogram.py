@@ -11,7 +11,6 @@ class SPGHistogram:
         self.__elements = 0.0
 
     def __getitem__(self, value):
-
         nearest = self.__get_nearest(value)
 
         if nearest in self.__dict:

@@ -363,7 +363,6 @@ class GraceDocument:
         self.datasets[len(self.datasets)] = newds
 
     def set_world(self, minx, maxx, miny, maxy, tickx=None, ticky=None):
-
         if minx == maxx:
             minx -= 0.5
             maxx += 0.5
@@ -385,7 +384,6 @@ class GraceDocument:
         self.graph.yaxis["tick major"] = ticky
 
     def getRoundedValues(self, scale, a2, a1):
-
         sign1 = sign2 = 1
         if a1 < 0:
             sign1 = -1
@@ -402,7 +400,7 @@ class GraceDocument:
         if scale == "Normal":
             propose1 = sign1 * int1 * 10**scale1
             propose2 = sign2 * int2 * 10**scale2
-            skip = abs((int1 * 10**scale1 - int2 * 10**scale2) // 4)
+            abs((int1 * 10**scale1 - int2 * 10**scale2) // 4)
             return propose2, propose1, propose1 // 4
         propose1 = 10 ** (scale1 + 1)
         propose2 = 10 ** (scale2 - 1)
@@ -446,7 +444,6 @@ class GraceDocument:
         self.graph.subtitle[" "] = f'"{st}"'
 
     def dump(self, outStream=None):
-
         old_stdout = sys.stdout
         if outStream:
             sys.stdout = outStream

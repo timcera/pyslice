@@ -157,7 +157,6 @@ class ParamParser:
         try:
             return self.actual_values[varn]
         except ValueError:
-
             sys.stderr.write(
                 f"""'{varn}' not found among entities
 """

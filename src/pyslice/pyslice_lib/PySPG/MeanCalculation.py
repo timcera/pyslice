@@ -45,7 +45,6 @@ class MeanCalculation:
         try:
             columnas = list(range(len(all_data[0])))
         except:
-
             sys.stderr.write(f"mean-> error! in directory '{dirname}'\n")
             sys.stderr.write(f"all_data = {str(all_data)}\n")
 
