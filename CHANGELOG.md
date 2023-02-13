@@ -1,3 +1,9 @@
+## v6.0.0 (2023-02-13)
+
+### Refactor
+
+- small refactors to prettify the code
+
 ## v5.0.1 (2023-01-29)
 
 ### Fix
