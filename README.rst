@@ -49,17 +49,17 @@ Reference documentation is at https://timcera.bitbucket.io/pyslice/docs/index.ht
 
 Installation
 ============
+pip
+~~~
+.. code-block:: bash
 
-At the command line::
+    pip install pyslice
 
-    $ pip install pyslice
-    # OR
-    $ easy_install pyslice
+conda
+~~~~~
+.. code-block:: bash
 
-Or, if you have virtualenvwrapper installed::
-
-    $ mkvirtualenv pyslice
-    $ pip install pyslice
+    conda install -c conda-forge pyslice
 
 Development
 ===========
