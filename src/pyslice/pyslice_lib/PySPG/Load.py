@@ -28,7 +28,7 @@ def loadXY(s, xCol=0, yCol=1):
     for line in data:
         try:
             out.append([line[xCol], line[yCol]])
-        except:
+        except Exception:
             sys.stderr.write("skipping line %d, wrong size\n" % (data.index(line)))
     return out
 
@@ -66,9 +66,8 @@ def loadY(s, yCol=1):
         lines = fIn.readlines()
 
     try:
-        ls = [float(line.strip().split()[yCol]) for line in lines if len(line) > 1]
-        return ls
-    except:
+        return [float(line.strip().split()[yCol]) for line in lines if len(line) > 1]
+    except Exception:
         sys.stderr.write(
             " ... error reading file: %s, %d\n"
             % (os.path.realpath(s), os.path.isfile(s))
@@ -93,8 +92,8 @@ def transformXY(ls, xFormula="x", yFormula="y"):
                 ]
             )
 
-        except:
-            sys.stderr.write("skipping line: " + str(line) + "\n")
+        except Exception:
+            sys.stderr.write(f"skipping line: {str(line)}" + "\n")
     return lsOut
 
 
@@ -132,7 +131,7 @@ def histogram(data, nbins, maxboxsize=10000, minx=-1e64, maxx=1e64):
                 pos = len(out) - 1
             sys.stderr.write("%d\n" % pos)
             out[pos] += 1
-        except:
+        except Exception:
             sys.stderr.write(f"histogram error!!! len(data) = {len(out)} \n")
             sys.stderr.write(
                 "\n".join(
@@ -149,8 +148,6 @@ def histogram(data, nbins, maxboxsize=10000, minx=-1e64, maxx=1e64):
     suma = np.sum(out)
 
     out3 = [(x // suma) for x in out]
-    out2 = []
-
-    for i in range(nbins):
-        out2.append([float(i) / float(nbins) * (maxa - mina) + mina, out3[i]])
-    return out2
+    return [
+        [float(i) / float(nbins) * (maxa - mina) + mina, out3[i]] for i in range(nbins)
+    ]

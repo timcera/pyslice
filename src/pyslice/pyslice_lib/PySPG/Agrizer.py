@@ -47,7 +47,7 @@ class Agrizer(ParamParser):
         try:
             if not os.path.exists(elpath):
                 raise AssertionError("")
-        except:
+        except Exception:
             print(f"Error accessing path: '{elpath}'.")
             sys.exit()
         cwd = os.getcwd()
@@ -82,7 +82,7 @@ class Agrizer(ParamParser):
         try:
             if not os.path.exists(elpath):
                 raise AssertionError("")
-        except:
+        except Exception:
             print(f"Error accessing path: '{elpath}'.")
             sys.exit()
         cwd = os.getcwd()
@@ -134,7 +134,7 @@ class Agrizer(ParamParser):
         try:
             if not os.path.exists(elpath):
                 raise AssertionError("")
-        except:
+        except Exception:
             print(f"Error accessing path: '{elpath}'.")
             sys.exit()
 

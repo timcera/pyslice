@@ -93,7 +93,7 @@ class ItOperator(SPGIterator):
         lsTmp = []
         xact = xmin
 
-        while (xmin > xmax) ^ (xact <= xmax):  # ^ is xor in python !
+        while (xact > xmax) ^ (xact <= xmax):  # ^ is xor in python !
             lsTmp.append(xact)
             xact = eval(f"{xact}{self.it_type}{xstep}")
 

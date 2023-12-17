@@ -104,11 +104,11 @@ class ParamParser:
                 self.actual_values[varname] = next(i_iter)
 
                 break
-            except StopIteration:
+            except StopIteration as e:
                 self.actual_values[varname] = i_iter.reset()
 
                 if last_iterated == self.iterator_list[0]:
-                    raise StopIteration
+                    raise StopIteration from e
 
         return self.actual_values
 
@@ -198,11 +198,7 @@ entities = {self.entities}"""
         thepath = os.path.curdir + os.path.sep
 
         for i_iter in self.variables_list[:limit]:
-            thepath += "{}-{}{}".format(
-                i_iter.get_varname(),
-                self.actual_values[i_iter.get_varname()],
-                os.path.sep,
-            )
+            thepath += f"{i_iter.get_varname()}-{self.actual_values[i_iter.get_varname()]}{os.path.sep}"
 
         return thepath
 
@@ -214,10 +210,10 @@ entities = {self.entities}"""
         By setting limit to something else, you change the amount of variables printed
         (i.e. limit=-2, will print the value of the last two variables)
         """
-        theoutput = ""
-        for i_iter in self.variables_list[limit:]:
-            theoutput += f"{self.actual_values[i_iter.get_varname()]}" + self.separator
-        return theoutput
+        return "".join(
+            f"{self.actual_values[i_iter.get_varname()]}{self.separator}"
+            for i_iter in self.variables_list[limit:]
+        )
 
 
 #

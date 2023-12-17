@@ -25,7 +25,7 @@ readCIN = False
 try:
     os.path.isdir(PySPGPATH)
     sys.path.append(os.path.expanduser(PySPGPATH))
-except:
+except Exception:
     sys.stderr.write(f"Error! '{PySPGPATH}' directory NOT FOUND\n")
     sys.exit(2)
 
@@ -33,7 +33,7 @@ except:
 # imports the PySPG library
 try:
     from PySPG import *
-except:
+except Exception:
     sys.stderr.write("Couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("And verify that PySPG lives there\n")
     sys.stderr.write(f"actual value: '{PySPGPATH}'\n")
@@ -43,7 +43,7 @@ except:
 # reads the PySPG parameter file
 try:
     lsLines = open(paramFile).readlines()
-except:
+except Exception:
     sys.stderr.write(f"Error! Couldn't open '{paramFile}' file\n")
     sys.exit(2)
 

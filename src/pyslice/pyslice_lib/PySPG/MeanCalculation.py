@@ -38,27 +38,22 @@ class MeanCalculation:
 
         try:
             all_data = loadData(fsearch)
-        except:
+        except Exception:
             print(f"Error! '{fsearch}' file doesn't exist or not enough permissions...")
             sys.exit()
 
         try:
             columnas = list(range(len(all_data[0])))
-        except:
+        except Exception:
             sys.stderr.write(f"mean-> error! in directory '{dirname}'\n")
             sys.stderr.write(f"all_data = {str(all_data)}\n")
 
-        tmpDict = {}
-
-        for i in all_data:
-            tmpDict[i[0]] = 0
-        valuesX = list(tmpDict.keys())
-        valuesX.sort()
-
+        tmpDict = {i[0]: 0 for i in all_data}
+        valuesX = sorted(tmpDict.keys())
         xDict = {}
         nPoints = {}
 
-        zeros = [0 for i in columnas]
+        zeros = [0 for _ in columnas]
 
         for i in valuesX:
             xDict[i] = copy.copy(zeros)
@@ -71,20 +66,19 @@ class MeanCalculation:
                 for j in columnas:
                     vec[j] += row[j]
 
-        dataOut = []
-
-        for x in valuesX:
-            if nPoints[x] != 0:
-                dataOut.append([(xDict[x][j] // nPoints[x]) for j in columnas])
-
+        dataOut = [
+            [(xDict[x][j] // nPoints[x]) for j in columnas]
+            for x in valuesX
+            if nPoints[x] != 0
+        ]
         try:
             dumpData(fout, dataOut)
-        except:
+        except Exception:
             print(f"Error! Couldn't create output file '{fsearch}' ...")
             sys.exit()
 
     def doit(self, fin_name="out.dat", fout_name="mean.dat"):
-        for i in self.pp_varying:
+        for _ in self.pp_varying:
             self.mean(fin_name, fout_name)
 
 

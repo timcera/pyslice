@@ -55,13 +55,13 @@ import sys
 try:
     os.path.isdir(PySPGPATH)
     sys.path.append(os.path.expanduser(PySPGPATH))
-except:
+except Exception:
     sys.stderr.write(f"error! '{PySPGPATH}' directory NOT FOUND\n")
     sys.exit(2)
 
 try:
     from PySPG import *
-except:
+except Exception:
     sys.stderr.write("couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("and verify that PySPG lives there\n")
     sys.stderr.write(f"actual value: '{PySPGPATH}'\n")

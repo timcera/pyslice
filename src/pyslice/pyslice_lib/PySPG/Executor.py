@@ -42,16 +42,14 @@ class Executor:
         try:
             if not os.path.isdir(way2):
                 os.makedirs(way2)
-        except:
+        except Exception:
             print(f"Error!! creating directory: '{way2}'")
             sys.exit(1)
 
         os.chdir(way2)
 
-        fparam = open(inname, "w")
-        fparam.write(str(self.parser))
-        fparam.close()
-
+        with open(inname, "w") as fparam:
+            fparam.write(str(self.parser))
         open(outname, "a").write(f"{self.parser.output_tree(self.limit)}	")
 
         os.system(f"{exename} >> {outname} ")
@@ -64,7 +62,7 @@ class Executor:
         inname is the input file for the command
         while outfile is the output file name
         """
-        for i in self.parser:
+        for _ in self.parser:
             self.run(command, outfile, inname)
 
 

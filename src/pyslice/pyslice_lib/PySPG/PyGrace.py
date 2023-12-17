@@ -48,33 +48,36 @@ class GraceDataSet:
 
     def __str__(self):
         return (
-            "\n".join(
-                [
-                    "@    s" + str(self.name) + " " + a + " " + str(b)
-                    for a, b in list(self.default.items())
-                ]
+            (
+                (
+                    "\n".join(
+                        [
+                            f"@    s{str(self.name)} {a} {str(b)}"
+                            for a, b in list(self.default.items())
+                        ]
+                    )
+                    + "\n"
+                )
+                + "\n".join(
+                    [
+                        f"@    s{str(self.name)} symbol {a} {str(b)}"
+                        for a, b in list(self.symbol.items())
+                    ]
+                )
+                + "\n"
             )
-            + "\n"
             + "\n".join(
                 [
-                    "@    s" + str(self.name) + " symbol " + a + " " + str(b)
-                    for a, b in list(self.symbol.items())
-                ]
-            )
-            + "\n"
-            + "\n".join(
-                [
-                    "@    s" + str(self.name) + " line " + a + " " + str(b)
+                    f"@    s{str(self.name)} line {a} {str(b)}"
                     for a, b in list(self.line.items())
                 ]
             )
             + "\n"
-            + "\n".join(
-                [
-                    "@    s" + str(self.name) + " fill " + a + " " + str(b)
-                    for a, b in list(self.fill.items())
-                ]
-            )
+        ) + "\n".join(
+            [
+                f"@    s{str(self.name)} fill {a} {str(b)}"
+                for a, b in list(self.fill.items())
+            ]
         )
 
 
@@ -198,59 +201,103 @@ class GraceGraph:
 
     def __str__(self):
         return (
-            "\n".join(
-                [
-                    "@g" + str(self.name) + " " + a + " " + str(b)
-                    for a, b in list(self.default.items())
-                ]
+            (
+                (
+                    (
+                        (
+                            (
+                                (
+                                    (
+                                        (
+                                            (
+                                                (
+                                                    (
+                                                        "\n".join(
+                                                            [
+                                                                f"@g{str(self.name)} {a} {str(b)}"
+                                                                for a, b in list(
+                                                                    self.default.items()
+                                                                )
+                                                            ]
+                                                        )
+                                                        + "\n@with g"
+                                                    )
+                                                    + str(self.name)
+                                                    + "\n"
+                                                )
+                                                + "\n".join(
+                                                    [
+                                                        f"@    world {a} {str(b)}"
+                                                        for a, b in list(
+                                                            self.world.items()
+                                                        )
+                                                    ]
+                                                )
+                                                + "\n"
+                                            )
+                                            + "\n".join(
+                                                [
+                                                    f"@    view {a} {str(b)}"
+                                                    for a, b in list(self.view.items())
+                                                ]
+                                            )
+                                            + "\n"
+                                        )
+                                        + "\n".join(
+                                            [
+                                                f"@    title {a} {str(b)}"
+                                                for a, b in list(self.title.items())
+                                            ]
+                                        )
+                                        + "\n"
+                                    )
+                                    + "\n".join(
+                                        [
+                                            f"@    subtitle {a} {str(b)}"
+                                            for a, b in list(self.subtitle.items())
+                                        ]
+                                    )
+                                    + "\n"
+                                )
+                                + "\n".join(
+                                    [
+                                        f"@    xaxes {a} {str(b)}"
+                                        for a, b in list(self.xaxes.items())
+                                    ]
+                                )
+                                + "\n"
+                            )
+                            + "\n".join(
+                                [
+                                    f"@    yaxes {a} {str(b)}"
+                                    for a, b in list(self.yaxes.items())
+                                ]
+                            )
+                            + "\n"
+                        )
+                        + "\n".join(
+                            [
+                                f"@    xaxis {a} {str(b)}"
+                                for a, b in list(self.xaxis.items())
+                            ]
+                        )
+                        + "\n"
+                    )
+                    + "\n".join(
+                        [
+                            f"@    yaxis {a} {str(b)}"
+                            for a, b in list(self.yaxis.items())
+                        ]
+                    )
+                    + "\n"
+                )
+                + "\n".join(
+                    [f"@    legend {a} {str(b)}" for a, b in list(self.legend.items())]
+                )
+                + "\n"
             )
-            + "\n@with g"
-            + str(self.name)
-            + "\n"
             + "\n".join(
-                ["@    world " + a + " " + str(b) for a, b in list(self.world.items())]
-            )
-            + "\n"
-            + "\n".join(
-                ["@    view " + a + " " + str(b) for a, b in list(self.view.items())]
-            )
-            + "\n"
-            + "\n".join(
-                ["@    title " + a + " " + str(b) for a, b in list(self.title.items())]
-            )
-            + "\n"
-            + "\n".join(
-                [
-                    "@    subtitle " + a + " " + str(b)
-                    for a, b in list(self.subtitle.items())
-                ]
-            )
-            + "\n"
-            + "\n".join(
-                ["@    xaxes " + a + " " + str(b) for a, b in list(self.xaxes.items())]
-            )
-            + "\n"
-            + "\n".join(
-                ["@    yaxes " + a + " " + str(b) for a, b in list(self.yaxes.items())]
-            )
-            + "\n"
-            + "\n".join(
-                ["@    xaxis " + a + " " + str(b) for a, b in list(self.xaxis.items())]
-            )
-            + "\n"
-            + "\n".join(
-                ["@    yaxis " + a + " " + str(b) for a, b in list(self.yaxis.items())]
-            )
-            + "\n"
-            + "\n".join(
-                [
-                    "@    legend " + a + " " + str(b)
-                    for a, b in list(self.legend.items())
-                ]
-            )
-            + "\n"
-            + "\n".join(
-                ["@    frame " + a + " " + str(b) for a, b in list(self.frame.items())]
+                [f"@    frame {a} {str(b)}" for a, b in list(self.frame.items())]
             )
             + "\n"
         )
@@ -314,34 +361,35 @@ class GraceDocument:
 
     def __str__(self):
         return (
-            "\n".join(["@" + a + " " + str(b) for a, b in list(self.default.items())])
-            + "\n"
-            + "\n".join(
-                ["@page " + a + " " + str(b) for a, b in list(self.page.items())]
+            (
+                (
+                    "\n".join([f"@{a} {str(b)}" for a, b in list(self.default.items())])
+                    + "\n"
+                )
+                + "\n".join([f"@page {a} {str(b)}" for a, b in list(self.page.items())])
+                + "\n"
             )
-            + "\n"
             + "\n".join(
                 [
-                    "@map font " + str(a) + " to " + b + ", " + c
+                    f"@map font {str(a)} to {b}, {c}"
                     for a, (b, c) in list(self.map_font.items())
                 ]
             )
             + "\n"
-            + "\n".join(
-                [
-                    "@map color "
-                    + str(a)
-                    + " to ("
-                    + str(b)
-                    + ","
-                    + str(c)
-                    + ","
-                    + str(d)
-                    + "), "
-                    + str(e)
-                    for a, ((b, c, d), e) in list(self.map_color.items())
-                ]
-            )
+        ) + "\n".join(
+            [
+                "@map color "
+                + str(a)
+                + " to ("
+                + str(b)
+                + ","
+                + str(c)
+                + ","
+                + str(d)
+                + "), "
+                + str(e)
+                for a, ((b, c, d), e) in list(self.map_color.items())
+            ]
         )
 
     #
@@ -357,7 +405,7 @@ class GraceDocument:
         newds.line["color"] = len(self.datasets) + 1
         newds.symbol["color"] = len(self.datasets) + 1
         if legend == "":
-            legend = f"y{str(len(self.datasets))}"
+            legend = f"y{len(self.datasets)}"
         legend = f'"{legend}"'
         newds.default["legend"] = legend
         self.datasets[len(self.datasets)] = newds
@@ -416,10 +464,10 @@ class GraceDocument:
         for it in list(self.datasets.values()):
             colx = [a[0] for a in it.data]
             coly = [a[1] for a in it.data]
-            if len(colx) > 0:
+            if colx:
                 minx = min(minx, min(colx))
                 maxx = max(maxx, max(colx))
-            if len(coly) > 0:
+            if coly:
                 miny = min(miny, min(coly))
                 maxy = max(maxy, max(coly))
 

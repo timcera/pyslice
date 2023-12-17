@@ -48,7 +48,7 @@ class MultiAgrizer:
         pTmp = ParamParser(commands)
         try:
             lastvar_idx = pTmp.entities.index(var_name)
-        except:
+        except Exception:
             sys.stdout = sys.stderr
             print("last_var= ", var_name)
             print("var=", lastvar_idx)
@@ -125,7 +125,7 @@ class MultiAgrizer:
         given the commands, for all the possible values, do the plotting according the given rules
         """
 
-        for i in self.parser_original:
+        for _ in self.parser_original:
             #    print self.parser_original
             self.__agr(outname, inname)
 

@@ -122,7 +122,7 @@ def usage():
 def assignment(var1, var2):
     try:
         return var1
-    except:
+    except Exception:
         return var2
 
 
@@ -212,10 +212,7 @@ class Pyslice:
             with suppress(OSError):
                 (Path(_output_path) / _strtag / rel_dir).mkdir()
         for files in fnames:
-            excludeflag = False
-            for extensions in _exclude_list:
-                if extensions in files:
-                    excludeflag = True
+            excludeflag = any(extensions in files for extensions in _exclude_list)
             if excludeflag:
                 continue
             infilepath = Path(dirname) / files
@@ -343,26 +340,25 @@ class Pyslice:
         # PYSLICE can be used in subprocess to do different things if script
         # is run outside of Pyslice.
         os.environ["PYSLICE"] = "1"
-        if os.name != "nt":
-            pype = subprocess.Popen(
-                com,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                close_fds=True,
-            )
-        else:
-            # close_fds is not supported on Windows
-            pype = subprocess.Popen(
-                com,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            )
-
-        chstdouterr = pype.communicate()[0]
-
         if _keep_log is True:
+            pype = (
+                subprocess.Popen(
+                    com,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    close_fds=True,
+                )
+                if os.name != "nt"
+                else subprocess.Popen(
+                    com,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                )
+            )
+            chstdouterr = pype.communicate()[0]
+
             with open("pyslice.log", "w", encoding="utf8") as fpo:
                 fpo.write(str(chstdouterr))
 
@@ -398,11 +394,11 @@ class Pyslice:
         max_threads = configuration.getint("flags", "max_threads")
         try:
             comment_code = configuration.get("flags", "comment")
-        except:
+        except Exception:
             comment_code = "qwerty"
         try:
             dt_code = assignment(configuration.get("flags", "active_comment"), "")
-        except:
+        except Exception:
             dt_code = "qwerty"
         CODE = comment_code + dt_code
         _exclude_list = []
@@ -413,7 +409,7 @@ class Pyslice:
         flat_dirs = configuration.getboolean("flags", "flat_dirs")
         try:
             _keep_log = configuration.getboolean("flags", "keep_log")
-        except:
+        except Exception:
             _keep_log = True
 
         program = self.dequote(configuration.get("program", "program"))
@@ -448,19 +444,14 @@ class Pyslice:
                 # Find out distribution
                 distribution = f"random.{configuration.get(variable, 'distribution')}"
                 samples = configuration.getint(variable, "samples")
-                for _ in range(samples):
-                    var_list.append(eval(distribution))
-            # Arithmetic
+                var_list.extend(eval(distribution) for _ in range(samples))
             elif var_type == "arithmetic":
                 var_list.append(f"+{variable}")
-            # Geometric
             elif var_type == "geometric":
                 var_list.append(f"*{variable}")
-            # List
             elif var_type == "list":
                 var_list.append(f".{variable}")
-                for i in eval(configuration.get(variable, "values_list")):
-                    var_list.append(i)
+                var_list.extend(iter(eval(configuration.get(variable, "values_list"))))
             else:
                 raise NotValidTypeError(
                     f"'{var_type}' is not a valid type - ['arithmetic', 'geometric', 'list', or 'montecarlo']"
@@ -495,11 +486,7 @@ class Pyslice:
         nmax = {}
         allints = {}
         for _ in pyspg_obj:
-            tmp = []
-            # Had to add the 'limit=None' in order to get directories created
-            # for the last variable.  Is this a bug in PySPG?
-            tmp.append(pyspg_obj.directory_tree(limit=None))
-
+            tmp = [pyspg_obj.directory_tree(limit=None)]
             for i_iter in pyspg_obj.variables_list:
                 vname = i_iter.get_varname()
                 nval = pyspg_obj.actual_values[vname]
@@ -509,9 +496,11 @@ class Pyslice:
                     allints[vname] = False
                     with suppress(ValueError):
                         nval = float(nval)
-                if isinstance(nval, int):
-                    if nmax.setdefault(vname, float("-inf")) < nval:
-                        nmax[vname] = nval
+                if (
+                    isinstance(nval, int)
+                    and nmax.setdefault(vname, float("-inf")) < nval
+                ):
+                    nmax[vname] = nval
                 tmp.append([vname, nval])
             nset.append(tmp)
 

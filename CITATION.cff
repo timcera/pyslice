@@ -1,0 +1,36 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: pyslice
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Timothy
+    family-names: Cera
+    email: tim@cerazone.net
+    orcid: 'https://orcid.org/0000-0003-4613-7697'
+identifiers:
+  - type: url
+    value: 'https://pypi.org/project/pyslice/'
+    description: Python Package Index entry for pyslice
+repository-code: 'https://github.com/timcera/pyslice'
+url: >-
+  https://timcera.bitbucket.io/pyslice/docs/index.html#pyslice-documentation
+repository: 'https://bitbucket.org/timcera/pyslice/src/main/'
+abstract: >-
+  pyslice is a specialized templating system that replaces
+  variables in a template data set with numbers taken from
+  all combinations of a grouped series of numbers. It
+  creates a dataset from input template files for each
+  combination of variables in the series.
+keywords:
+  - monte-carlo
+  - simulation
+  - model
+  - parametric
+  - model-parameters
+  - template
+license: BSD-3-Clause
