@@ -16,7 +16,6 @@ from .ParamParser import *
 
 
 class MeanCalculation:
-
     """
     When a simulation is run with a given number of repetitions what is needed is a
     tool for calculating the mean values. This is that tool
