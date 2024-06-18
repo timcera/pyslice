@@ -1,3 +1,13 @@
+## v6.0.3 (2024-06-17)
+
+### Fix
+
+- fixed variable that needed to reset for each parameter
+
+### Refactor
+
+- remove unused pyspg3 git submodule
+
 ## v6.0.2 (2024-03-31)
 
 ## v6.0.1 (2023-12-16)
