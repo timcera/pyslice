@@ -32,7 +32,7 @@ except Exception:
 
 # imports the PySPG library
 try:
-    from PySPG import *
+    from PySPG import Executor
 except Exception:
     sys.stderr.write("Couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("And verify that PySPG lives there\n")

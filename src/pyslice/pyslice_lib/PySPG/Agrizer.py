@@ -9,10 +9,9 @@
 import os
 import os.path
 import sys
-from math import *
 
 from . import Load, PyGrace
-from .ParamParser import *
+from .ParamParser import ParamParser
 
 
 class Agrizer(ParamParser):
@@ -44,15 +43,7 @@ class Agrizer(ParamParser):
             if actual[0] in self.isvariable[:-1]:
                 elpath += "%s-%s/" % actual
 
-        try:
-            if not os.path.exists(elpath):
-                raise AssertionError("")
-        except Exception:
-            print(f"Error accessing path: '{elpath}'.")
-            sys.exit()
-        cwd = os.getcwd()
-        os.chdir(elpath)
-
+        cwd = self._test_paths(elpath)
         sys.stdout = open(outname, "w")
 
         ls = Load.loadXY(inname, self.xcol, self.ycol)
@@ -62,14 +53,12 @@ class Agrizer(ParamParser):
         g1.set_data(ls2, legend)
 
         g1.autoscale()
-        g1.set_labels(self.xlabel, self.ylabel)
-        g1.set_scale(self.xscale, self.yscale)
-        g1.set_title(title)
+        self._extracted_from_hist_30(g1, title)
         g1.dump()
 
         os.chdir(cwd)
 
-    def agr(self, pattern, outname=None, autoscale="xy"):
+    def agr_alter(self, pattern, outname=None, autoscale="xy"):
         title = self.title
         elpath = ""
         ac_values = self.actual_values()
@@ -79,14 +68,7 @@ class Agrizer(ParamParser):
                 legend = " %s = %s " % actual
                 elpath += "%s-%s/" % actual
 
-        try:
-            if not os.path.exists(elpath):
-                raise AssertionError("")
-        except Exception:
-            print(f"Error accessing path: '{elpath}'.")
-            sys.exit()
-        cwd = os.getcwd()
-        os.chdir(elpath)
+        cwd = self._test_paths(elpath)
         if isinstance(pattern, str):
             pattern = [pattern]
         g1 = PyGrace.GraceDocument()
@@ -119,6 +101,18 @@ class Agrizer(ParamParser):
 
         os.chdir(cwd)
 
+    def _test_paths(self, elpath):
+        try:
+            if not os.path.exists(elpath):
+                raise AssertionError("")
+        except Exception:
+            print(f"Error accessing path: '{elpath}'.")
+            sys.exit()
+        result = os.getcwd()
+        os.chdir(elpath)
+        return result
+
+    # TODO Rename this here and in `agr`, `agr_alter` and `hist`
     def hist(self, pattern, mustCalculateDif, outname=None, autoscale="xy"):
         title = self.title
         elpath = ""
@@ -172,13 +166,17 @@ class Agrizer(ParamParser):
                 sys.stderr.write(f"skipping {inname}... file does not exist\n")
         if isSomething:
             sys.stdout = open(outname, "w")
-            g1.set_labels(self.xlabel, self.ylabel)
-            g1.set_scale(self.xscale, self.yscale)
-            g1.set_title(title)
+            self._extracted_from_hist_30(g1, title)
             g1.set_world(self.minx, self.maxx, self.miny, self.maxy)
             g1.autoscale(autoscale)
             g1.dump()
         os.chdir(cwd)
+
+    # TODO Rename this here and in `agr`, `agr_alter` and `hist`
+    def _extracted_from_hist_30(self, g1, title):
+        g1.set_labels(self.xlabel, self.ylabel)
+        g1.set_scale(self.xscale, self.yscale)
+        g1.set_title(title)
 
     def doit(
         self,

@@ -6,10 +6,10 @@
 #
 
 
-columnX = 12
-
 import os.path
 import sys
+
+columnX = 12
 
 #
 # WARNING YOU MUST SPECIFY THE DIRECTORY WHERE PySPG LIVES
@@ -47,7 +47,7 @@ except Exception:
     sys.exit(2)
 
 try:
-    from PySPG import *
+    from PySPG import MeanCalculation
 except Exception:
     sys.stderr.write("Couldn't import PySPG package, check PySPGPATH variable\n")
     sys.stderr.write("And verify that PySPG lives there\n")

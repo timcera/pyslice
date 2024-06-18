@@ -5,10 +5,20 @@ Distributed According to GNU Generic Purpose License (GPL)
 Please visit www.gnu.org
 """
 
-from .Agrizer import *
-from .Executor import *
-from .MatrixPlotter import *
-from .MeanCalculation import *
-from .MultiAgrizer import *
-from .ParamParser import *
-from .TeXParser import *
+__all__ = [
+    "Agrizer",
+    "Executor",
+    "MatrixPlotter",
+    "MeanCalculation",
+    "MultiAgrizer",
+    "ParamParser",
+    "TeXParser",
+]
+
+from .Agrizer import Agrizer
+from .Executor import Executor
+from .MatrixPlotter import MatrixPlotter
+from .MeanCalculation import MeanCalculation
+from .MultiAgrizer import MultiAgrizer
+from .ParamParser import ParamParser
+from .TeXParser import TeXParser

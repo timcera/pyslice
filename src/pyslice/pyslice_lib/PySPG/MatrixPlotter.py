@@ -2,7 +2,7 @@ import os.path
 import sys
 
 from . import Load
-from .ParamParser import *
+from .ParamParser import ParamParser
 
 #
 #

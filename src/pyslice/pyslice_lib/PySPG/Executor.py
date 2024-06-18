@@ -1,9 +1,8 @@
 import os
 import os.path
 import sys
-from math import *  # nopycln: import
 
-from .ParamParser import *  # nopycln: import
+from .ParamParser import ParamParser
 
 #
 #

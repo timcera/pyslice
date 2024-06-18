@@ -1,15 +1,13 @@
 import os.path
-
-BASEDIR = os.path.expanduser("~/devel/")
-
 import sys
-
-sys.path.append(BASEDIR)
 
 import PySPG
 
 # Lee los labels de las columnas
-from plotdyconf import *
+from plotdyconf import col_contents, lastvar, xlabel
+
+BASEDIR = os.path.expanduser("~/devel/")
+sys.path.append(BASEDIR)
 
 for kcol, kerr, colname in col_contents:
     p2 = PySPG.MultiAgrizer(open("param.dat").readlines(), lastvar)

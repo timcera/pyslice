@@ -1,9 +1,8 @@
 import copy
 import sys
-from math import *
 
-from .Load import *
-from .ParamParser import *
+from .Load import dumpData, loadData
+from .ParamParser import ParamParser
 
 #
 #

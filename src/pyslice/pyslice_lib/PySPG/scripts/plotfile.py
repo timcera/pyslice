@@ -3,6 +3,8 @@
 #  outputed by a {}-something directive in a recoursive-directory
 #
 
+from PySPG import Agrizer
+
 #
 # Specifies the grace format of the x axis
 #

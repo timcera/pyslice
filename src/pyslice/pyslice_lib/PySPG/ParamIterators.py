@@ -7,8 +7,6 @@ Copyright: Distributed according to GNU/GPL Version 2
            (see http://www.gnu.org)
 """
 
-from math import *
-
 
 class SPGIterator:
     """This is a subsidiary abstract class for the ParamParser one.  It defines
@@ -70,23 +68,23 @@ class ItOperator(SPGIterator):
     def set_command(self, command, separator=" "):
         str_rest = command.split(separator)
         self.varname = str_rest[0].strip()
-        try:
-            [xmin, xmax, xstep] = list(map(eval, str_rest[1:]))
-        except:
-            raise ValueError(
-                f"Line: '{command}' incorrect number of parameters (found {len(str_rest) - 1}) for iterator       '{self.it_type}' over '{self.varname}'"
-            )
-            #
-            #   Block that raises exception in the case that iteration
-            #   requested do not reaches xmax
+        # try:
+        [xmin, xmax, xstep] = list(map(eval, str_rest[1:]))
+        # except ValueError:
+        #    raise ValueError(
+        #        f"Line: '{command}' incorrect number of parameters (found {len(str_rest) - 1}) for iterator       '{self.it_type}' over '{self.varname}'"
+        #    )
+        #    #
+        #    #   Block that raises exception in the case that iteration
+        #    #   requested do not reaches xmax
 
         try:
             if (xmin < xmax) and (xmin >= eval(f"{xmin} {self.it_type} {xstep}")):
-                raise AssertError("")
+                raise AssertionError("")
 
             if (xmin > xmax) and (xmin <= eval(f"{xmin} {self.it_type} {xstep}")):
-                raise AssertError("")
-        except:
+                raise AssertionError("")
+        except AssertionError:
             raise ValueError(
                 f"Line: '{command}' Variable '{self.varname}': Error! {xmin}{self.it_type}{xstep} do not seem to tend to {xmax}"
             )
@@ -94,7 +92,7 @@ class ItOperator(SPGIterator):
         lsTmp = []
         xact = xmin
 
-        while (xact > xmax) ^ (xact <= xmax):  # ^ is xor in python !
+        while (xmin > xmax) ^ (xact <= xmax):  # ^ is xor in python !
             lsTmp.append(xact)
             xact = eval(f"{xact}{self.it_type}{xstep}")
 
@@ -164,11 +162,8 @@ class ItRepetition(SPGIterator):
         SPGIterator.__init__(self)
 
     def set_command(self, command, separator=" "):
-        try:
-            self.varname = False
-            self.data = list(range(eval(command)))
-        except:
-            raise ValueError(f"Line: '{command}' iterator '#' could not eval()")
+        self.varname = False
+        self.data = list(range(eval(command)))
 
     def is_variable(self):
         return False

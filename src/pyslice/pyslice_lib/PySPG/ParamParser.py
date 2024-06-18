@@ -8,7 +8,6 @@ Please visit http://www.gnu.org
 # :::~ Important: for constants and functions already defined
 import copy
 import sys
-from math import *
 
 from . import ParamIterators
 

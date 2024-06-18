@@ -5,6 +5,31 @@
 #  FROM THE SERIE
 #
 
+
+import os.path
+import sys
+
+# WARNING YOU MUST SPECIFY THE DIRECTORY WHERE PySPG LIVES
+PySPGPATH = "/t/users1/tessonec/devel/"
+
+
+try:
+    os.path.isdir(PySPGPATH)
+    sys.path.append(os.path.expanduser(PySPGPATH))
+except Exception:
+    sys.stderr.write(f"error! '{PySPGPATH}' directory NOT FOUND\n")
+    sys.exit(2)
+
+try:
+    from PySPG import Agrizer
+except Exception:
+    sys.stderr.write("couldn't import PySPG package, check PySPGPATH variable\n")
+    sys.stderr.write("and verify that PySPG lives there\n")
+    sys.stderr.write(f"actual value: '{PySPGPATH}'\n")
+
+    sys.exit(2)
+
+
 # Specifies the grace format of the x axis
 #
 
@@ -26,30 +51,6 @@ inputFile = "param.dat"
 # if you want to construct the histogram only with the raw data of the
 # file leave it as is
 mustComputeDiference = 0
-
-
-# WARNING YOU MUST SPECIFY THE DIRECTORY WHERE PySPG LIVES
-PySPGPATH = "/t/users1/tessonec/devel/"
-
-
-import os.path
-import sys
-
-try:
-    os.path.isdir(PySPGPATH)
-    sys.path.append(os.path.expanduser(PySPGPATH))
-except Exception:
-    sys.stderr.write(f"error! '{PySPGPATH}' directory NOT FOUND\n")
-    sys.exit(2)
-
-try:
-    from PySPG import *
-except Exception:
-    sys.stderr.write("couldn't import PySPG package, check PySPGPATH variable\n")
-    sys.stderr.write("and verify that PySPG lives there\n")
-    sys.stderr.write(f"actual value: '{PySPGPATH}'\n")
-
-    sys.exit(2)
 
 
 for histvar in histvec:
