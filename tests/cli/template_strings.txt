@@ -1,0 +1,11 @@
+
+# Blank lines and
+# simple comments are allowed
+
+# This is labels 1 and accessed as ~1 within an active comment
+1|    {water_level} {flow}
+
+# This is ~4 within an active comment...
+4|              {flow} compared to {water_level}
+
+210|     {water_level}
