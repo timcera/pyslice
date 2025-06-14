@@ -18,11 +18,6 @@
     :target: https://pypi.python.org/pypi/pyslice/
     :height: 20
 
-.. image:: https://img.shields.io/pypi/dd/pyslice.svg
-    :alt: pyslice downloads
-    :target: https://pypi.python.org/pypi/pyslice/
-    :height: 20
-
 .. image:: https://img.shields.io/pypi/pyversions/pyslice
     :alt: PyPI - Python Version
     :target: https://pypi.org/project/pyslice/
