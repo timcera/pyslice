@@ -50,10 +50,9 @@ jobs:
 
             - name: >
                   Install package and dependencies
-                  version ${{ matrix.pandas-versions }}
+                  version ${{ matrix.numpy-versions }}
               run: >
                   python -m pip install
-                  '${{ matrix.pandas-versions }}'
                   '${{ matrix.numpy-versions }}' .
 
             - name: Test with pytest
