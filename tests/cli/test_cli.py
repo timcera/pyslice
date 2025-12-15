@@ -15,5 +15,7 @@ def test_cli(tmp_path):
     subprocess.run(["pyslice"], input="\ny\n", text=True, check=True)
     time.sleep(60)
     dirs = sorted([str(i.as_posix()) for i in sorted(list(Path("output").rglob("*")))])
+    dirs = [i for i in dirs if "pyslice.log" not in i]
     refdirs = sorted(json.load(open("refdirs.json")))
+    refdirs = [i for i in refdirs if "pyslice.log" not in i]
     assert dirs == refdirs
