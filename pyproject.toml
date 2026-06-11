@@ -30,6 +30,7 @@ classifiers = [
 ] # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
 dependencies = [
     "binaryornot",
+    "chardet",
     "numpy"
 ]
 description = "Specialized templating engine do develop a parameterized set of model data sets"
